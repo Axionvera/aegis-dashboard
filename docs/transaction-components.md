@@ -161,6 +161,17 @@ import { transferDetailsFixture, unknownResultFixture } from '@/components/trans
 />
 ```
 
+### Contributor fixture gallery
+
+Use the gallery component at `src/components/transactions/TransactionFixtureGallery.tsx`
+for a single-page preview of review, progress, and receipt states. It is meant for
+UI review and contributor QA, not as a substitute for SDK or contract-level
+validation. The gallery lives on the `/transactions` page and should be updated
+whenever new transaction states or messaging are introduced.
+
+Keep any compliance-facing copy conservative and avoid presenting protocol-level
+status as legal or financial advice.
+
 ## Flows using these components
 
 - **`src/features/investor/components/TransferModal.tsx`** — the KYC whitelist check runs first,
