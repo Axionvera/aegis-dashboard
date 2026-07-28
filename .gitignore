@@ -1,4 +1,10 @@
-node_modules/
-.next/
+.idea/
+node_modules
+
+# next.js
+/.next/
+/out/
+
+# typescript
 *.tsbuildinfo
-.DS_Store
+next-env.d.ts
