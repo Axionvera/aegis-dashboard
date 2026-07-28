@@ -1,23 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAegis } from '@/hooks/useAegis';
-import { buildRecoveryPlan, classifySdkError } from '@/features/sdk-recovery';
-import type { ClassifiedSdkError, RecoveryPlan } from '@/features/sdk-recovery';
 import type { PortfolioAsset } from '@/lib/aegis/types';
 
 export type PortfolioStatus = 'idle' | 'loading' | 'error' | 'ready';
 
-export interface PortfolioFailure {
-  error: ClassifiedSdkError;
-  plan: RecoveryPlan;
-}
-
 interface UsePortfolioResult {
   status: PortfolioStatus;
   assets: PortfolioAsset[];
-  /** Plain message, kept for callers that only need one line of text. */
   error: string | null;
-  /** Classified failure and its recovery plan, when the load failed. */
-  failure: PortfolioFailure | null;
   refetch: () => void;
 }
 
@@ -31,7 +21,6 @@ export function usePortfolio(investorAddress: string | null): UsePortfolioResult
   const [status, setStatus] = useState<PortfolioStatus>('idle');
   const [assets, setAssets] = useState<PortfolioAsset[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [failure, setFailure] = useState<PortfolioFailure | null>(null);
   const [refetchToken, setRefetchToken] = useState(0);
 
   useEffect(() => {
@@ -39,14 +28,12 @@ export function usePortfolio(investorAddress: string | null): UsePortfolioResult
       setStatus('idle');
       setAssets([]);
       setError(null);
-      setFailure(null);
       return;
     }
 
     let cancelled = false;
     setStatus('loading');
     setError(null);
-    setFailure(null);
 
     getPortfolio(investorAddress)
       .then((result) => {
@@ -56,11 +43,7 @@ export function usePortfolio(investorAddress: string | null): UsePortfolioResult
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        // Reads have no side effects, so the plan here is purely about telling
-        // the user whether waiting, reconnecting, or reporting is the next step.
-        const classified = classifySdkError(err, { walletConnected: Boolean(investorAddress) });
-        setFailure({ error: classified, plan: buildRecoveryPlan(classified) });
-        setError(classified.detail ?? classified.message);
+        setError(err instanceof Error ? err.message : 'Unable to load your portfolio right now.');
         setStatus('error');
       });
 
@@ -74,5 +57,5 @@ export function usePortfolio(investorAddress: string | null): UsePortfolioResult
 
   const refetch = useCallback(() => setRefetchToken((token) => token + 1), []);
 
-  return { status, assets, error, failure, refetch };
+  return { status, assets, error, refetch };
 }
