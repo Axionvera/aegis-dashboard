@@ -24,6 +24,9 @@ npm install
 ## Contribution Guidelines
 We welcome frontend contributions! Check CONTRIBUTING.md for our branching strategies and tailwind styling rules. Look for // TODO: comments in the codebase for easy wins.
 
+## Testing & Evidence Expectations
+All PRs that modify application behavior must include testing evidence — see [docs/testing-evidence-requirement.md](docs/testing-evidence-requirement.md) for the full policy and [.github/pull_request_template.md](.github/pull_request_template.md) for the checklist rendered in every new pull request.
+
 ## Release Readiness Review
 Please review the [Release Readiness Review](docs/release-readiness-review.md) before considering any release to production or testnet. It outlines current security flaws, limitations, and UX gaps.
 
