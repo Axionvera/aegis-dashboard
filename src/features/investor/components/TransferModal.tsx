@@ -14,6 +14,13 @@ import type {
   TransactionState,
 } from '@/components/transactions/types';
 import { useIdempotentSubmit } from '@/features/forms/idempotency';
+import {
+  buildRecoveryPlan,
+  classifySdkError,
+  SdkErrorRecovery,
+  type ClassifiedSdkError,
+  type RecoveryPlan,
+} from '@/features/sdk-recovery';
 import type { PortfolioAsset } from '@/lib/aegis/types';
 
 interface TransferModalProps {
@@ -23,12 +30,16 @@ interface TransferModalProps {
 
 export default function TransferModal({ asset, onClose }: TransferModalProps) {
   const { checkWhitelist, transfer, isLoading } = useAegis();
-  const { address, network } = useWallet();
+  const { address, network, connect } = useWallet();
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
   const [state, setState] = useState<TransactionState>('idle');
   const [result, setResult] = useState<TransactionResult | null>(null);
+  const [failure, setFailure] = useState<{
+    error: ClassifiedSdkError;
+    plan: RecoveryPlan;
+  } | null>(null);
 
   // Re-check eligibility here too: the card's disabled button is the primary
   // guard, but this modal can be reached via any future entry point, so it
@@ -93,6 +104,7 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
   };
 
   const handleConfirm = async () => {
+    setFailure(null);
     setState('signing');
 
     const outcome = await submission.submit((idempotencyKey) => {
@@ -120,11 +132,42 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
     }
 
     if (outcome.status === 'failed') {
-      setResult(mapToTransactionResult(outcome.error));
+      showRecovery(outcome.error);
       return;
     }
 
-    setResult(mapToTransactionResult(outcome.result));
+    // A resolved call can still describe a failure: the SDK reports most
+    // problems in the envelope rather than by throwing. Successes and pending
+    // submissions keep the receipt; anything else gets the recovery surface.
+    const mapped = mapToTransactionResult(outcome.result);
+    if (mapped.status === 'failure' || mapped.status === 'unknown') {
+      showRecovery(outcome.result);
+      return;
+    }
+
+    setResult(mapped);
+  };
+
+  /**
+   * Classifies a failure and swaps the modal to the recovery surface. The
+   * idempotency key is released only when the classifier can prove nothing was
+   * submitted — otherwise a retry must stay de-duplicated against the original.
+   */
+  const showRecovery = (failed: unknown) => {
+    const classified = classifySdkError(failed, { walletConnected: Boolean(address) });
+    const plan = buildRecoveryPlan(classified);
+
+    setFailure({ error: classified, plan });
+    setState('idle');
+
+    if (!plan.reuseIdempotencyKey) submission.reset();
+  };
+
+  /** Back to the form, keeping the entered values so they can be corrected. */
+  const handleEditDetails = () => {
+    setFailure(null);
+    setError('');
+    setState('idle');
   };
 
   const renderBody = () => {
@@ -142,6 +185,33 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
           >
             Close
           </button>
+        </>
+      );
+    }
+
+    if (failure) {
+      return (
+        <>
+          <h2 className="mb-4 text-xl font-bold">Transfer {asset.ticker}</h2>
+          <SdkErrorRecovery
+            error={failure.error}
+            plan={failure.plan}
+            isBusy={submission.isSubmitting}
+            explorerUrl={getExplorerUrl(failure.error.txHash, network)}
+            handlers={{
+              retry: handleConfirm,
+              retry_with_backoff: handleConfirm,
+              review_input: handleEditDetails,
+              // Freighter owns the network selector, so the best the dashboard
+              // can do is send the user back with the mismatch explained.
+              switch_network: handleEditDetails,
+              connect_wallet: () => {
+                void connect();
+                handleEditDetails();
+              },
+              dismiss: onClose,
+            }}
+          />
         </>
       );
     }
