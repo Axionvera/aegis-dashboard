@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { isMockModeEnabled } from '@/config/mockMode';
 
 /**
  * Registry of all feature flags available in the Aegis Dashboard.
@@ -15,7 +16,8 @@ import { create } from 'zustand';
 export type FeatureFlagKey =
   | 'newMintFlow'
   | 'complianceBanner'
-  | 'darkMode';
+  | 'darkMode'
+  | 'mockMode';
 
 export interface FeatureFlagMeta {
   label: string;
@@ -35,12 +37,20 @@ export const FLAG_METADATA: Record<FeatureFlagKey, FeatureFlagMeta> = {
     label: 'Dark Mode',
     description: 'Enables dark theme across the dashboard.',
   },
+  mockMode: {
+    label: 'Mock Mode',
+    description:
+      'Uses local fixture data instead of live SDK calls. For local development only — never enable on testnet or mainnet.',
+  },
 };
 
 const DEFAULT_FLAGS: Record<FeatureFlagKey, boolean> = {
   newMintFlow: false,
   complianceBanner: true,
   darkMode: false,
+  // Seed from the env var so the Diagnostics page and FeatureFlagsPanel reflect
+  // the true initial state without the user having to toggle manually.
+  mockMode: isMockModeEnabled(),
 };
 
 interface FeatureFlagsState {

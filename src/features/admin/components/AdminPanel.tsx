@@ -7,6 +7,7 @@ import TransactionProgress from '@/components/transactions/TransactionProgress';
 import TransactionReceipt from '@/components/transactions/TransactionReceipt';
 import { mapToTransactionResult } from '@/components/transactions/statusMapper';
 import { getExplorerUrl } from '@/components/transactions/explorerLink';
+import { CheckCircle } from 'lucide-react';
 import type {
   TransactionDetails,
   TransactionResult,
@@ -21,6 +22,7 @@ export default function AdminPanel() {
   const [address, setAddress] = useState('');
   const [state, setState] = useState<TransactionState>('idle');
   const [result, setResult] = useState<TransactionResult | null>(null);
+  const [whitelistMessage, setWhitelistMessage] = useState<string | null>(null);
 
   // Pasted Stellar addresses often carry surrounding whitespace.
   const cleanAddress = address.trim();
@@ -38,8 +40,10 @@ export default function AdminPanel() {
   };
 
   const handleWhitelist = async () => {
-    // In reality, this would call a contract.whitelist(address) method
-    alert(`Whitelisted: ${cleanAddress}`);
+    // TODO: replace with a real contract.whitelist(address) call once the SDK is live.
+    // For now, show an inline confirmation instead of a blocking alert().
+    setWhitelistMessage(`Address ${cleanAddress} has been submitted for whitelisting.`);
+    setTimeout(() => setWhitelistMessage(null), 4000);
   };
 
   const handleConfirmMint = async () => {
@@ -56,6 +60,7 @@ export default function AdminPanel() {
   const reset = () => {
     setResult(null);
     setState('idle');
+    setWhitelistMessage(null);
   };
 
   const renderBody = () => {
@@ -90,15 +95,29 @@ export default function AdminPanel() {
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Target Address</label>
+            <label htmlFor="admin-target-address" className="block text-sm font-medium text-slate-700 mb-1">
+              Target Address
+            </label>
             <input
+              id="admin-target-address"
               type="text"
               className="w-full border border-slate-300 rounded p-2 focus:ring-2 focus:ring-aegis-brand outline-none"
-              placeholder="GABC..."
+              placeholder="GABC…"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
             />
           </div>
+
+          {/* Inline whitelist confirmation — replaces the removed alert() */}
+          {whitelistMessage && (
+            <div
+              role="status"
+              className="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-3 py-2"
+            >
+              <CheckCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+              {whitelistMessage}
+            </div>
+          )}
 
           <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:gap-0 sm:space-x-4">
             <button

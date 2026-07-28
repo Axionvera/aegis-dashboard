@@ -74,4 +74,43 @@ describe('useFeatureFlags', () => {
     setFlag('newMintFlow', true);
     expect(useFeatureFlags.getState().isEnabled('newMintFlow')).toBe(true);
   });
+
+  // --- mockMode flag ---
+
+  it('mockMode flag exists and can be toggled', () => {
+    const { toggleFlag } = useFeatureFlags.getState();
+
+    const before = useFeatureFlags.getState().flags.mockMode;
+    toggleFlag('mockMode');
+    expect(useFeatureFlags.getState().flags.mockMode).toBe(!before);
+  });
+
+  it('mockMode flag can be set to an explicit value', () => {
+    const { setFlag } = useFeatureFlags.getState();
+
+    setFlag('mockMode', true);
+    expect(useFeatureFlags.getState().flags.mockMode).toBe(true);
+
+    setFlag('mockMode', false);
+    expect(useFeatureFlags.getState().flags.mockMode).toBe(false);
+  });
+
+  it('mockMode flag is included in resetFlags', () => {
+    const { setFlag, resetFlags } = useFeatureFlags.getState();
+    // Drive mockMode to the opposite of its env-seeded default.
+    const envDefault = useFeatureFlags.getState().flags.mockMode;
+    setFlag('mockMode', !envDefault);
+
+    resetFlags();
+
+    // After reset, it should equal the env-seeded default again.
+    expect(useFeatureFlags.getState().flags.mockMode).toBe(envDefault);
+  });
+
+  it('mockMode flag default matches NEXT_PUBLIC_MOCK_MODE env var', () => {
+    // After resetFlags the flag should reflect the env var, not a hardcoded value.
+    const envValue = process.env.NEXT_PUBLIC_MOCK_MODE === 'true';
+    useFeatureFlags.getState().resetFlags();
+    expect(useFeatureFlags.getState().flags.mockMode).toBe(envValue);
+  });
 });
