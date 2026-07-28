@@ -29,6 +29,7 @@ Key resources for contributors:
 
 - [Contributing Guide](CONTRIBUTING.md) — Branch naming, component rules, PR evidence checklist, and review process
 - [PR Evidence Checklist](docs/pr-evidence-checklist.md) — Detailed requirements for pull request evidence and documentation
+- [Aegis SDK Testing Standard](docs/sdk-testing-standard.md) — Minimum unit, integration, and negative-path test coverage for compliance, KYC, RWA metadata, investor reads, admin actions, and transaction receipts
 - [Architecture Overview](docs/architecture.md) — Component hierarchy and state management
 - [Frontend Developer Guide](docs/frontend-guide.md) — Styling conventions and page creation
 - [Compliance Reviewer Workflow](docs/compliance-reviewer-workflow.md) — Guide for compliance operators reviewing investor eligibility

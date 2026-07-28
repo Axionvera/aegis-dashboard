@@ -16,6 +16,7 @@ Every pull request that modifies application behavior must include testing evide
 
 - All PRs that touch `src/` files.
 - Documentation-only PRs and trivial fixes (typos, formatting) may skip screenshots/recordings at the author's discretion, but CI and the checklist must still be completed.
+- PRs touching compliance, KYC checks, RWA metadata, investor reads, admin actions, or transaction receipts must additionally meet the [Aegis SDK Testing Standard](sdk-testing-standard.md), which specifies minimum unit, integration, negative-path, and fixture coverage per area, plus guidance on when skipping tests is (and isn't) acceptable.
 
 ## Template
 
