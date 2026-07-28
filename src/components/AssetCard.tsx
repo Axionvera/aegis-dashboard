@@ -1,4 +1,5 @@
 import { formatAmount } from '@/utils/formatting';
+import Disclaimer from './Disclaimer';
 
 interface AssetCardProps {
   name: string;
@@ -17,11 +18,14 @@ export default function AssetCard({ name, ticker, balance, onTransferClick }: As
             {ticker}
           </span>
         </div>
-        {/* // TODO: display historical price charts using a charting library */}
       </div>
-      <div className="mb-6">
-        <p className="text-sm text-slate-500 mb-1">Your Balance</p>
+      <div className="mb-4">
+        <p className="text-sm text-slate-500 mb-1">On-Chain Token Balance</p>
         <p className="text-2xl font-bold text-slate-900">{formatAmount(balance)} {ticker}</p>
+        <Disclaimer
+          variant="card"
+          text="Protocol-level representation only. Not a certificate of legal ownership."
+        />
       </div>
       <button
         onClick={onTransferClick}

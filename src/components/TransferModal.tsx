@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { useAegis } from '@/hooks/useAegis';
+import Disclaimer from './Disclaimer';
 
 interface TransferModalProps {
   ticker: string;
   onClose: () => void;
 }
+
+const TRANSFER_DISCLAIMER =
+  'Transfers are subject to protocol-level allowlist restrictions only. You are solely responsible for ensuring this transfer complies with applicable off-chain securities, tax, and transfer laws in your jurisdiction. On-chain transactions are irreversible once submitted.';
 
 export default function TransferModal({ ticker, onClose }: TransferModalProps) {
   const { checkWhitelist, transfer, isLoading } = useAegis();
@@ -14,20 +18,20 @@ export default function TransferModal({ ticker, onClose }: TransferModalProps) {
 
   const handleTransfer = async () => {
     setError('');
-    if (!recipient || !amount) return setError("Fill all fields");
+    if (!recipient || !amount) return setError('Fill all fields');
 
-    // Compliance Check
-    const isCompliant = await checkWhitelist(recipient);
-    if (!isCompliant) {
-      return setError("Recipient is not KYC whitelisted.");
+    // Protocol-level allowlist check (NOT a substitute for legal verification).
+    const isAllowed = await checkWhitelist(recipient);
+    if (!isAllowed) {
+      return setError('Recipient is not on the protocol allowlist.');
     }
 
     try {
       await transfer(recipient, parseFloat(amount));
-      alert("Transfer Successful!");
+      alert('Transfer Successful!');
       onClose();
     } catch (err) {
-      setError("Transaction failed");
+      setError('Transaction failed');
     }
   };
 
@@ -60,6 +64,8 @@ export default function TransferModal({ ticker, onClose }: TransferModalProps) {
             />
           </div>
         </div>
+
+        <Disclaimer variant="modal" text={TRANSFER_DISCLAIMER} className="mb-4" />
 
         <div className="flex space-x-3">
           <button
