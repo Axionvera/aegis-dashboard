@@ -1,5 +1,5 @@
 import React from 'react';
-import ComplianceInfo from '../ComplianceInfo';
+import ComplianceInfo from './ComplianceInfo';
 
 // Minimal smoke test — verifies component renders all six statuses
 // without crashing and each status label appears in the output.

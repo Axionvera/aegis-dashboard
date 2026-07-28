@@ -1,5 +1,5 @@
 import Head from "next/head";
-import BulkComplianceReview from "@/components/BulkComplianceReview";
+import BulkComplianceReview from "@/features/admin/components/BulkComplianceReview";
 import { useWallet } from "@/hooks/useWallet";
 import { sampleSubjects } from "@/lib/__fixtures__/complianceReview";
 
