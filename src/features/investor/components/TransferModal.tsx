@@ -8,10 +8,12 @@ import TransactionReceipt from '@/components/transactions/TransactionReceipt';
 import { mapToTransactionResult } from '@/components/transactions/statusMapper';
 import { getExplorerUrl } from '@/components/transactions/explorerLink';
 import type {
+  RawTransactionOutcome,
   TransactionDetails,
   TransactionResult,
   TransactionState,
 } from '@/components/transactions/types';
+import { useIdempotentSubmit } from '@/features/forms/idempotency';
 import type { PortfolioAsset } from '@/lib/aegis/types';
 
 interface TransferModalProps {
@@ -36,6 +38,23 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
   // Pasted Stellar addresses often carry surrounding whitespace, which would
   // otherwise reach the compliance check and the transaction itself.
   const cleanRecipient = recipient.trim();
+  const numericAmount = parseFloat(amount);
+
+  // One key per (signer, asset, recipient, amount, network) tuple. A double
+  // click on Confirm, or a retry from the recovery panel, resolves to the same
+  // key and therefore cannot produce a second transfer; editing any field
+  // produces a new key and is treated as a new submission. See
+  // docs/form-idempotency.md.
+  const submission = useIdempotentSubmit<RawTransactionOutcome>({
+    scope: 'transfer',
+    actor: address,
+    payload: {
+      assetId: asset.id,
+      recipient: cleanRecipient,
+      amount: Number.isFinite(numericAmount) ? numericAmount : null,
+      network: network ?? null,
+    },
+  });
 
   const details: TransactionDetails = {
     action: 'transfer',
@@ -57,7 +76,6 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
     setError('');
     if (!cleanRecipient || !amount) return setError('Fill all fields');
 
-    const numericAmount = parseFloat(amount);
     if (Number.isNaN(numericAmount) || numericAmount <= 0) {
       return setError('Enter a valid amount.');
     }
@@ -76,15 +94,37 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
 
   const handleConfirm = async () => {
     setState('signing');
-    try {
-      setResult(
-        mapToTransactionResult(
-          await transfer(cleanRecipient, parseFloat(amount), setState, asset.ticker),
-        ),
-      );
-    } catch (err) {
-      setResult(mapToTransactionResult(err));
+
+    const outcome = await submission.submit((idempotencyKey) => {
+      // The mock client has no idempotency parameter yet. When the real SDK
+      // accepts one, pass this key straight through so the de-duplication
+      // survives a lost response rather than living only in this tab.
+      void idempotencyKey;
+      return transfer(cleanRecipient, numericAmount, setState, asset.ticker);
+    });
+
+    if (outcome.status === 'blocked') {
+      const replayed = outcome.verdict.entry?.result;
+      if (outcome.verdict.decision === 'replay_result' && replayed) {
+        // The identical transfer already went through: show that receipt
+        // instead of signing a second, indistinguishable transaction.
+        setResult(mapToTransactionResult(replayed));
+        return;
+      }
+
+      // Still in flight elsewhere — keep the progress view rather than
+      // pretending the user can start again.
+      setState('pending');
+      setError(outcome.verdict.message ?? '');
+      return;
     }
+
+    if (outcome.status === 'failed') {
+      setResult(mapToTransactionResult(outcome.error));
+      return;
+    }
+
+    setResult(mapToTransactionResult(outcome.result));
   };
 
   const renderBody = () => {
@@ -127,6 +167,9 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
           details={details}
           onConfirm={handleConfirm}
           onCancel={() => setState('idle')}
+          // The guard already blocks a duplicate submission; disabling the
+          // button stops the user from having to discover that.
+          isSubmitting={submission.isSubmitting}
         />
       );
     }
