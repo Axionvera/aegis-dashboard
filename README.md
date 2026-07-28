@@ -19,3 +19,6 @@ npm install
 3. Open http://localhost:3000 in your browser.
 ## Contribution Guidelines
 We welcome frontend contributions! Check CONTRIBUTING.md for our branching strategies and tailwind styling rules. Look for // TODO: comments in the codebase for easy wins.
+
+## Security
+Any PR that touches the wallet, signer, secret handling, diagnostics, transaction review, wrong-network handling, admin, compliance, or minting flows **must** complete the [Frontend Security Review Checklist](docs/security-checklist.md) before merging.
