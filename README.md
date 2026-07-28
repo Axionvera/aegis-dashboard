@@ -33,5 +33,8 @@ Please review the [Release Readiness Review](docs/release-readiness-review.md) b
 ## Payment-Period Conduct
 Contributors paid through the GrantFox evaluation process should read the [Payment-Period Conduct Note](docs/payment-period-conduct.md). It covers self-review before merge, screenshot and test-output expectations, and the rules around repeated submissions and complaints during evaluation windows.
 
+## Reviewer Checklist
+When reviewing a GrantFox-submitted PR, use the [Reviewer Checklist](docs/reviewer-checklist.md) to verify implementation correctness, accessibility, test coverage, and acceptance criteria before approval.
+
 ## Transaction History
 The dashboard now includes a normalized transaction history view at `/transactions`. See `docs/transaction-history.md` for model details, supported operation types, fixture coverage, and current data source limitations.
