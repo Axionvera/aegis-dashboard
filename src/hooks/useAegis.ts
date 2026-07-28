@@ -61,13 +61,5 @@ export const useAegis = () => {
     }
   };
 
-  // Mock getting portfolio
-  const getPortfolio = async (address: string) => {
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsLoading(false);
-    return { assets: [] };
-  };
-
   return { checkWhitelist, transfer, mint, getPortfolio, isLoading };
 };

@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import AdminPanel from '@/features/admin/components/AdminPanel';
-import FeatureFlagsPanel from '@/components/FeatureFlagsPanel';
+import FeatureFlagsPanel from '@/features/admin/components/FeatureFlagsPanel';
 import { useWallet } from '@/hooks/useWallet';
 
 export default function Admin() {
