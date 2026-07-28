@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getAccessibleRoutes } from '@/features/auth/routes';
 import { useAuthStore } from '@/features/auth/store';
 import { useWallet } from '@/hooks/useWallet';
 import { truncateAddress } from '@/utils/formatting';
-import { Shield, AlertCircle } from 'lucide-react';
+import { Shield, AlertCircle, Menu } from 'lucide-react';
+import MobileNav from '@/components/layout/MobileNav';
 
 const prettyRole = (role: string): string =>
   role
@@ -14,6 +15,7 @@ const prettyRole = (role: string): string =>
 
 export default function Navbar() {
   const { address, network, isConnecting, connectionError, connect, disconnect } = useWallet();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const role = useAuthStore((state) => state.role);
   const isRoleLoading = useAuthStore((state) => state.isRoleLoading);
   const loadRoleForWallet = useAuthStore((state) => state.loadRoleForWallet);
@@ -50,6 +52,15 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setIsMobileMenuOpen(true)}
+          aria-label="Open navigation menu"
+          className="rounded-md p-2 text-slate-600 hover:bg-slate-100 transition md:hidden"
+        >
+          <Menu size={20} aria-hidden="true" />
+        </button>
+
         {/* Inline connection error — replaces the removed alert() */}
         {connectionError && !address && (
           <span
@@ -93,6 +104,16 @@ export default function Navbar() {
           </button>
         )}
       </div>
+      <MobileNav
+        isConnected={Boolean(address)}
+        isMobileMenuOpen={isMobileMenuOpen}
+        address={address ?? undefined}
+        disconnect={disconnect}
+        isConnecting={isConnecting}
+        onConnectWallet={connect}
+        onClose={() => setIsMobileMenuOpen(false)}
+        routes={accessibleRoutes}
+      />
     </nav>
   );
 }

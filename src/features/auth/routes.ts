@@ -29,6 +29,13 @@ export const dashboardRoutes: RouteAccessConfig[] = [
     walletRequired: true,
     description: 'Protocol administration and privileged operations.',
   },
+  {
+    path: '/compliance',
+    label: 'Compliance',
+    requiredRoles: ['admin'],
+    walletRequired: true,
+    description: 'Bulk compliance review for admin operators.',
+  },
 ];
 
 export const getRouteAccessConfig = (path: string): RouteAccessConfig | undefined =>

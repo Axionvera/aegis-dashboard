@@ -46,4 +46,23 @@ describe('evaluateRouteAccess', () => {
     expect(adminResult.state).toBe('allowed');
     expect(investorResult.state).toBe('role_unavailable');
   });
+
+  it('restricts compliance page to admin role', () => {
+    const adminResult = evaluateRouteAccess({
+      path: '/compliance',
+      walletAddress: 'GCFXADMIN00000000000000000000000000000000000000000000',
+      role: 'admin',
+      isRoleLoading: false,
+    });
+
+    const investorResult = evaluateRouteAccess({
+      path: '/compliance',
+      walletAddress: 'GCFXUSERALICE0000000000000000000000000000000000000000',
+      role: 'investor',
+      isRoleLoading: false,
+    });
+
+    expect(adminResult.state).toBe('allowed');
+    expect(investorResult.state).toBe('role_unavailable');
+  });
 });
