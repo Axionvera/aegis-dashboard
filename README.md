@@ -17,10 +17,17 @@ npm install
    npm run dev
 ```
 3. Open http://localhost:3000 in your browser.
+## Documentation
+- [Architecture](docs/architecture.md)
+- [Frontend Developer Guide](docs/frontend-guide.md)
+- [Accessibility Review Checklist](docs/accessibility-checklist.md) — required reading before any UI PR
 
-## Release Testing
-
-Before every release, complete the [Release Testing Checklist](docs/release-testing-checklist.md) covering wallet connection, admin flows, investor portfolio, error states, accessibility, and security.
+## Accessibility
+This dashboard moves real-world assets, so keyboard access, labels, focus handling and screen
+reader support are treated as functional requirements rather than polish. Every frontend
+contribution is reviewed against the
+[Accessibility Review Checklist](docs/accessibility-checklist.md), which covers forms, tables,
+modals, navigation, and wallet/signing flows with examples taken from this codebase.
 
 ## Contribution Guidelines
 We welcome frontend contributions! Check CONTRIBUTING.md for our branching strategies and tailwind styling rules. Look for // TODO: comments in the codebase for easy wins.
