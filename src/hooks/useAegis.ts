@@ -1,32 +1,50 @@
 import { useState } from 'react';
-// import { AegisClient } from '@aegis/sdk'; // Mocked for now
+import * as aegisClient from '@/lib/aegis/client';
+import type { PortfolioReadModel } from '@/lib/aegis/types';
 
+/**
+ * Thin wrapper around the Aegis SDK client. Real Soroban RPC calls should
+ * be added to src/lib/aegis/client.ts, not here — this hook only manages
+ * loading state for the UI.
+ */
 export const useAegis = () => {
-const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-// Mock checking if a user is KYC whitelisted
-const checkWhitelist = async (address: string): Promise<boolean> => {
-setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800)); // Simulate RPC
-    setIsLoading(false);
-    return address.startsWith('G') && address.length > 50; // Mock validation
+  const getPortfolio = async (address: string): Promise<PortfolioReadModel> => {
+    setIsLoading(true);
+    try {
+      return await aegisClient.getPortfolio(address);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Mock transferring assets
+  const checkWhitelist = async (address: string): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      return await aegisClient.checkWhitelist(address);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const transfer = async (to: string, amount: number) => {
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    return "mock_tx_hash_1234567890";
+    try {
+      return await aegisClient.transfer(to, amount);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Mock minting assets (Admin)
   const mint = async (to: string, amount: number) => {
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    return "mock_tx_hash_0987654321";
+    try {
+      return await aegisClient.mint(to, amount);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  return { checkWhitelist, transfer, mint, isLoading };
+  return { getPortfolio, checkWhitelist, transfer, mint, isLoading };
 };
