@@ -73,6 +73,8 @@ Contributors must demonstrate that their changes are tested:
 - **If tests were added or updated:** List the test files and describe what they cover.
 - **If tests are not applicable:** Provide a brief justification (e.g., documentation-only changes, CI configuration changes).
 
+Changes to compliance, KYC checks, RWA metadata, investor reads, admin actions, or transaction receipts must meet the [Aegis SDK Testing Standard](sdk-testing-standard.md), which defines the minimum unit, integration, and negative-path coverage per area — "list the test files" is not sufficient on its own for these areas.
+
 **Acceptable justifications for skipping tests:**
 - Documentation-only changes with no testable logic
 - CI/CD pipeline configuration changes (validated by the pipeline itself)
@@ -173,5 +175,6 @@ A: Only if you provide a justification in the corresponding section. Unchecked i
 ## Related Documentation
 
 - [Contributing Guide](../CONTRIBUTING.md) — Branch naming, component rules, and workflow
+- [Aegis SDK Testing Standard](./sdk-testing-standard.md) — Minimum test coverage expected for compliance, KYC, RWA metadata, investor reads, admin actions, and transaction receipts
 - [Architecture Overview](./architecture.md) — Component hierarchy and state management
 - [Frontend Developer Guide](./frontend-guide.md) — Styling conventions and page creation

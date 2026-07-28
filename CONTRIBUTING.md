@@ -63,7 +63,7 @@ Your PR must satisfy **all six** of the following categories:
 
 2. **Implementation Summary** — Describe what changed, why it changed, and list the key files affected. Reviewers should understand the scope of the PR from the summary alone.
 
-3. **Testing** — Include tests that cover your changes, or provide a clear justification if tests are not applicable (e.g., documentation-only changes).
+3. **Testing** — Include tests that cover your changes, or provide a clear justification if tests are not applicable (e.g., documentation-only changes). Changes to compliance, KYC checks, RWA metadata, investor reads, admin actions, or transaction receipts must meet the [Aegis SDK Testing Standard](docs/sdk-testing-standard.md).
 
 4. **Commands Run** — List the exact commands you ran locally to validate your change:
    ```bash

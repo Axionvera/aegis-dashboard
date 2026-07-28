@@ -57,6 +57,8 @@ This checklist provides a repeatable review process for every GrantFox-submitted
 - [ ] `npm run build` completes without TypeScript errors
 - [ ] `npm run lint` passes with no warnings or errors
 - [ ] New logic has corresponding unit or integration tests (if test framework is set up)
+- [ ] Changes to compliance, KYC checks, RWA metadata, investor reads, admin actions, or transaction receipts meet the [Aegis SDK Testing Standard](sdk-testing-standard.md) — check happy-path, negative-path, and fixture coverage, not just presence of a test file
+- [ ] `npm test` was run locally and its output is included in the PR (CI does not currently run the test suite — see [Testing Evidence Requirement](testing-evidence-requirement.md))
 
 ### Manual testing confirmation
 - [ ] Reviewer has pulled the branch and tested locally
