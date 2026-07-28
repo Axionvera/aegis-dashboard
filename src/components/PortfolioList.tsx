@@ -1,15 +1,20 @@
 import { useState } from 'react';
 import AssetCard from './AssetCard';
 import TransferModal from './TransferModal';
+import { ComplianceStatus } from '@/types/compliance';
 
 export default function PortfolioList() {
-  // TODO: add skeleton loading states for asset fetching
   const [activeTransfer, setActiveTransfer] = useState<string | null>(null);
 
-  // Mock Data
-  const mockAssets = [
-    { id: '1', name: 'Manhattan Commercial Real Estate', ticker: 'NY-CRE', balance: 50.5 },
-    { id: '2', name: 'US Treasury Bill 6-Mo', ticker: 'UST-6M', balance: 10000.00 }
+  const mockAssets: Array<{
+    id: string;
+    name: string;
+    ticker: string;
+    balance: number;
+    complianceStatus: ComplianceStatus;
+  }> = [
+    { id: '1', name: 'Manhattan Commercial Real Estate', ticker: 'NY-CRE', balance: 50.5, complianceStatus: 'approved' },
+    { id: '2', name: 'US Treasury Bill 6-Mo', ticker: 'UST-6M', balance: 10000.00, complianceStatus: 'pending' },
   ];
 
   return (
@@ -21,6 +26,7 @@ export default function PortfolioList() {
             name={asset.name}
             ticker={asset.ticker}
             balance={asset.balance}
+            complianceStatus={asset.complianceStatus}
             onTransferClick={() => setActiveTransfer(asset.ticker)}
           />
         ))}

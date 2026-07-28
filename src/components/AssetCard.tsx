@@ -1,13 +1,16 @@
 import { formatAmount } from '@/utils/formatting';
+import { ComplianceStatus } from '@/types/compliance';
+import ComplianceBadge from './ComplianceBadge';
 
 interface AssetCardProps {
   name: string;
   ticker: string;
   balance: number;
+  complianceStatus?: ComplianceStatus;
   onTransferClick: () => void;
 }
 
-export default function AssetCard({ name, ticker, balance, onTransferClick }: AssetCardProps) {
+export default function AssetCard({ name, ticker, balance, complianceStatus, onTransferClick }: AssetCardProps) {
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition">
       <div className="flex justify-between items-start mb-4">
@@ -17,7 +20,7 @@ export default function AssetCard({ name, ticker, balance, onTransferClick }: As
             {ticker}
           </span>
         </div>
-        {/* // TODO: display historical price charts using a charting library */}
+        <ComplianceBadge status={complianceStatus ?? 'unknown'} />
       </div>
       <div className="mb-6">
         <p className="text-sm text-slate-500 mb-1">Your Balance</p>
