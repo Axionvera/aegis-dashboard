@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import PortfolioList from '@/features/investor/components/PortfolioList';
+import PortfolioList from '@/features/portfolio/components/PortfolioList';
 import { useWallet } from '@/hooks/useWallet';
 
 export default function Portfolio() {

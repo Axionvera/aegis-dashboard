@@ -1,11 +1,11 @@
-import { create } from "zustand";
-import { isConnected, requestAccess, getNetwork } from "@stellar/freighter-api";
+import { create } from 'zustand';
+import { isConnected, requestAccess, getNetwork } from '@stellar/freighter-api';
 
 interface WalletState {
-  address: string | null;
-  network: string | null;
-  isConnecting: boolean;
-  connect: () => Promise<void>;
+address: string | null;
+network: string | null;
+isConnecting: boolean;
+connect: () => Promise<void>;
   disconnect: () => void;
 }
 
@@ -25,7 +25,7 @@ export const useWallet = create<WalletState>((set) => ({
         set({
           address: access,
           network: networkDetails,
-          isConnecting: false,
+          isConnecting: false
         });
       } else {
         alert("Please install Freighter wallet!");
@@ -39,5 +39,5 @@ export const useWallet = create<WalletState>((set) => ({
 
   disconnect: () => {
     set({ address: null, network: null });
-  },
+  }
 }));
