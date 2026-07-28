@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import AdminPanel from '@/components/AdminPanel';
+import AdminPanel from '@/features/admin/components/AdminPanel';
 import { useWallet } from '@/hooks/useWallet';
 
 export default function Admin() {
