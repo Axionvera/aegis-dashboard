@@ -36,6 +36,9 @@ Contributors paid through the GrantFox evaluation process should read the [Payme
 ## Reviewer Checklist
 When reviewing a GrantFox-submitted PR, use the [Reviewer Checklist](docs/reviewer-checklist.md) to verify implementation correctness, accessibility, test coverage, and acceptance criteria before approval.
 
+## Contributor Payment Guide
+Before working on a GrantFox-tagged issue, review the [Contributor Payment Guide](docs/contributor-payment-guide.md). It covers evaluation criteria, required artifacts (screenshots and tests), and professional conduct expectations.
+
 ## Low-Effort PR Examples
 Before submitting a PR, review [Low-Effort PR Examples](docs/low-effort-pr-examples.md) for guidance on what GrantFox evaluators look for — including screenshot requirements, test coverage expectations, and CI standards.
 
