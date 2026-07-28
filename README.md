@@ -22,5 +22,6 @@ We welcome frontend contributions! Check CONTRIBUTING.md for our branching strat
 
 ## Documentation
 - [Admin Role Management — UI Design & Implementation Plan](./docs/admin-role-management-design.md) — design-first role model, permission matrix, risks, and approval flow (security-sensitive; implementation pending review).
+- [Investor Transfer Eligibility Panel](./docs/investor-transfer-eligibility.md) — explains send/receive eligibility (compliant, blocked, unknown, unavailable) with copy guardrails.
 - [Frontend Developer Guide](./docs/frontend-guide.md)
 - [Architecture](./docs/architecture.md)
