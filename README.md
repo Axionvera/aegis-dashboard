@@ -17,5 +17,12 @@ npm install
    npm run dev
 ```
 3. Open http://localhost:3000 in your browser.
+
+## Feature Flags
+
+The dashboard includes a client-side feature flag system for toggling
+experimental UI. See [docs/feature-flags.md](./docs/feature-flags.md) for
+usage and how to add new flags.
+
 ## Contribution Guidelines
 We welcome frontend contributions! Check CONTRIBUTING.md for our branching strategies and tailwind styling rules. Look for // TODO: comments in the codebase for easy wins.
