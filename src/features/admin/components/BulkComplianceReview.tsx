@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { FileText } from "lucide-react";
 import {
   type ComplianceReviewState,
   type ComplianceSubject,
@@ -14,6 +15,7 @@ import {
   applyBulkAction,
   type BulkAction,
 } from "@/lib/complianceReview";
+import { EmptyState } from "@/components/states";
 
 const STATUS_BADGE: Record<ComplianceStatus, string> = {
   pending: "bg-amber-100 text-amber-800",
@@ -207,8 +209,24 @@ export default function BulkComplianceReview({
               ))}
             {visible.length === 0 && (
               <tr>
-                <td colSpan={5} className="p-4 text-center text-slate-400">
-                  No subjects match the current filter.
+                <td colSpan={5}>
+                  <EmptyState
+                    icon={FileText}
+                    title="No compliance records"
+                    description="No compliance records found for this entity. Compliance data will appear here once available."
+                    variant="no-data"
+                    actions={[
+                      {
+                        label: 'Clear filter',
+                        onClick: () => setQuery(''),
+                        variant: 'secondary',
+                      },
+                    ]}
+                    docsLink={{
+                      label: 'Learn about KYC bulk import',
+                      href: '/docs/kyc-bulk-import',
+                    }}
+                  />
                 </td>
               </tr>
             )}
