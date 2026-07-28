@@ -24,6 +24,9 @@ npm install
 ## Contribution Guidelines
 We welcome frontend contributions! Check CONTRIBUTING.md for our branching strategies and tailwind styling rules. Look for // TODO: comments in the codebase for easy wins.
 
+## Contributor Experience Review
+New to the project? Read the [Contributor Experience Review](docs/contributor-experience-review.md) for known onboarding friction, setup pitfalls, and documentation gaps to watch out for — plus the prioritized follow-up issues that will make contributing smoother.
+
 ## Testing & Evidence Expectations
 All PRs that modify application behavior must include testing evidence — see [docs/testing-evidence-requirement.md](docs/testing-evidence-requirement.md) for the full policy and [.github/pull_request_template.md](.github/pull_request_template.md) for the checklist rendered in every new pull request.
 
