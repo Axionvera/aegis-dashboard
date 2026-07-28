@@ -29,6 +29,7 @@ Key resources for contributors:
 - [PR Evidence Checklist](docs/pr-evidence-checklist.md) — Detailed requirements for pull request evidence and documentation
 - [Architecture Overview](docs/architecture.md) — Component hierarchy and state management
 - [Frontend Developer Guide](docs/frontend-guide.md) — Styling conventions and page creation
+- [Compliance Reviewer Workflow](docs/compliance-reviewer-workflow.md) — Guide for compliance operators reviewing investor eligibility
 
 > **Note:** All pull requests must follow the [PR Evidence Checklist](docs/pr-evidence-checklist.md). The checklist template is automatically loaded when you open a new PR.
 
