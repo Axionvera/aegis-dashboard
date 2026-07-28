@@ -27,6 +27,7 @@ We welcome frontend contributions! Please read our [Contributing Guide](CONTRIBU
 
 Key resources for contributors:
 
+- [Evaluation Readiness Dashboard](docs/evaluation-readiness.md) — Central summary page for testing standards, CI workflow, PR evidence, acceptance criteria mapping, self-review, and payment guidance
 - [Contributing Guide](CONTRIBUTING.md) — Branch naming, component rules, PR evidence checklist, and review process
 - [PR Evidence Checklist](docs/pr-evidence-checklist.md) — Detailed requirements for pull request evidence and documentation
 - [Aegis Dashboard Minimum Testing Standard](docs/testing-standard.md) — Minimum test coverage for admin workflows, investor views, compliance screens, asset registration, minting, wallet connection, and diagnostics
@@ -35,9 +36,12 @@ Key resources for contributors:
 - [Frontend Developer Guide](docs/frontend-guide.md) — Styling conventions and page creation
 - [Compliance Reviewer Workflow](docs/compliance-reviewer-workflow.md) — Guide for compliance operators reviewing investor eligibility
 
-> **Note:** All pull requests must follow the [PR Evidence Checklist](docs/pr-evidence-checklist.md). The checklist template is automatically loaded when you open a new PR.
+> **Note:** All pull requests must follow the [PR Evidence Checklist](docs/pr-evidence-checklist.md) and be audited against the [Evaluation Readiness Dashboard](docs/evaluation-readiness.md) before requesting review.
 
 The transactions page also includes a contributor-ready fixture gallery for transaction review, progress, and receipt states. See [docs/transaction-components.md](docs/transaction-components.md) for the shared component contract, fixture expectations, and compliance-safe wording guidance.
+
+## Evaluation Readiness
+Before submitting a pull request for maintainer review or payment evaluation, review the [Evaluation Readiness Dashboard](docs/evaluation-readiness.md). It links testing standards, CI status expectations, PR evidence templates, acceptance criteria mapping, and conduct guidelines into a single scorecard.
 
 ## Route Access
 Role-aware route guards protect admin, issuer, investor, and read-only sections. See `docs/route-access.md` for route mapping, guard states, SDK assumptions, and mock wallet fixtures.
