@@ -35,3 +35,6 @@ Contributors paid through the GrantFox evaluation process should read the [Payme
 
 ## Transaction History
 The dashboard now includes a normalized transaction history view at `/transactions`. See `docs/transaction-history.md` for model details, supported operation types, fixture coverage, and current data source limitations.
+
+## Route Access
+Role-aware route guards protect admin, issuer, investor, and read-only sections. See `docs/route-access.md` for route mapping, guard states, SDK assumptions, and mock wallet fixtures.
