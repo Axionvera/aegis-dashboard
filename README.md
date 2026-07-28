@@ -17,5 +17,15 @@ npm install
    npm run dev
 ```
 3. Open http://localhost:3000 in your browser.
+
+## Testing
+
+Run the test suite:
+```bash
+npm test
+```
+
+Tests use reusable fixtures from `src/fixtures/` — see the [Test Fixture Guide](docs/test-fixtures.md) for available mock data (wallet states, compliance, assets, portfolios, transactions, errors).
+
 ## Contribution Guidelines
 We welcome frontend contributions! Check CONTRIBUTING.md for our branching strategies and tailwind styling rules. Look for // TODO: comments in the codebase for easy wins.
