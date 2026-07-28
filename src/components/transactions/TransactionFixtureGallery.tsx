@@ -7,12 +7,12 @@ export default function TransactionFixtureGallery() {
   return (
     <section className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <header className="space-y-2">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-aegis-brand">
+        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-aegis-brand">
           Component fixture gallery
-        </p>
-        <h2 className="text-xl font-bold text-aegis-dark">
-          Preview transaction states for contributors and reviewers
         </h2>
+        <h3 className="text-xl font-bold text-aegis-dark">
+          Preview transaction states for contributors and reviewers
+        </h3>
         <p className="max-w-3xl text-sm text-slate-600">
           Use these fixtures to validate review copy, progress indicators, and receipt
           states without running an on-chain flow. They are intentionally conservative and
