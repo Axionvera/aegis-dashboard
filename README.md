@@ -41,3 +41,9 @@ The transactions page also includes a contributor-ready fixture gallery for tran
 
 ## Route Access
 Role-aware route guards protect admin, issuer, investor, and read-only sections. See `docs/route-access.md` for route mapping, guard states, SDK assumptions, and mock wallet fixtures.
+
+## Contribution Quality Examples
+Before submitting a PR, read the [Contribution Quality Examples](docs/contribution-quality-examples.md) for concrete examples of low-effort, partial, under-tested, failing-CI, and acceptable contributions — including what each category looks like and how to improve it. The companion [Low-Effort PR Examples](docs/low-effort-pr-examples.md) covers additional screenshot and CI-specific anti-patterns.
+
+## Documentation Index
+A full index of every file in `docs/` organised by audience (onboarding, building features, review and payment, release) is at [docs/README.md](docs/README.md).
