@@ -69,3 +69,9 @@ The dashboard now includes a normalized transaction history view at `/transactio
 
 ## Route Access
 Role-aware route guards protect admin, issuer, investor, and read-only sections. See `docs/route-access.md` for route mapping, guard states, SDK assumptions, and mock wallet fixtures.
+
+## SDK Error Recovery
+Failures from the Aegis SDK are classified into typed categories and mapped to concrete recovery actions (retry with backoff, reconnect the wallet, check the explorer, correct the form). See [docs/sdk-error-recovery.md](docs/sdk-error-recovery.md) for the category model, side-effect risk rules, retry policies, and compliance wording assumptions.
+
+## Form Submission Idempotency
+Value-moving forms submit under a content-derived idempotency key, so a double-click, a remount, or a retry after a lost response cannot produce two transactions. See [docs/form-idempotency.md](docs/form-idempotency.md) for the key format, guard decisions, TTLs, and the limits of a client-side guard.
