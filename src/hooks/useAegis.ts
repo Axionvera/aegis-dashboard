@@ -5,6 +5,7 @@ import type {
   RawTransactionOutcome,
   TransactionPhase,
 } from '@/components/transactions/types';
+import { resolveWalletRole } from '@/features/auth/resolveRole';
 import { useTransactionHistoryStore } from '@/features/transactions/store';
 import { useWallet } from '@/hooks/useWallet';
 
@@ -119,5 +120,12 @@ export const useAegis = () => {
     }
   };
 
-  return { checkWhitelist, transfer, mint, getPortfolio, isLoading };
+  return {
+    checkWhitelist,
+    transfer,
+    mint,
+    getPortfolio,
+    getWalletRole: resolveWalletRole,
+    isLoading,
+  };
 };
