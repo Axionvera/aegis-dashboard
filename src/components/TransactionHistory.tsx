@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Activity } from 'lucide-react';
 import {
   applyTransactionFilters,
   defaultTransactionHistoryFilters,
@@ -10,6 +11,7 @@ import {
   useTransactionHistoryStore,
 } from '@/features/transactions';
 import { formatTimestamp, truncateAddress } from '@/utils/formatting';
+import { EmptyState } from '@/components/states';
 
 const prettyLabel = (value: string): string =>
   value
@@ -154,9 +156,19 @@ export default function TransactionHistory() {
           ))}
 
           {filteredRecords.length === 0 && (
-            <div className="border border-dashed border-slate-300 rounded-lg p-6 text-center text-sm text-slate-500">
-              No transactions match the selected filters.
-            </div>
+            <EmptyState
+              icon={Activity}
+              title="No transactions found"
+              description="No transactions match the selected filters. Try adjusting your filter criteria or check back later."
+              variant="no-data"
+              actions={[
+                {
+                  label: 'Clear filters',
+                  onClick: () => setFilters(defaultTransactionHistoryFilters),
+                  variant: 'secondary',
+                },
+              ]}
+            />
           )}
         </div>
 
