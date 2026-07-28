@@ -17,6 +17,10 @@ npm install
    npm run dev
 ```
 3. Open http://localhost:3000 in your browser.
+
+> [!TIP]
+> **Having issues?** Check our [Troubleshooting Guide](docs/troubleshooting.md) for solutions to common Node, Freighter, and Next.js setup problems.
+
 ## Contribution Guidelines
 We welcome frontend contributions! Check CONTRIBUTING.md for our branching strategies and tailwind styling rules. Look for // TODO: comments in the codebase for easy wins.
 
