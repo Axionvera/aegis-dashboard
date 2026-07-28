@@ -18,21 +18,8 @@ The official web interface for the **Aegis RWA Protocol**. Built with Next.js, t
    npm run dev
    ```
 3. Open http://localhost:3000 in your browser.
+## Contribution Guidelines
+We welcome frontend contributions! Check [CONTRIBUTING.md](CONTRIBUTING.md) for our branching strategies and Tailwind styling rules. Look for `// TODO:` comments in the codebase for easy wins.
 
-## Contributing
-
-We welcome frontend contributions! Please read our [Contributing Guide](CONTRIBUTING.md) before submitting a pull request.
-
-Key resources for contributors:
-
-- [Contributing Guide](CONTRIBUTING.md) — Branch naming, component rules, PR evidence checklist, and review process
-- [PR Evidence Checklist](docs/pr-evidence-checklist.md) — Detailed requirements for pull request evidence and documentation
-- [Architecture Overview](docs/architecture.md) — Component hierarchy and state management
-- [Frontend Developer Guide](docs/frontend-guide.md) — Styling conventions and page creation
-
-> **Note:** All pull requests must follow the [PR Evidence Checklist](docs/pr-evidence-checklist.md). The checklist template is automatically loaded when you open a new PR.
-
-The transactions page also includes a contributor-ready fixture gallery for transaction review, progress, and receipt states. See [docs/transaction-components.md](docs/transaction-components.md) for the shared component contract, fixture expectations, and compliance-safe wording guidance.
-
-## Route Access
-Role-aware route guards protect admin, issuer, investor, and read-only sections. See `docs/route-access.md` for route mapping, guard states, SDK assumptions, and mock wallet fixtures.
+### Reviewer Guidance
+Maintainers should consult the **[Reviewer Quality Checklist](docs/reviewer-checklist.md)** before approving pull requests to ensure consistent evaluation of implementation quality, test coverage, CI status, and acceptance criteria.
