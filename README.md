@@ -18,6 +18,8 @@ The official web interface for the **Aegis RWA Protocol**. Built with Next.js, t
    npm run dev
    ```
 3. Open http://localhost:3000 in your browser.
+## Contribution Guidelines
+We welcome frontend contributions! Check [CONTRIBUTING.md](CONTRIBUTING.md) for our branching strategies and Tailwind styling rules. Look for `// TODO:` comments in the codebase for easy wins.
 
 ## Contributing
 
@@ -30,6 +32,7 @@ Key resources for contributors:
 - [Aegis SDK Testing Standard](docs/sdk-testing-standard.md) — Minimum unit, integration, and negative-path test coverage for compliance, KYC, RWA metadata, investor reads, admin actions, and transaction receipts
 - [Architecture Overview](docs/architecture.md) — Component hierarchy and state management
 - [Frontend Developer Guide](docs/frontend-guide.md) — Styling conventions and page creation
+- [Compliance Reviewer Workflow](docs/compliance-reviewer-workflow.md) — Guide for compliance operators reviewing investor eligibility
 
 > **Note:** All pull requests must follow the [PR Evidence Checklist](docs/pr-evidence-checklist.md). The checklist template is automatically loaded when you open a new PR.
 
