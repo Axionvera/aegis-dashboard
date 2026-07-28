@@ -12,3 +12,5 @@ export { mockPortfolioFixture } from './portfolio';
 export { mockComplianceSubjects } from './compliance';
 export { transactionHistoryFixtures, transactionHistoryFixtureInputs } from './transactions';
 export { mockDiagnosticsFixture } from './diagnostics';
+export { mockIssuanceRequests } from './issuer';
+export type { IssuanceRequest } from './issuer';
