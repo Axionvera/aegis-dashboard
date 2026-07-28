@@ -12,13 +12,14 @@ import type {
   TransactionResult,
   TransactionState,
 } from '@/components/transactions/types';
+import type { PortfolioAsset } from '@/lib/aegis/types';
 
 interface TransferModalProps {
-  ticker: string;
+  asset: PortfolioAsset;
   onClose: () => void;
 }
 
-export default function TransferModal({ ticker, onClose }: TransferModalProps) {
+export default function TransferModal({ asset, onClose }: TransferModalProps) {
   const { checkWhitelist, transfer, isLoading } = useAegis();
   const { address, network } = useWallet();
   const [recipient, setRecipient] = useState('');
@@ -27,18 +28,23 @@ export default function TransferModal({ ticker, onClose }: TransferModalProps) {
   const [state, setState] = useState<TransactionState>('idle');
   const [result, setResult] = useState<TransactionResult | null>(null);
 
+  // Re-check eligibility here too: the card's disabled button is the primary
+  // guard, but this modal can be reached via any future entry point, so it
+  // must not assume the caller already validated eligibility.
+  const isEligible = asset.isDataAvailable && asset.transferEligibility.state === 'eligible';
+
   // Pasted Stellar addresses often carry surrounding whitespace, which would
   // otherwise reach the compliance check and the transaction itself.
   const cleanRecipient = recipient.trim();
 
   const details: TransactionDetails = {
     action: 'transfer',
-    title: `Transfer ${ticker}`,
+    title: `Transfer ${asset.ticker}`,
     description: 'Review the details before signing this transfer.',
     network: network ?? undefined,
     rows: [
-      { label: 'Asset', value: ticker },
-      { label: 'Amount', value: `${formatAmount(parseFloat(amount) || 0)} ${ticker}` },
+      { label: 'Asset', value: asset.ticker },
+      { label: 'Amount', value: `${formatAmount(parseFloat(amount) || 0)} ${asset.ticker}` },
       { label: 'Recipient', value: cleanRecipient, mono: true },
       ...(address
         ? [{ label: 'From', value: truncateAddress(address), mono: true }]
@@ -49,12 +55,20 @@ export default function TransferModal({ ticker, onClose }: TransferModalProps) {
 
   const handleReview = async () => {
     setError('');
-    if (!cleanRecipient || !amount) return setError("Fill all fields");
+    if (!cleanRecipient || !amount) return setError('Fill all fields');
+
+    const numericAmount = parseFloat(amount);
+    if (Number.isNaN(numericAmount) || numericAmount <= 0) {
+      return setError('Enter a valid amount.');
+    }
+    if (numericAmount > asset.balance) {
+      return setError('Amount exceeds your available balance.');
+    }
 
     // Compliance Check
     const isCompliant = await checkWhitelist(cleanRecipient);
     if (!isCompliant) {
-      return setError("Recipient is not KYC whitelisted.");
+      return setError('Recipient is not KYC whitelisted.');
     }
 
     setState('review');
@@ -74,6 +88,24 @@ export default function TransferModal({ ticker, onClose }: TransferModalProps) {
   };
 
   const renderBody = () => {
+    if (!isEligible) {
+      return (
+        <>
+          <h2 className="text-xl font-bold mb-4">Transfer {asset.ticker}</h2>
+          <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">
+            This asset is not currently eligible for transfer.
+            {asset.transferEligibility.reasons[0] ? ` ${asset.transferEligibility.reasons[0]}` : ''}
+          </div>
+          <button
+            onClick={onClose}
+            className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded font-medium transition"
+          >
+            Close
+          </button>
+        </>
+      );
+    }
+
     if (result) {
       return (
         <TransactionReceipt
@@ -101,7 +133,7 @@ export default function TransferModal({ ticker, onClose }: TransferModalProps) {
 
     return (
       <>
-        <h2 className="text-xl font-bold mb-4">Transfer {ticker}</h2>
+        <h2 className="text-xl font-bold mb-4">Transfer {asset.ticker}</h2>
 
         {error && <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">{error}</div>}
 
@@ -117,7 +149,9 @@ export default function TransferModal({ ticker, onClose }: TransferModalProps) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Amount</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Amount <span className="text-slate-400 font-normal">(max {asset.balance})</span>
+            </label>
             <input
               type="number"
               className="w-full border border-slate-300 rounded p-2 focus:ring-2 focus:ring-aegis-brand outline-none"

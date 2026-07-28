@@ -130,7 +130,7 @@ until the SDK lands:
 | anything else | `success` |
 
 Run a transfer from `/portfolio` with each amount to walk all four states. The
-rule lives in `mockOutcome` in `src/hooks/useAegis.ts` and goes away with the
+rule lives in `mockOutcome` in `src/lib/aegis/client.ts` and goes away with the
 mock — the real client returns the RPC status and the mapper handles the rest.
 
 Note that `/admin` mints a fixed `1000`, so that flow always renders `success`.
@@ -163,7 +163,7 @@ import { transferDetailsFixture, unknownResultFixture } from '@/components/trans
 
 ## Flows using these components
 
-- **`src/components/TransferModal.tsx`** — the KYC whitelist check runs first,
+- **`src/features/investor/components/TransferModal.tsx`** — the KYC whitelist check runs first,
   then `Review Transfer` opens `TransactionReview`, confirming signs and submits
   the transfer, and the receipt replaces the old `alert("Transfer Successful!")`.
 - **`src/components/AdminPanel.tsx`** — `Mint Asset` opens the review inline in

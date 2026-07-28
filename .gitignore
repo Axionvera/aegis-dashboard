@@ -1,10 +1,10 @@
 .idea/
-
-# dependencies
-/node_modules
+node_modules
 
 # next.js
 /.next/
 /out/
-next-env.d.ts
+
+# typescript
 *.tsbuildinfo
+next-env.d.ts
