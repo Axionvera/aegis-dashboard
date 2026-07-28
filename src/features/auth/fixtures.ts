@@ -62,4 +62,25 @@ export const routeAccessStateFixtures = [
     walletAddress: null,
     expectedState: 'wallet_required' as const,
   },
+  {
+    name: 'compliance-admin-allowed',
+    path: '/compliance',
+    role: 'admin' as DashboardRole,
+    walletAddress: walletRoleFixtures[0].address,
+    expectedState: 'allowed' as const,
+  },
+  {
+    name: 'compliance-investor-denied',
+    path: '/compliance',
+    role: 'investor' as DashboardRole,
+    walletAddress: walletRoleFixtures[2].address,
+    expectedState: 'role_unavailable' as const,
+  },
+  {
+    name: 'compliance-wallet-required',
+    path: '/compliance',
+    role: null,
+    walletAddress: null,
+    expectedState: 'wallet_required' as const,
+  },
 ];

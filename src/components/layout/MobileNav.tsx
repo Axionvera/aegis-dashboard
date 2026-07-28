@@ -3,14 +3,12 @@
 import { truncateAddress } from "@/utils/formatting";
 import { X } from "lucide-react";
 import Link from "next/link";
+import type { RouteAccessConfig } from "@/features/auth/types";
 
-const NAV_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Portfolio", href: "/portfolio" },
-  { label: "Transactions", href: "/transactions" },
-  { label: "Admin", href: "/admin" },
-  { label: "Diagnostics", href: "/diagnostics" },
-];
+interface NavLink {
+  label: string;
+  href: string;
+}
 
 interface MobileNavProps {
   isConnected: boolean;
@@ -20,6 +18,7 @@ interface MobileNavProps {
   isConnecting: boolean;
   onConnectWallet: () => void;
   onClose: () => void;
+  routes: RouteAccessConfig[];
 }
 
 export default function MobileNav({
@@ -30,7 +29,13 @@ export default function MobileNav({
   isConnecting,
   onConnectWallet,
   onClose,
+  routes,
 }: MobileNavProps) {
+  const navLinks: NavLink[] = [
+    { label: "Home", href: "/" },
+    ...routes.map((r) => ({ label: r.label, href: r.path })),
+    { label: "Diagnostics", href: "/diagnostics" },
+  ];
   return (
     <div
       id="mobile-navigation"
@@ -59,7 +64,7 @@ export default function MobileNav({
         {/* Navigation Links */}
         <nav aria-label="Mobile navigation">
           <ul className="flex flex-col gap-1">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
