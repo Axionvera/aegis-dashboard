@@ -1,28 +1,22 @@
 import Head from 'next/head';
-import AdminPanel from '@/components/AdminPanel';
-import { useWallet } from '@/hooks/useWallet';
+import AdminPanel from '@/features/admin/components/AdminPanel';
+import FeatureFlagsPanel from '@/features/admin/components/FeatureFlagsPanel';
+import RouteGuard from '@/components/RouteGuard';
 
 export default function Admin() {
-  const { address } = useWallet();
-
-  // In a real app, verify address against contract admin key
-  if (!address) {
-    return (
-      <div className="text-center py-20">
-        <h2 className="text-2xl font-bold text-slate-800">Admin Access Required</h2>
-      </div>
-    );
-  }
-
   return (
-    <>
+    <RouteGuard path="/admin">
       <Head>
         <title>Admin Dashboard | Aegis RWA</title>
       </Head>
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-slate-900 mb-8">Protocol Administration</h1>
-        <AdminPanel />
+      <div className="max-w-2xl mx-auto space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 mb-8">Protocol Administration</h1>
+          <AdminPanel />
+        </div>
+
+        <FeatureFlagsPanel />
       </div>
-    </>
+    </RouteGuard>
   );
 }

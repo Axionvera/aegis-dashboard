@@ -1,6 +1,6 @@
 # Contributing to Aegis Dashboard
 
-We love open-source contributions! To ensure a smooth process:
+We love open-source contributions! To ensure a smooth and productive process, please follow the guidelines below.
 
 1. **Branch Naming:** Use `feat/`, `fix/`, `ui/`, or `docs/`.
 2. **Component Rules:** If building a new UI component, ensure it is fully responsive (mobile-first via Tailwind).
