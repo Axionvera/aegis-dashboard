@@ -17,5 +17,10 @@ npm install
    npm run dev
 ```
 3. Open http://localhost:3000 in your browser.
+
+## Release Testing
+
+Before every release, complete the [Release Testing Checklist](docs/release-testing-checklist.md) covering wallet connection, admin flows, investor portfolio, error states, accessibility, and security.
+
 ## Contribution Guidelines
 We welcome frontend contributions! Check CONTRIBUTING.md for our branching strategies and tailwind styling rules. Look for // TODO: comments in the codebase for easy wins.
