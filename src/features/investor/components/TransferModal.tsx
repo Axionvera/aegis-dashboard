@@ -79,7 +79,7 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
     try {
       setResult(
         mapToTransactionResult(
-          await transfer(cleanRecipient, parseFloat(amount), setState),
+          await transfer(cleanRecipient, parseFloat(amount), setState, asset.ticker),
         ),
       );
     } catch (err) {

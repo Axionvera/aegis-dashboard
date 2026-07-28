@@ -26,3 +26,6 @@ We welcome frontend contributions! Check CONTRIBUTING.md for our branching strat
 
 ## Release Readiness Review
 Please review the [Release Readiness Review](docs/release-readiness-review.md) before considering any release to production or testnet. It outlines current security flaws, limitations, and UX gaps.
+
+## Transaction History
+The dashboard now includes a normalized transaction history view at `/transactions`. See `docs/transaction-history.md` for model details, supported operation types, fixture coverage, and current data source limitations.

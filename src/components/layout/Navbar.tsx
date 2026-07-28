@@ -15,6 +15,7 @@ export default function Navbar() {
         </Link>
         <div className="hidden md:flex space-x-4 text-sm font-medium text-slate-600">
           <Link href="/portfolio" className="hover:text-aegis-brand transition">Portfolio</Link>
+          <Link href="/transactions" className="hover:text-aegis-brand transition">Transactions</Link>
           <Link href="/admin" className="hover:text-aegis-brand transition">Admin</Link>
           <Link href="/diagnostics" className="hover:text-aegis-brand transition">Diagnostics</Link>
         </div>

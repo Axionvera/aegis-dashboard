@@ -1,0 +1,82 @@
+import { normalizeTransactionRecord } from '@/features/transactions/normalize';
+import { NormalizedTransaction, TransactionRecordInput } from '@/features/transactions/types';
+
+export const transactionHistoryFixtureInputs: TransactionRecordInput[] = [
+  {
+    kind: 'sdk_receipt',
+    receiptId: 'receipt-1',
+    txHash: 'tx_sdk_transfer_11',
+    successful: true,
+    signer: 'GCFXUSERALICE0000000000000000000000000000000000000000',
+    recipient: 'GCFXUSERBOB0000000000000000000000000000000000000000000',
+    createdAt: '2026-07-28T07:10:00.000Z',
+    action: 'transfer',
+    amount: 1250.75,
+    assetTicker: 'NY-CRE',
+    notes: 'Secondary market transfer',
+  },
+  {
+    kind: 'contract_event',
+    eventId: 'event-2',
+    txHash: 'tx_evt_whitelist_88',
+    eventType: 'whitelist.updated',
+    actor: 'GCFXADMIN00000000000000000000000000000000000000000000',
+    target: 'GCFXUSERCHARLIE000000000000000000000000000000000000000',
+    happenedAt: '2026-07-28T07:12:00.000Z',
+    status: 'ok',
+    notes: 'KYC document verified by compliance desk',
+  },
+  {
+    kind: 'contract_event',
+    eventId: 'event-3',
+    txHash: 'tx_evt_asset_register_01',
+    eventType: 'asset.registered',
+    actor: 'GCFXADMIN00000000000000000000000000000000000000000000',
+    target: 'asset:UST-6M',
+    happenedAt: '2026-07-28T07:08:00.000Z',
+    status: 'ok',
+    assetTicker: 'UST-6M',
+    notes: 'Added treasury asset metadata',
+  },
+  {
+    kind: 'sdk_receipt',
+    receiptId: 'receipt-4',
+    txHash: 'tx_sdk_mint_42',
+    successful: true,
+    signer: 'GCFXADMIN00000000000000000000000000000000000000000000',
+    recipient: 'GCFXUSERALICE0000000000000000000000000000000000000000',
+    createdAt: '2026-07-28T07:11:00.000Z',
+    action: 'mint',
+    amount: 5000,
+    assetTicker: 'UST-6M',
+    notes: 'Treasury top-up after issuance window',
+  },
+  {
+    kind: 'sdk_receipt',
+    receiptId: 'receipt-6',
+    txHash: 'tx_sdk_transfer_failed_99',
+    successful: false,
+    signer: 'GCFXUSERALICE0000000000000000000000000000000000000000',
+    recipient: 'GCFXUSERBOB0000000000000000000000000000000000000000000',
+    createdAt: '2026-07-28T07:07:00.000Z',
+    action: 'transfer',
+    amount: 250,
+    assetTicker: 'NY-CRE',
+    notes: 'Transfer rejected by compliance policy',
+  },
+  {
+    kind: 'placeholder',
+    id: 'placeholder-5',
+    operation: 'admin_action',
+    status: 'pending',
+    actor: 'GCFXADMIN00000000000000000000000000000000000000000000',
+    target: 'policy:transfer-window',
+    hash: 'pending-finalization',
+    timestamp: '2026-07-28T07:09:00.000Z',
+    notes: 'Awaiting multisig approval for transfer policy update',
+  },
+];
+
+export const transactionHistoryFixtures: NormalizedTransaction[] = transactionHistoryFixtureInputs
+  .map(normalizeTransactionRecord)
+  .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
