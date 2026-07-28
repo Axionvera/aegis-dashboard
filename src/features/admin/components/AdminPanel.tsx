@@ -1,53 +1,129 @@
 import { useState } from 'react';
 import { useAegis } from '@/hooks/useAegis';
+import { useWallet } from '@/hooks/useWallet';
+import { formatAmount } from '@/utils/formatting';
+import TransactionReview from '@/components/transactions/TransactionReview';
+import TransactionProgress from '@/components/transactions/TransactionProgress';
+import TransactionReceipt from '@/components/transactions/TransactionReceipt';
+import { mapToTransactionResult } from '@/components/transactions/statusMapper';
+import { getExplorerUrl } from '@/components/transactions/explorerLink';
+import type {
+  TransactionDetails,
+  TransactionResult,
+  TransactionState,
+} from '@/components/transactions/types';
+
+const MINT_AMOUNT = 1000;
 
 export default function AdminPanel() {
-  const { mint, checkWhitelist, isLoading } = useAegis();
+  const { mint, isLoading } = useAegis();
+  const { network } = useWallet();
   const [address, setAddress] = useState('');
+  const [state, setState] = useState<TransactionState>('idle');
+  const [result, setResult] = useState<TransactionResult | null>(null);
+
+  // Pasted Stellar addresses often carry surrounding whitespace.
+  const cleanAddress = address.trim();
+
+  const details: TransactionDetails = {
+    action: 'mint',
+    title: 'Mint asset',
+    description: 'This issues new supply directly to the target address.',
+    network: network ?? undefined,
+    rows: [
+      { label: 'Amount', value: formatAmount(MINT_AMOUNT) },
+      { label: 'Target address', value: cleanAddress, mono: true },
+      { label: 'Network', value: network ?? 'Unknown' },
+    ],
+  };
 
   const handleWhitelist = async () => {
     // In reality, this would call a contract.whitelist(address) method
-    alert(`Whitelisted: ${address}`);
+    alert(`Whitelisted: ${cleanAddress}`);
   };
 
-  const handleMint = async () => {
-    await mint(address, 1000);
-    alert(`Minted 1000 tokens to: ${address}`);
+  const handleConfirmMint = async () => {
+    setState('signing');
+    try {
+      setResult(
+        mapToTransactionResult(await mint(cleanAddress, MINT_AMOUNT, setState)),
+      );
+    } catch (err) {
+      setResult(mapToTransactionResult(err));
+    }
+  };
+
+  const reset = () => {
+    setResult(null);
+    setState('idle');
+  };
+
+  const renderBody = () => {
+    if (result) {
+      return (
+        <TransactionReceipt
+          result={result}
+          details={details}
+          onClose={reset}
+          explorerUrl={getExplorerUrl(result.txHash, network)}
+        />
+      );
+    }
+
+    if (state === 'signing' || state === 'pending') {
+      return <TransactionProgress state={state} />;
+    }
+
+    if (state === 'review') {
+      return (
+        <TransactionReview
+          details={details}
+          onConfirm={handleConfirmMint}
+          onCancel={reset}
+        />
+      );
+    }
+
+    return (
+      <>
+        <h2 className="text-xl font-bold mb-6">Admin Controls</h2>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Target Address</label>
+            <input
+              type="text"
+              className="w-full border border-slate-300 rounded p-2 focus:ring-2 focus:ring-aegis-brand outline-none"
+              placeholder="GABC..."
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:gap-0 sm:space-x-4">
+            <button
+              onClick={handleWhitelist}
+              disabled={isLoading || !cleanAddress}
+              className="flex-1 bg-aegis-accent hover:bg-emerald-600 text-white py-2 rounded font-medium transition disabled:opacity-50"
+            >
+              Whitelist User
+            </button>
+            <button
+              onClick={() => setState('review')}
+              disabled={isLoading || !cleanAddress}
+              className="flex-1 bg-aegis-dark hover:bg-slate-800 text-white py-2 rounded font-medium transition disabled:opacity-50"
+            >
+              Mint Asset
+            </button>
+          </div>
+        </div>
+      </>
+    );
   };
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-      <h2 className="text-xl font-bold mb-6">Admin Controls</h2>
-
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Target Address</label>
-          <input
-            type="text"
-            className="w-full border border-slate-300 rounded p-2 focus:ring-2 focus:ring-aegis-brand outline-none"
-            placeholder="GABC..."
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-        </div>
-
-        <div className="flex space-x-4 pt-2">
-          <button
-            onClick={handleWhitelist}
-            disabled={isLoading || !address}
-            className="flex-1 bg-aegis-accent hover:bg-emerald-600 text-white py-2 rounded font-medium transition disabled:opacity-50"
-          >
-            Whitelist User
-          </button>
-          <button
-            onClick={handleMint}
-            disabled={isLoading || !address}
-            className="flex-1 bg-aegis-dark hover:bg-slate-800 text-white py-2 rounded font-medium transition disabled:opacity-50"
-          >
-            Mint Asset
-          </button>
-        </div>
-      </div>
+      {renderBody()}
     </div>
   );
 }
