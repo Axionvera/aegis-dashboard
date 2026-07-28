@@ -18,6 +18,8 @@ The official web interface for the **Aegis RWA Protocol**. Built with Next.js, t
    npm run dev
    ```
 3. Open http://localhost:3000 in your browser.
+## Contribution Guidelines
+We welcome frontend contributions! Check [CONTRIBUTING.md](CONTRIBUTING.md) for our branching strategies and Tailwind styling rules. Look for `// TODO:` comments in the codebase for easy wins.
 
 ## Contributing
 
