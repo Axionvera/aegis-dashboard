@@ -1,4 +1,8 @@
 import type { PortfolioAsset, PortfolioReadModel } from './types';
+import type {
+  RawTransactionOutcome,
+  TransactionPhase,
+} from '@/components/transactions/types';
 
 /**
  * Stand-in for `@aegis/sdk`. The real SDK is not published to this
@@ -134,18 +138,64 @@ export async function checkWhitelist(address: string): Promise<boolean> {
   return address.startsWith('G') && address.length > 50;
 }
 
+/** Called as the transaction moves from wallet signature to network submission. */
+type PhaseListener = (phase: TransactionPhase) => void;
+
+/**
+ * Until the SDK is wired in, the amount decides the outcome so every receipt
+ * state stays reachable from the UI without editing code:
+ *
+ *   0.01 -> failure   0.02 -> pending   0.03 -> unknown   anything else -> success
+ *
+ * The real client will return the RPC status here instead; `mapToTransactionResult`
+ * already understands both.
+ */
+function mockOutcome(amount: number, hash: string): RawTransactionOutcome {
+  switch (amount) {
+    case 0.01:
+      return {
+        status: 'FAILED',
+        errorMessage: 'Recipient account is not authorised to hold this asset.',
+      };
+    case 0.02:
+      return { status: 'PENDING', hash };
+    case 0.03:
+      return { status: 'not_a_real_status', hash };
+    default:
+      return { status: 'SUCCESS', hash };
+  }
+}
+
+/**
+ * Runs the mocked signature + submission delays, reporting each phase so the
+ * UI can show real progress instead of guessing. The real SDK will report the
+ * same two phases: signing in the wallet, then pending on the network.
+ */
+async function simulateSubmission(onPhase?: PhaseListener) {
+  onPhase?.('signing');
+  await wait(600);
+  onPhase?.('pending');
+  await wait(900);
+}
+
 /** Mocks a compliant asset transfer. */
-export async function transfer(to: string, amount: number): Promise<string> {
-  await wait(1500);
+export async function transfer(
+  to: string,
+  amount: number,
+  onPhase?: PhaseListener,
+): Promise<RawTransactionOutcome> {
   void to;
-  void amount;
-  return 'mock_tx_hash_1234567890';
+  await simulateSubmission(onPhase);
+  return mockOutcome(amount, 'mock_tx_hash_1234567890');
 }
 
 /** Mocks an admin mint action. */
-export async function mint(to: string, amount: number): Promise<string> {
-  await wait(1500);
+export async function mint(
+  to: string,
+  amount: number,
+  onPhase?: PhaseListener,
+): Promise<RawTransactionOutcome> {
   void to;
-  void amount;
-  return 'mock_tx_hash_0987654321';
+  await simulateSubmission(onPhase);
+  return mockOutcome(amount, 'mock_tx_hash_0987654321');
 }
