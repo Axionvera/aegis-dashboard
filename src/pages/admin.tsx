@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import AdminPanel from '@/components/AdminPanel';
+import AdminPanel from '@/features/admin/components/AdminPanel';
 import FeatureFlagsPanel from '@/components/FeatureFlagsPanel';
 import { useWallet } from '@/hooks/useWallet';
 
