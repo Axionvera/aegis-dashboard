@@ -13,7 +13,7 @@ const SKELETON_COUNT = 3;
 
 export default function PortfolioList() {
   const { address } = useWallet();
-  const { status, assets, error, failure, refetch } = usePortfolio(address);
+  const { status, assets, error, refetch } = usePortfolio(address);
   const [activeAsset, setActiveAsset] = useState<PortfolioAsset | null>(null);
 
   if (status === 'idle' || status === 'loading') {
@@ -27,13 +27,7 @@ export default function PortfolioList() {
   }
 
   if (status === 'error') {
-    return (
-      <PortfolioErrorState
-        message={error ?? 'Unable to load your portfolio right now.'}
-        failure={failure}
-        onRetry={refetch}
-      />
-    );
+    return <PortfolioErrorState message={error ?? 'Unable to load your portfolio right now.'} onRetry={refetch} />;
   }
 
   if (assets.length === 0) {
