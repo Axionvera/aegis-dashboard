@@ -45,6 +45,7 @@ Reference material for contributors implementing new functionality.
 | [kyc-bulk-import-design.md](kyc-bulk-import-design.md) | KYC bulk import design, field mapping, validation rules |
 | [kyc-bulk-import-template.csv](kyc-bulk-import-template.csv) | Example CSV for the bulk import flow |
 | [accessibility-checklist.md](accessibility-checklist.md) | WCAG AA targets, keyboard navigation, ARIA patterns |
+| [visual-regression-fixture-plan.md](visual-regression-fixture-plan.md) | Target screens, fixture states, viewport coverage, and implementation plan for future visual regression testing |
 
 ---
 
