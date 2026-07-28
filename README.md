@@ -19,3 +19,9 @@ npm install
 3. Open http://localhost:3000 in your browser.
 ## Contribution Guidelines
 We welcome frontend contributions! Check CONTRIBUTING.md for our branching strategies and tailwind styling rules. Look for // TODO: comments in the codebase for easy wins.
+
+## Documentation
+
+- [Design Guidelines](docs/design-guidelines.md) — Tailwind usage rules, component structure, layout patterns, forms, tables, status states, and review checklist for contributors.
+- [Architecture](docs/architecture.md) — Component hierarchy and state management overview.
+- [Frontend Guide](docs/frontend-guide.md) — Styling conventions and adding new pages.
