@@ -18,4 +18,7 @@ npm install
 ```
 3. Open http://localhost:3000 in your browser.
 ## Contribution Guidelines
-We welcome frontend contributions! Check CONTRIBUTING.md for our branching strategies and tailwind styling rules. Look for // TODO: comments in the codebase for easy wins.
+We welcome frontend contributions! Check [CONTRIBUTING.md](CONTRIBUTING.md) for our branching strategies and Tailwind styling rules. Look for `// TODO:` comments in the codebase for easy wins.
+
+### Reviewer Guidance
+Maintainers should consult the **[Reviewer Quality Checklist](docs/reviewer-checklist.md)** before approving pull requests to ensure consistent evaluation of implementation quality, test coverage, CI status, and acceptance criteria.
