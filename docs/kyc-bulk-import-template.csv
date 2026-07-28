@@ -1,0 +1,4 @@
+schema_version,account_id,action,proposed_status,jurisdiction,tier,reason_code,effective_date,external_ref
+1.0,GBKP7K3F6XN3V9QZ2WY8L4M1T5R6S7A8B9C0D1E2F3G4H5I6J7K8L9M0N1O2P,approve,approved,US,accredited,KYC documents verified by compliance desk,2026-07-28,KYC-2026-001234
+1.0,GAAQ1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6A7B8C9D0E1F,flag_review,review,EU,retail,Accreditation certificate expires 2026-08-15 — renewal pending,2026-07-28,KYC-2026-001235
+1.0,INVALID_ADDRESS_FORMAT,approve,approved,XX,,,,KYC-2026-001236
