@@ -16,3 +16,19 @@ export const formatAmount = (amount: number): string => {
     maximumFractionDigits: 2,
   }).format(amount);
 };
+
+/**
+ * Formats an ISO timestamp for dashboard activity feeds.
+ */
+export const formatTimestamp = (timestamp: string): string => {
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return timestamp;
+
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date);
+};
