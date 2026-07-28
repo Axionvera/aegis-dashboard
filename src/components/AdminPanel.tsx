@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { useAegis } from '@/hooks/useAegis';
+import Disclaimer from './Disclaimer';
+
+const MINTING_PANEL_DISCLAIMER =
+  'Minting records an on-chain issuance event. It does not certify legal ownership, regulatory status, or the existence of any underlying real-world asset.';
 
 export default function AdminPanel() {
-  const { mint, checkWhitelist, isLoading } = useAegis();
+  const { mint, isLoading } = useAegis();
   const [address, setAddress] = useState('');
 
   const handleWhitelist = async () => {
     // In reality, this would call a contract.whitelist(address) method
-    alert(`Whitelisted: ${address}`);
+    alert(`Added ${address} to the protocol allowlist.`);
   };
 
   const handleMint = async () => {
@@ -36,17 +40,21 @@ export default function AdminPanel() {
             onClick={handleWhitelist}
             disabled={isLoading || !address}
             className="flex-1 bg-aegis-accent hover:bg-emerald-600 text-white py-2 rounded font-medium transition disabled:opacity-50"
+            title="Adds the address to the protocol-level on-chain allowlist."
           >
-            Whitelist User
+            Add to Allowlist
           </button>
           <button
             onClick={handleMint}
             disabled={isLoading || !address}
             className="flex-1 bg-aegis-dark hover:bg-slate-800 text-white py-2 rounded font-medium transition disabled:opacity-50"
+            title="Records an on-chain issuance event for the given address."
           >
             Mint Asset
           </button>
         </div>
+
+        <Disclaimer variant="modal" text={MINTING_PANEL_DISCLAIMER} className="mt-4" />
       </div>
     </div>
   );
