@@ -1,9 +1,10 @@
 # Frontend Architecture
 
 ## Component Hierarchy
-The UI is strictly separated into pages and reusable components:
+The UI is strictly separated into pages and domain-specific features:
 - `pages/`: Handles routing and route-level authorization (e.g., checking if the wallet is connected).
-- `components/`: Contains isolated UI elements (`AssetCard`, `TransferModal`). State should be kept as local as possible unless required globally.
+- `features/`: Contains domain-specific components, hooks, and logic (e.g., `admin`, `portfolio`).
+- `components/layout/`: Contains reusable, global UI layout elements like `Navbar.tsx`.
 
 ## State Management
 - **Wallet State:** Handled globally using `zustand` in `src/hooks/useWallet.ts`. This allows any component to access the connected Stellar address.

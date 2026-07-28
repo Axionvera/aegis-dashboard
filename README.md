@@ -19,3 +19,6 @@ npm install
 3. Open http://localhost:3000 in your browser.
 ## Contribution Guidelines
 We welcome frontend contributions! Check CONTRIBUTING.md for our branching strategies and tailwind styling rules. Look for // TODO: comments in the codebase for easy wins.
+
+## Release Readiness Review
+Please review the [Release Readiness Review](docs/release-readiness-review.md) before considering any release to production or testnet. It outlines current security flaws, limitations, and UX gaps.
