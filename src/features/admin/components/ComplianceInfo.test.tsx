@@ -1,4 +1,5 @@
 import React from 'react';
+import { render } from '@testing-library/react';
 import ComplianceInfo from './ComplianceInfo';
 
 // Minimal smoke test — verifies component renders all six statuses
