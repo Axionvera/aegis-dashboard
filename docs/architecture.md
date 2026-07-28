@@ -10,6 +10,7 @@ The UI is strictly separated into pages and domain-specific features:
 - **Wallet State:** Handled globally using `zustand` in `src/hooks/useWallet.ts`. This allows any component to access the connected Stellar address.
 - **Contract State:** Interactions with the Soroban RPC are abstracted into `src/hooks/useAegis.ts`, which currently wraps the `@aegis/sdk`.
 - **Transaction History State:** Normalized activity records are managed in `src/features/transactions/store.ts` and consumed by `src/components/TransactionHistory.tsx`.
+- **Auth / Role State:** Wallet role resolution and route access state are managed in `src/features/auth/store.ts` and evaluated through `src/lib/route-guard.ts`.
 
 ## Feature Modules
 - `src/features/transactions/` encapsulates:
@@ -18,3 +19,7 @@ The UI is strictly separated into pages and domain-specific features:
   - filtering utilities
   - fixtures for major transaction classes
   - state store for list/detail UI
+- `src/features/auth/` encapsulates:
+  - dashboard role model and route access config
+  - SDK-backed role resolution (mocked)
+  - route guard hook and fixtures for access states

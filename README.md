@@ -45,5 +45,24 @@ Please review the [Release Readiness Review](docs/release-readiness-review.md) b
 ## Payment-Period Conduct
 Contributors paid through the GrantFox evaluation process should read the [Payment-Period Conduct Note](docs/payment-period-conduct.md). It covers self-review before merge, screenshot and test-output expectations, and the rules around repeated submissions and complaints during evaluation windows.
 
+## Reviewer Checklist
+When reviewing a GrantFox-submitted PR, use the [Reviewer Checklist](docs/reviewer-checklist.md) to verify implementation correctness, accessibility, test coverage, and acceptance criteria before approval.
+
+## Local Verification
+Before opening a pull request, run the complete verification command:
+
+
+
+This runs build, lint, and typecheck () locally to catch issues before CI. See the [Testing & Evidence PR Requirement](docs/testing-evidence-requirement.md) for what to include in your PR.
+
+## Contributor Payment Guide
+Before working on a GrantFox-tagged issue, review the [Contributor Payment Guide](docs/contributor-payment-guide.md). It covers evaluation criteria, required artifacts (screenshots and tests), and professional conduct expectations.
+
+## Low-Effort PR Examples
+Before submitting a PR, review [Low-Effort PR Examples](docs/low-effort-pr-examples.md) for guidance on what GrantFox evaluators look for — including screenshot requirements, test coverage expectations, and CI standards.
+
 ## Transaction History
 The dashboard now includes a normalized transaction history view at `/transactions`. See `docs/transaction-history.md` for model details, supported operation types, fixture coverage, and current data source limitations.
+
+## Route Access
+Role-aware route guards protect admin, issuer, investor, and read-only sections. See `docs/route-access.md` for route mapping, guard states, SDK assumptions, and mock wallet fixtures.
