@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import * as aegisClient from '@/lib/aegis/client';
+import { getAegisProvider } from '@/lib/sdk';
 import type { PortfolioReadModel } from '@/lib/aegis/types';
 import type {
   RawTransactionOutcome,
@@ -21,9 +21,17 @@ const mapOutcomeSuccessful = (outcome: RawTransactionOutcome): boolean | undefin
 };
 
 /**
- * Thin wrapper around the Aegis SDK client. Real Soroban RPC calls should
- * be added to src/lib/aegis/client.ts, not here — this hook only manages
- * loading state for the UI.
+ * Thin wrapper around the Aegis SDK provider. Delegates every call to the
+ * active provider returned by `getAegisProvider()`, which is either
+ * MockAegisProvider (when NEXT_PUBLIC_MOCK_MODE=true) or LiveAegisProvider.
+ *
+ * To add a new SDK operation:
+ *  1. Extend IAegisProvider with the new method.
+ *  2. Implement it in both MockAegisProvider and LiveAegisProvider.
+ *  3. Add a wrapper here that manages isLoading and records the transaction.
+ *
+ * Do NOT import `@/lib/aegis/client` directly from here — all SDK concerns
+ * go through the provider abstraction.
  */
 export const useAegis = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +42,7 @@ export const useAegis = () => {
   const getPortfolio = async (investorAddress: string): Promise<PortfolioReadModel> => {
     setIsLoading(true);
     try {
-      return await aegisClient.getPortfolio(investorAddress);
+      return await getAegisProvider().getPortfolio(investorAddress);
     } finally {
       setIsLoading(false);
     }
@@ -43,7 +51,7 @@ export const useAegis = () => {
   const checkWhitelist = async (target: string): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const isCompliant = await aegisClient.checkWhitelist(target);
+      const isCompliant = await getAegisProvider().checkWhitelist(target);
       addRecord({
         kind: 'contract_event',
         eventType: 'whitelist.check',
@@ -70,8 +78,8 @@ export const useAegis = () => {
   ): Promise<RawTransactionOutcome> => {
     setIsLoading(true);
     try {
-      const outcome = await aegisClient.transfer(to, amount, onPhase);
-      const txHash = outcome.hash ?? outcome.txHash ?? `mock_tx_hash_transfer_${Date.now()}`;
+      const outcome = await getAegisProvider().transfer(to, amount, onPhase);
+      const txHash = outcome.hash ?? outcome.txHash ?? `tx_transfer_${Date.now()}`;
 
       addRecord({
         kind: 'sdk_receipt',
@@ -99,8 +107,8 @@ export const useAegis = () => {
   ): Promise<RawTransactionOutcome> => {
     setIsLoading(true);
     try {
-      const outcome = await aegisClient.mint(to, amount, onPhase);
-      const txHash = outcome.hash ?? outcome.txHash ?? `mock_tx_hash_mint_${Date.now()}`;
+      const outcome = await getAegisProvider().mint(to, amount, onPhase);
+      const txHash = outcome.hash ?? outcome.txHash ?? `tx_mint_${Date.now()}`;
 
       addRecord({
         kind: 'sdk_receipt',
@@ -110,7 +118,6 @@ export const useAegis = () => {
         recipient: to,
         createdAt: new Date().toISOString(),
         action: 'mint',
-        amount,
         notes: 'Admin mint action from dashboard',
       });
 

@@ -21,6 +21,18 @@ npm install
 > [!TIP]
 > **Having issues?** Check our [Troubleshooting Guide](docs/troubleshooting.md) for solutions to common Node, Freighter, and Next.js setup problems.
 
+## Mock Mode (No Live Contracts Required)
+
+Frontend contributors can run the full dashboard UI without a live Soroban RPC endpoint or deployed contracts. Set `NEXT_PUBLIC_MOCK_MODE="true"` in `.env.local` to activate the built-in mock SDK provider.
+
+```bash
+cp .env.example .env.local
+# then set NEXT_PUBLIC_MOCK_MODE="true" in .env.local
+npm run dev
+```
+
+An amber warning banner is shown on every page when mock mode is active. See [docs/mock-mode.md](docs/mock-mode.md) for full setup instructions, fixture data reference, and safety warnings.
+
 ## Contribution Guidelines
 We welcome frontend contributions! Check CONTRIBUTING.md for our branching strategies and tailwind styling rules. Look for // TODO: comments in the codebase for easy wins.
 

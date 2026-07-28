@@ -3,6 +3,7 @@ import StatusCard from './StatusCard';
 import { redactUrl, redactContractId } from '@/lib/diagnostics/redact';
 import { useWallet } from '@/hooks/useWallet';
 import { useFeatureFlags } from '@/hooks/useFeatureFlags';
+import { isProviderMocked } from '@/lib/sdk';
 
 export default function DiagnosticsPanel() {
   const { address, network } = useWallet();
@@ -11,18 +12,21 @@ export default function DiagnosticsPanel() {
 
   const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || '';
   const contractId = process.env.NEXT_PUBLIC_AEGIS_CONTRACT_ID || '';
-  
+
   const redactedRpc = redactUrl(rpcUrl);
   const redactedContract = redactContractId(contractId);
-  
+
+  const mockActive = isProviderMocked();
+
   const reportData = {
     timestamp: new Date().toISOString(),
-    sdkVersion: 'Mocked v0.0.0', // Hardcoded as requested
-    rpc: redactedRpc,
-    contract: redactedContract,
+    sdkVersion: mockActive ? '[MOCK] v0.0.0-local' : 'Mocked v0.0.0',
+    rpc: mockActive ? '[MOCK] Not connected — mock provider active' : redactedRpc,
+    contract: mockActive ? '[MOCK] Not deployed — mock provider active' : redactedContract,
     wallet: address ? redactContractId(address) : 'Not connected',
-    network: network || 'Not connected',
+    network: mockActive ? 'LOCAL_MOCK' : network || 'Not connected',
     flags: flags,
+    provider: mockActive ? 'MockAegisProvider' : 'LiveAegisProvider',
   };
 
   const handleCopy = () => {
@@ -43,34 +47,53 @@ export default function DiagnosticsPanel() {
         </button>
       </div>
 
+      {/* Mock mode callout — rendered at the top so it's impossible to miss */}
+      {mockActive && (
+        <div
+          role="alert"
+          className="mb-4 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+        >
+          <span className="font-semibold">Mock provider active.</span>{' '}
+          All values below reflect fixture data, not a live environment.
+          Set <code className="font-mono text-xs">NEXT_PUBLIC_MOCK_MODE=false</code> to
+          switch to the live provider.
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <StatusCard 
-          title="RPC URL" 
-          value={redactedRpc} 
-          status={rpcUrl ? 'ok' : 'error'} 
+        {/* Provider row — always shown so the active provider is visible */}
+        <StatusCard
+          title="Active Provider"
+          value={reportData.provider}
+          status={mockActive ? 'warning' : 'ok'}
         />
-        <StatusCard 
-          title="Contract ID" 
-          value={redactedContract} 
-          status={contractId ? 'ok' : 'error'} 
+        <StatusCard
+          title="RPC URL"
+          value={mockActive ? '[MOCK] Not connected' : redactedRpc}
+          status={mockActive ? 'warning' : rpcUrl ? 'ok' : 'error'}
         />
-        <StatusCard 
-          title="SDK Version" 
-          value={reportData.sdkVersion} 
-          status="warning" 
+        <StatusCard
+          title="Contract ID"
+          value={mockActive ? '[MOCK] Not deployed' : redactedContract}
+          status={mockActive ? 'warning' : contractId ? 'ok' : 'error'}
         />
-        <StatusCard 
-          title="Wallet Address" 
-          value={reportData.wallet} 
-          status={address ? 'ok' : 'unknown'} 
+        <StatusCard
+          title="SDK Version"
+          value={reportData.sdkVersion}
+          status="warning"
         />
-        <StatusCard 
-          title="Wallet Network" 
-          value={reportData.network} 
-          status={network ? 'ok' : 'unknown'} 
+        <StatusCard
+          title="Wallet Address"
+          value={address ? redactContractId(address) : 'Not connected'}
+          status={address ? 'ok' : 'unknown'}
+        />
+        <StatusCard
+          title="Wallet Network"
+          value={mockActive ? 'LOCAL_MOCK' : network || 'Not connected'}
+          status={mockActive ? 'warning' : network ? 'ok' : 'unknown'}
         />
       </div>
-      
+
       <div className="mt-6">
         <h3 className="font-semibold text-sm mb-2 text-slate-700">Feature Flags</h3>
         <pre className="bg-slate-50 p-4 rounded-md border border-slate-200 text-sm overflow-x-auto">
