@@ -172,6 +172,10 @@ this is the only signal a reviewer has that the suite was run at all.
 
 ## Related documentation
 
+- [Aegis Dashboard Minimum Testing Standard](testing-standard.md) — the
+  dashboard-wide standard this document specializes for SDK-adjacent logic;
+  covers admin workflows, investor views, compliance screens, asset
+  registration, minting, wallet connection, and diagnostics as a whole.
 - [PR Evidence Checklist](pr-evidence-checklist.md) — how to present testing
   evidence in a PR.
 - [Reviewer Checklist](reviewer-checklist.md) — what reviewers verify before
