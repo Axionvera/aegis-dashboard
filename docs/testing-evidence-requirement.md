@@ -21,4 +21,4 @@ Every pull request that modifies application behavior must include testing evide
 
 ## Template
 
-The PR description template lives at `.github/pull_request_template.md`. It is rendered automatically when a new PR is opened.
+The PR description template lives at `.github/pull_request_template.md`. It is rendered automatically when a new PR is opened. Before opening a PR, complete the self-review checklist on the [Evaluation Readiness Dashboard](evaluation-readiness.md).
