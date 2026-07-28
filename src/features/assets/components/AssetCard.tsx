@@ -1,0 +1,58 @@
+import { formatAmount } from '@/utils/formatting';
+import ComplianceBadge from './ComplianceBadge';
+import TransferEligibilityBadge from './TransferEligibilityBadge';
+import type { PortfolioAsset } from '@/lib/aegis/types';
+
+interface AssetCardProps {
+  asset: PortfolioAsset;
+  onTransferClick: () => void;
+}
+
+export default function AssetCard({ asset, onTransferClick }: AssetCardProps) {
+  const { name, ticker, balance, metadata, compliance, transferEligibility, isDataAvailable } = asset;
+  const canTransfer = isDataAvailable && transferEligibility.state === 'eligible';
+
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col">
+      <div className="flex justify-between items-start gap-3 mb-3">
+        <div>
+          <h3 className="font-bold text-lg text-slate-800">{name}</h3>
+          <span className="text-xs font-semibold text-aegis-brand bg-blue-50 px-2 py-1 rounded">
+            {ticker}
+          </span>
+        </div>
+        {isDataAvailable && <ComplianceBadge compliance={compliance} />}
+      </div>
+
+      {isDataAvailable ? (
+        <p className="text-sm text-slate-500 mb-4">
+          {metadata.assetClass} &middot; {metadata.issuer} &middot; {metadata.jurisdiction}
+        </p>
+      ) : (
+        <p className="text-sm text-amber-600 mb-4">
+          Asset metadata is temporarily unavailable from the compliance registry. Your recorded balance is still shown below.
+        </p>
+      )}
+
+      <div className="mb-4">
+        <p className="text-sm text-slate-500 mb-1">Your Balance</p>
+        <p className="text-2xl font-bold text-slate-900">
+          {formatAmount(balance)} {ticker}
+        </p>
+      </div>
+
+      <div className="mb-6">
+        <TransferEligibilityBadge eligibility={transferEligibility} />
+      </div>
+
+      <button
+        onClick={onTransferClick}
+        disabled={!canTransfer}
+        title={!canTransfer ? transferEligibility.reasons[0] ?? 'Transfer is unavailable for this asset.' : undefined}
+        className="mt-auto w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2 rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-slate-900"
+      >
+        Transfer
+      </button>
+    </div>
+  );
+}

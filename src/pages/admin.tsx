@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import AdminPanel from '@/components/AdminPanel';
+import FeatureFlagsPanel from '@/components/FeatureFlagsPanel';
 import { useWallet } from '@/hooks/useWallet';
 
 export default function Admin() {
@@ -19,9 +20,13 @@ export default function Admin() {
       <Head>
         <title>Admin Dashboard | Aegis RWA</title>
       </Head>
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-slate-900 mb-8">Protocol Administration</h1>
-        <AdminPanel />
+      <div className="max-w-2xl mx-auto space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 mb-8">Protocol Administration</h1>
+          <AdminPanel />
+        </div>
+
+        <FeatureFlagsPanel />
       </div>
     </>
   );
