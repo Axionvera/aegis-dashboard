@@ -1,6 +1,11 @@
-#  Aegis RWA Dashboard
+# Aegis RWA Dashboard
 
 The official web interface for the **Aegis RWA Protocol**. Built with Next.js, this dashboard provides a seamless UI for administrators to mint compliant Real-World Assets and for investors to manage their portfolios.
+
+## Documentation
+- [Frontend Architecture](docs/architecture.md) — component hierarchy and state management
+- [Frontend Developer Guide](docs/frontend-guide.md) — styling conventions and adding pages
+- [Bulk Compliance Review Table](docs/bulk-compliance-review.md) — typed, testable compliance triage workflow (status derivation, bulk actions, edge cases)
 
 ## Prerequisites
 - [Node.js](https://nodejs.org/en/) (v18+)
@@ -17,10 +22,17 @@ npm install
    npm run dev
 ```
 3. Open http://localhost:3000 in your browser.
+## Documentation
+- [Architecture](docs/architecture.md)
+- [Frontend Developer Guide](docs/frontend-guide.md)
+- [Accessibility Review Checklist](docs/accessibility-checklist.md) — required reading before any UI PR
+
+## Accessibility
+This dashboard moves real-world assets, so keyboard access, labels, focus handling and screen
+reader support are treated as functional requirements rather than polish. Every frontend
+contribution is reviewed against the
+[Accessibility Review Checklist](docs/accessibility-checklist.md), which covers forms, tables,
+modals, navigation, and wallet/signing flows with examples taken from this codebase.
+
 ## Contribution Guidelines
 We welcome frontend contributions! Check CONTRIBUTING.md for our branching strategies and tailwind styling rules. Look for // TODO: comments in the codebase for easy wins.
-
-## Documentation
-- [Admin Role Management — UI Design & Implementation Plan](./docs/admin-role-management-design.md) — design-first role model, permission matrix, risks, and approval flow (security-sensitive; implementation pending review).
-- [Frontend Developer Guide](./docs/frontend-guide.md)
-- [Architecture](./docs/architecture.md)
