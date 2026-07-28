@@ -1,5 +1,16 @@
 import type { TransactionDetails, TransactionResult } from './types';
 
+interface TransactionFixtureGalleryEntry {
+  id: string;
+  kind: 'review' | 'progress' | 'receipt';
+  title: string;
+  description: string;
+  details?: TransactionDetails;
+  state?: 'signing' | 'pending';
+  result?: TransactionResult;
+  explorerUrl?: string | null;
+}
+
 /**
  * Sample data for previewing the transaction components without running a real
  * flow — useful for manual QA of the failure and unknown states, which the
@@ -86,4 +97,67 @@ export const transactionResultFixtures: TransactionResult[] = [
   pendingResultFixture,
   failureResultFixture,
   unknownResultFixture,
+];
+
+export const transactionFixtureGalleryEntries: TransactionFixtureGalleryEntry[] = [
+  {
+    id: 'review-transfer',
+    kind: 'review',
+    title: 'Review transfer before signing',
+    description: 'Preview the confirmation screen for a transfer request.',
+    details: transferDetailsFixture,
+  },
+  {
+    id: 'review-mint',
+    kind: 'review',
+    title: 'Review mint request',
+    description: 'Preview the confirmation copy for an issuance workflow.',
+    details: mintDetailsFixture,
+  },
+  {
+    id: 'review-compliance',
+    kind: 'review',
+    title: 'Review compliance update',
+    description: 'Preview the review screen for a compliance action.',
+    details: complianceDetailsFixture,
+  },
+  {
+    id: 'progress-signing',
+    kind: 'progress',
+    title: 'Waiting for wallet signature',
+    description: 'Shows the in-flight state while the wallet prompt is open.',
+    state: 'signing',
+  },
+  {
+    id: 'progress-pending',
+    kind: 'progress',
+    title: 'Submitting to the network',
+    description: 'Shows the pending state after the transaction is submitted.',
+    state: 'pending',
+  },
+  {
+    id: 'receipt-success',
+    kind: 'receipt',
+    title: 'Success receipt',
+    description: 'Preview the final confirmation screen for a successful transaction.',
+    details: transferDetailsFixture,
+    result: successResultFixture,
+    explorerUrl: 'https://stellar.expert/explorer/testnet/tx/b9d0e1f2a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e',
+  },
+  {
+    id: 'receipt-failure',
+    kind: 'receipt',
+    title: 'Failure receipt',
+    description: 'Preview the error state that appears when a transaction is rejected.',
+    details: transferDetailsFixture,
+    result: failureResultFixture,
+  },
+  {
+    id: 'receipt-unknown',
+    kind: 'receipt',
+    title: 'Unknown outcome receipt',
+    description: 'Preview the guarded unknown-state copy for ambiguous outcomes.',
+    details: transferDetailsFixture,
+    result: unknownResultFixture,
+  },
 ];

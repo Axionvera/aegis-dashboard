@@ -32,4 +32,7 @@ Key resources for contributors:
 
 > **Note:** All pull requests must follow the [PR Evidence Checklist](docs/pr-evidence-checklist.md). The checklist template is automatically loaded when you open a new PR.
 
-Look for `// TODO:` comments in the codebase for easy wins.
+The transactions page also includes a contributor-ready fixture gallery for transaction review, progress, and receipt states. See [docs/transaction-components.md](docs/transaction-components.md) for the shared component contract, fixture expectations, and compliance-safe wording guidance.
+
+## Route Access
+Role-aware route guards protect admin, issuer, investor, and read-only sections. See `docs/route-access.md` for route mapping, guard states, SDK assumptions, and mock wallet fixtures.
