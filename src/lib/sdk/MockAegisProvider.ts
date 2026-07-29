@@ -24,6 +24,7 @@ import type { RawTransactionOutcome } from '@/components/transactions/types';
 import type { BudgetReviewResult } from '@/lib/performanceBudget';
 import { mockPortfolioFixture } from '@/fixtures/portfolio';
 import { sampleBudgetResults } from '@/lib/__fixtures__/performanceBudget';
+import { sampleWhitelistEntries } from '@/lib/__fixtures__/whitelist';
 
 const MOCK_LATENCY_MS = 600;
 
