@@ -43,6 +43,7 @@ Key resources for contributors:
 - [Compliance-Safe Wording Guidance](docs/compliance-safe-wording.md) — Canonical disclaimer text, typed helper, and reviewer checklist for compliance-facing copy
 - [RWA Asset Lifecycle Status](docs/asset-lifecycle-status.md) — Lifecycle state machine, transition validation, and status UI for already-minted RWA assets
 - [Bulk Compliance Review](docs/bulk-compliance-review.md) — Bulk compliance review table with action confirmation modal
+- [Compliance Status Panel](docs/compliance-status-panel.md) — Address-level compliance status for investor and admin views (Issue #175)
 - [Environment Mismatch Blocking Screen](docs/environment-mismatch-blocking.md) — Full-page blocking screen when the wallet network does not match the dashboard target network
 - [Investor Onboarding Eligibility](docs/investor-onboarding-eligibility.md) — Investor onboarding eligibility page, evaluation precedence, and SDK mapping
 - [Performance Budget Review](docs/performance-budget-review.md) — Typed budget threshold evaluation, edge cases, and reviewer checklist

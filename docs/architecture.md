@@ -23,3 +23,7 @@ The UI is strictly separated into pages and domain-specific features:
   - dashboard role model and route access config
   - SDK-backed role resolution (mocked)
   - route guard hook and fixtures for access states
+- `src/features/compliance/` encapsulates:
+  - address-level compliance status panel
+  - SDK raw-record mapping and safe explanatory copy
+  - fixtures covering approved / blocked / pending / revoked / unknown / unavailable

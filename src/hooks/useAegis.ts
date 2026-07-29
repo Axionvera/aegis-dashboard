@@ -7,6 +7,7 @@ import type {
   TransactionPhase,
 } from '@/components/transactions/types';
 import type { BudgetReviewResult } from '@/lib/performanceBudget';
+import type { RawAddressComplianceRecord } from '@/features/compliance/types';
 import { resolveWalletRole } from '@/features/auth/resolveRole';
 import { useTransactionHistoryStore } from '@/features/transactions/store';
 import { useWallet } from '@/hooks/useWallet';
@@ -133,6 +134,17 @@ export const useAegis = () => {
     }
   };
 
+  const getAddressCompliance = async (
+    target: string,
+  ): Promise<RawAddressComplianceRecord> => {
+    setIsLoading(true);
+    try {
+      return await getAegisProvider().getAddressCompliance(target);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const transfer = async (
     to: string,
     amount: number,
@@ -209,6 +221,7 @@ export const useAegis = () => {
     listWhitelist,
     addToWhitelist,
     removeFromWhitelist,
+    getAddressCompliance,
     transfer,
     mint,
     getPortfolio,
