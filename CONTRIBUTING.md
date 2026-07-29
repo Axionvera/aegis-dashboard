@@ -95,6 +95,11 @@ See [docs/testing-evidence-requirement.md](docs/testing-evidence-requirement.md)
 the full policy and [docs/contribution-quality-examples.md](docs/contribution-quality-examples.md)
 for concrete examples of what passes and what does not.
 
+During GrantFox evaluation windows, review the
+[Payment-Period Conduct Policy](docs/payment-period-conduct.md). Repeated payout
+complaints, tagging maintainers outside designated threads, and other prohibited
+conduct may result in exclusion from the current evaluation window.
+
 ---
 
 ## For Maintainers and Reviewers

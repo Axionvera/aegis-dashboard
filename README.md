@@ -29,6 +29,7 @@ Key resources for contributors:
 
 - [Evaluation Readiness Dashboard](docs/evaluation-readiness.md) — Central summary page for testing standards, CI workflow, PR evidence, acceptance criteria mapping, self-review, and payment guidance
 - [Contributing Guide](CONTRIBUTING.md) — Branch naming, component rules, PR evidence checklist, and review process
+- [Evaluation-Readiness Index](docs/evaluation-readiness-index.md) — Central page linking every requirement for GrantFox evaluation: payment expectations, testing standards, CI guidance, acceptance criteria audit, self-assessment, and reviewer checklist
 - [PR Evidence Checklist](docs/pr-evidence-checklist.md) — Detailed requirements for pull request evidence and documentation
 - [Aegis Dashboard Minimum Testing Standard](docs/testing-standard.md) — Minimum test coverage for admin workflows, investor views, compliance screens, asset registration, minting, wallet connection, and diagnostics
 - [Aegis SDK Testing Standard](docs/sdk-testing-standard.md) — Minimum unit, integration, and negative-path test coverage for compliance, KYC, RWA metadata, investor reads, admin actions, and transaction receipts
@@ -42,6 +43,9 @@ The transactions page also includes a contributor-ready fixture gallery for tran
 
 ## Evaluation Readiness
 Before submitting a pull request for maintainer review or payment evaluation, review the [Evaluation Readiness Dashboard](docs/evaluation-readiness.md). It links testing standards, CI status expectations, PR evidence templates, acceptance criteria mapping, and conduct guidelines into a single scorecard.
+
+## Payment-Period Conduct
+During GrantFox evaluation windows, all contributors must follow the [Payment-Period Conduct Policy](docs/payment-period-conduct.md). Repeated spam, payout-related complaints, or harassment in community channels will not be tolerated. Self-review your PR thoroughly before raising payment concerns.
 
 ## Route Access
 Role-aware route guards protect admin, issuer, investor, and read-only sections. See `docs/route-access.md` for route mapping, guard states, SDK assumptions, and mock wallet fixtures.
