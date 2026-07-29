@@ -177,9 +177,14 @@ status as legal or financial advice.
 - **`src/features/investor/components/TransferModal.tsx`** — the KYC whitelist check runs first,
   then `Review Transfer` opens `TransactionReview`, confirming signs and submits
   the transfer, and the receipt replaces the old `alert("Transfer Successful!")`.
-- **`src/components/AdminPanel.tsx`** — `Mint Asset` opens the review inline in
-  the card, then progress, then the receipt.
+- **`src/features/minting/components/MintWorkflow.tsx`** — guided admin mint (Issue #6):
+  asset selector, amount/recipient validation, compliance pre-check, then
+  `TransactionReview` → progress → receipt / SDK recovery. Wired from
+  `AdminPanel` when `newMintFlow` is enabled (default on). See
+  [rwa-asset-minting-workflow.md](rwa-asset-minting-workflow.md).
+- **`src/features/admin/components/AdminPanel.tsx`** — hosts the mint workflow
+  (or the legacy fixed-amount panel when `newMintFlow` is off).
 
-`Whitelist User` in the admin panel still uses a plain `alert()`: it does not go
+`Whitelist User` in the legacy admin panel still uses an inline confirmation: it does not go
 through `useAegis` and has no contract call or hash behind it yet. It should move
 onto these components (`action: 'compliance-update'`) as soon as it does.

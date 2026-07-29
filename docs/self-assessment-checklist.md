@@ -1,3 +1,4 @@
+# Self-Assessment Checklist
 # Contributor Self-Assessment Form
 
 > **Applies to:** All contributors before submitting a pull request to the Aegis Dashboard
@@ -5,6 +6,7 @@
 
 ## Purpose
 
+This checklist helps contributors self-review their own work before requesting a maintainer review. Completing this checklist reduces review cycles, catches common issues early, and ensures GrantFox evaluation readiness.
 This self-assessment form helps contributors evaluate their own work before requesting a maintainer review. Completing this form reduces review cycles, catches common issues early, and ensures GrantFox evaluation readiness.
 
 ## Instructions
@@ -72,6 +74,7 @@ Branch Name: ________________________
 - [ ] "Acceptance Criteria Coverage" section maps each criterion to evidence.
 - [ ] Screenshots section is populated for UI changes.
 
+## Post-Submit
 ---
 
 ## Declaration

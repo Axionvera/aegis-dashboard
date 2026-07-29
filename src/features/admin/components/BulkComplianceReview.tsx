@@ -26,6 +26,8 @@ import {
 } from "@/components/table";
 import { useTableFilters } from "@/hooks/useTableFilters";
 import type { SortState } from "@/hooks/useTableFilters";
+import ComplianceUpdateModal, { ACTION_LABELS } from "./ComplianceUpdateModal";
+import type { TransactionResult } from "@/components/transactions/types";
 
 const STATUS_BADGE: Record<ComplianceStatus, string> = {
   pending: "bg-amber-100 text-amber-800",
@@ -47,6 +49,9 @@ const RESULT_DOT: Record<CheckResult, string> = {
   warn: "bg-amber-500",
   unknown: "bg-slate-400",
 };
+
+/** Actions that require a confirmation modal before applying. */
+const ACTIONS_WITH_CONFIRMATION: BulkAction[] = ["approve", "reject", "flag-for-review"];
 
 function shortId(id: string): string {
   if (id.length <= 14) return id;
@@ -87,6 +92,7 @@ export default function BulkComplianceReview({
   const [state, setState] = useState<ComplianceReviewState>(() =>
     recomputeSelection(initialSubjects.map((s) => ({ ...s, selected: false }))),
   );
+  const [pendingAction, setPendingAction] = useState<BulkAction | null>(null);
 
   /* ── Reusable table filters ── */
   const tableFilters = useTableFilters({ namespace: "bulk-compliance-review" });
@@ -134,6 +140,17 @@ export default function BulkComplianceReview({
       onAction?.(action, affected);
       return next;
     });
+  };
+
+  const handleConfirmAction = (action: BulkAction): TransactionResult => {
+    const ids = state.subjects.filter((s) => s.selected).map((s) => s.id);
+    handleAction(action);
+    setPendingAction(null);
+    return {
+      status: "success",
+      message: "Compliance update applied",
+      detail: `${ACTION_LABELS[action]} applied to ${ids.length} subject(s).`,
+    };
   };
 
   const activeView = tableFilters.savedViews.find(
@@ -215,21 +232,21 @@ export default function BulkComplianceReview({
         <div className="flex flex-wrap gap-2 mb-4">
           <button
             disabled={state.selectedCount === 0}
-            onClick={() => handleAction("approve")}
+            onClick={() => setPendingAction("approve")}
             className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-sm font-medium disabled:opacity-40"
           >
             Approve selected
           </button>
           <button
             disabled={state.selectedCount === 0}
-            onClick={() => handleAction("reject")}
+            onClick={() => setPendingAction("reject")}
             className="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded text-sm font-medium disabled:opacity-40"
           >
             Reject selected
           </button>
           <button
             disabled={state.selectedCount === 0}
-            onClick={() => handleAction("flag-for-review")}
+            onClick={() => setPendingAction("flag-for-review")}
             className="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded text-sm font-medium disabled:opacity-40"
           >
             Flag for review
@@ -242,6 +259,16 @@ export default function BulkComplianceReview({
             Clear selection
           </button>
         </div>
+      )}
+
+      {/* ── Compliance update review modal ── */}
+      {pendingAction && (
+        <ComplianceUpdateModal
+          subjects={state.subjects.filter((s) => s.selected)}
+          action={pendingAction}
+          onConfirm={() => handleConfirmAction(pendingAction)}
+          onClose={() => setPendingAction(null)}
+        />
       )}
 
       {/* ── Table ── */}

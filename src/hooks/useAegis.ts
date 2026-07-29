@@ -6,6 +6,7 @@ import type {
   RawTransactionOutcome,
   TransactionPhase,
 } from '@/components/transactions/types';
+import type { BudgetReviewResult } from '@/lib/performanceBudget';
 import { resolveWalletRole } from '@/features/auth/resolveRole';
 import { useTransactionHistoryStore } from '@/features/transactions/store';
 import { useWallet } from '@/hooks/useWallet';
@@ -166,6 +167,7 @@ export const useAegis = () => {
     to: string,
     amount: number,
     onPhase?: PhaseListener,
+    assetTicker?: string,
   ): Promise<RawTransactionOutcome> => {
     setIsLoading(true);
     try {
@@ -180,10 +182,23 @@ export const useAegis = () => {
         recipient: to,
         createdAt: new Date().toISOString(),
         action: 'mint',
+        amount,
+        assetTicker,
         notes: 'Admin mint action from dashboard',
       });
 
       return outcome;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getPerformanceBudget = async (
+    portfolioId: string,
+  ): Promise<BudgetReviewResult[]> => {
+    setIsLoading(true);
+    try {
+      return await getAegisProvider().getPerformanceBudget(portfolioId);
     } finally {
       setIsLoading(false);
     }
@@ -197,6 +212,7 @@ export const useAegis = () => {
     transfer,
     mint,
     getPortfolio,
+    getPerformanceBudget,
     getWalletRole: resolveWalletRole,
     isLoading,
   };

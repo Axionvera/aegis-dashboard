@@ -66,7 +66,7 @@ export default function Navbar() {
           <span
             role="alert"
             title={connectionError}
-            className="flex items-center gap-1 text-xs text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded max-w-xs truncate"
+            className="md:flex items-center hidden gap-1 text-xs text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded max-w-xs truncate"
           >
             <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span className="truncate">{connectionError}</span>
@@ -74,7 +74,7 @@ export default function Navbar() {
         )}
 
         {address ? (
-          <div className="flex items-center space-x-3">
+          <div className="md:flex items-center space-x-3 hidden">
             <span className="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500 font-mono">
               {network}
             </span>
@@ -98,7 +98,7 @@ export default function Navbar() {
           <button
             onClick={connect}
             disabled={isConnecting}
-            className="bg-aegis-brand hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium text-sm transition disabled:opacity-50"
+            className="bg-aegis-brand hidden md:block hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium text-sm transition disabled:opacity-50"
           >
             {isConnecting ? 'Connecting…' : 'Connect Wallet'}
           </button>
@@ -113,6 +113,7 @@ export default function Navbar() {
         onConnectWallet={connect}
         onClose={() => setIsMobileMenuOpen(false)}
         routes={accessibleRoutes}
+        connectionError={connectionError}
       />
     </nav>
   );

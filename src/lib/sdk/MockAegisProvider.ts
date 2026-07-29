@@ -21,8 +21,9 @@ import type { IAegisProvider, PhaseListener } from './IAegisProvider';
 import type { PortfolioReadModel } from '@/lib/aegis/types';
 import type { WhitelistEntry } from '@/lib/whitelist';
 import type { RawTransactionOutcome } from '@/components/transactions/types';
+import type { BudgetReviewResult } from '@/lib/performanceBudget';
 import { mockPortfolioFixture } from '@/fixtures/portfolio';
-import { sampleWhitelistEntries } from '@/lib/__fixtures__/whitelist';
+import { sampleBudgetResults } from '@/lib/__fixtures__/performanceBudget';
 
 const MOCK_LATENCY_MS = 600;
 
@@ -160,5 +161,13 @@ export class MockAegisProvider implements IAegisProvider {
     void to;
     await simulateSubmission(onPhase);
     return mockOutcome(amount, 'mock_tx_hash_mint_0987654321');
+  }
+
+  async getPerformanceBudget(
+    portfolioId: string,
+  ): Promise<BudgetReviewResult[]> {
+    void portfolioId;
+    await wait(400);
+    return sampleBudgetResults;
   }
 }
