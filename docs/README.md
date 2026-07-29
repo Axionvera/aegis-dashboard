@@ -63,6 +63,7 @@ Read before opening a pull request tied to a GrantFox-evaluated issue.
 | [testing-standard.md](testing-standard.md) | Minimum test coverage required per kind of dashboard change |
 | [sdk-testing-standard.md](sdk-testing-standard.md) | Minimum test coverage for compliance, KYC, RWA, and SDK-adjacent logic |
 | [reviewer-checklist.md](reviewer-checklist.md) | Full review process used on GrantFox-submitted PRs |
+| [pr-reviewer-evidence-checklist.md](pr-reviewer-evidence-checklist.md) | Structured checklist for reviewers to verify PR evidence completeness and quality |
 | [self-assessment-checklist.md](self-assessment-checklist.md) | Pre-submit self-assessment form for contributors |
 | [payment-period-conduct.md](payment-period-conduct.md) | Conduct expectations during GrantFox evaluation windows |
 | [contributor-payment-guide.md](contributor-payment-guide.md) | How GrantFox evaluates contributions for compensation |
