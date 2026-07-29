@@ -14,6 +14,7 @@ import type {
   TransactionState,
 } from '@/components/transactions/types';
 import { useIdempotentSubmit } from '@/features/forms/idempotency';
+import { FormError } from '@/features/forms/validation';
 import { validateMintRequest, MINT_ERROR_MESSAGES } from '@/lib/mintRequest';
 import {
   buildRecoveryPlan,
@@ -255,11 +256,7 @@ export default function MintWorkflow({
           Recipient compliance is checked before the review screen.
         </p>
 
-        {error && (
-          <div role="alert" className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">
-            {error}
-          </div>
-        )}
+        <FormError message={error} />
 
         <div className="space-y-4 mb-6">
           <div>

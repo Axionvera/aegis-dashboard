@@ -4,10 +4,28 @@ import {
   ASSET_CREATION_ERROR_MESSAGES,
   SUPPORTED_JURISDICTIONS,
   ASSET_CLASS_OPTIONS,
+  type AssetCreationErrorCode,
 } from '@/lib/assetCreationRequest';
+import { useFormErrors, FormFieldError, FormError } from '@/features/forms/validation';
 import type { IssuanceRequest } from '@/fixtures/issuer';
 
 type WizardStep = 'form' | 'review' | 'success';
+type AssetCreationField = 'assetName' | 'ticker' | 'amount' | 'jurisdiction';
+
+/**
+ * `validateAssetCreationRequest` reports one error code at a time. Map each
+ * code to the field it belongs to so it renders under the right input via
+ * the shared `FormFieldError`; codes that aren't about a single field (e.g.
+ * several fields left blank) fall back to the form-level `FormError` banner.
+ */
+const ERROR_FIELD: Partial<Record<AssetCreationErrorCode, AssetCreationField>> = {
+  ASSET_NAME_TOO_SHORT: 'assetName',
+  INVALID_TICKER: 'ticker',
+  DUPLICATE_TICKER: 'ticker',
+  NON_POSITIVE_AMOUNT: 'amount',
+  AMOUNT_TOO_LARGE: 'amount',
+  UNSUPPORTED_JURISDICTION: 'jurisdiction',
+};
 
 export interface AssetCreationWizardProps {
   /** Tickers already registered, for duplicate-ticker validation. */
@@ -48,18 +66,34 @@ export default function AssetCreationWizard({
   const [amount, setAmount] = useState('');
   const [jurisdiction, setJurisdiction] = useState<string>(SUPPORTED_JURISDICTIONS[0]);
   const [assetClass, setAssetClass] = useState<string>(ASSET_CLASS_OPTIONS[0]);
-  const [error, setError] = useState('');
+  const [formError, setFormError] = useState('');
   const [lastCreated, setLastCreated] = useState<IssuanceRequest | null>(null);
+  const fieldErrors = useFormErrors<AssetCreationField>();
+
+  /** Routes a validation error code to the right field or the form banner. */
+  const applyValidationError = (code: AssetCreationErrorCode) => {
+    const message = ASSET_CREATION_ERROR_MESSAGES[code];
+    const field = ERROR_FIELD[code];
+    if (field) {
+      fieldErrors.clearAll();
+      fieldErrors.setFieldError(field, message);
+      setFormError('');
+    } else {
+      fieldErrors.clearAll();
+      setFormError(message);
+    }
+  };
 
   const handleReview = () => {
-    setError('');
+    setFormError('');
+    fieldErrors.clearAll();
     const validation = validateAssetCreationRequest(
       { assetName, ticker, amount, jurisdiction, assetClass },
       { existingTickers },
     );
 
     if (!validation.valid) {
-      setError(ASSET_CREATION_ERROR_MESSAGES[validation.error!]);
+      applyValidationError(validation.error!);
       return;
     }
 
@@ -75,7 +109,7 @@ export default function AssetCreationWizard({
     // Re-validate on confirm: existingTickers may have changed while the
     // user sat on the review screen (e.g. another request was created).
     if (!validation.valid || validation.parsedAmount === undefined) {
-      setError(ASSET_CREATION_ERROR_MESSAGES[validation.error!]);
+      applyValidationError(validation.error!);
       setStep('form');
       return;
     }
@@ -102,7 +136,8 @@ export default function AssetCreationWizard({
     setAmount('');
     setJurisdiction(SUPPORTED_JURISDICTIONS[0]);
     setAssetClass(ASSET_CLASS_OPTIONS[0]);
-    setError('');
+    setFormError('');
+    fieldErrors.clearAll();
     setLastCreated(null);
     setStep('form');
   };
@@ -168,11 +203,7 @@ export default function AssetCreationWizard({
           </div>
         </dl>
 
-        {error && (
-          <div role="alert" className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">
-            {error}
-          </div>
-        )}
+        <FormError message={formError} />
 
         <p className="text-xs text-slate-500 mb-4">
           Submitting sends this asset for compliance review. This is a protocol-level
@@ -207,11 +238,7 @@ export default function AssetCreationWizard({
         approval — this does not mint supply directly.
       </p>
 
-      {error && (
-        <div role="alert" className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">
-          {error}
-        </div>
-      )}
+      <FormError message={formError} />
 
       <div className="space-y-4 mb-6">
         <div>
@@ -225,7 +252,9 @@ export default function AssetCreationWizard({
             placeholder="Manhattan Commercial Real Estate"
             value={assetName}
             onChange={(e) => setAssetName(e.target.value)}
+            aria-describedby={fieldErrors.errorFor('assetName') ? 'ac-asset-name-error' : undefined}
           />
+          <FormFieldError id="ac-asset-name-error" message={fieldErrors.errorFor('assetName')} />
         </div>
 
         <div>
@@ -241,7 +270,9 @@ export default function AssetCreationWizard({
             onChange={(e) => setTicker(e.target.value)}
             autoComplete="off"
             spellCheck={false}
+            aria-describedby={fieldErrors.errorFor('ticker') ? 'ac-ticker-error' : undefined}
           />
+          <FormFieldError id="ac-ticker-error" message={fieldErrors.errorFor('ticker')} />
         </div>
 
         <div>
@@ -275,7 +306,9 @@ export default function AssetCreationWizard({
             onChange={(e) => setAmount(e.target.value)}
             min="0"
             step="any"
+            aria-describedby={fieldErrors.errorFor('amount') ? 'ac-amount-error' : undefined}
           />
+          <FormFieldError id="ac-amount-error" message={fieldErrors.errorFor('amount')} />
         </div>
 
         <div>
@@ -287,6 +320,9 @@ export default function AssetCreationWizard({
             className="w-full border border-slate-300 rounded p-2 focus:ring-2 focus:ring-aegis-brand outline-none bg-white"
             value={jurisdiction}
             onChange={(e) => setJurisdiction(e.target.value)}
+            aria-describedby={
+              fieldErrors.errorFor('jurisdiction') ? 'ac-jurisdiction-error' : undefined
+            }
           >
             {SUPPORTED_JURISDICTIONS.map((option) => (
               <option key={option} value={option}>
@@ -294,6 +330,7 @@ export default function AssetCreationWizard({
               </option>
             ))}
           </select>
+          <FormFieldError id="ac-jurisdiction-error" message={fieldErrors.errorFor('jurisdiction')} />
         </div>
       </div>
 

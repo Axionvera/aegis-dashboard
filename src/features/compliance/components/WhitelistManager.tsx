@@ -11,7 +11,10 @@ import {
   guardWhitelistAction,
   type WhitelistEntry,
 } from '@/lib/whitelist';
+import { useFormErrors, FormFieldError } from '@/features/forms/validation';
 import { formatTimestamp, truncateAddress } from '@/utils/formatting';
+
+type WhitelistFormField = 'address';
 
 type LoadState = 'loading' | 'loaded' | 'error';
 
@@ -37,7 +40,7 @@ export default function WhitelistManager() {
 
   const [newAddress, setNewAddress] = useState('');
   const [newNote, setNewNote] = useState('');
-  const [formError, setFormError] = useState<string | null>(null);
+  const fieldErrors = useFormErrors<WhitelistFormField>();
 
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
 
@@ -66,17 +69,17 @@ export default function WhitelistManager() {
 
     const validation = validateWhitelistAddress(address);
     if (!validation.valid) {
-      setFormError(validation.reason);
+      fieldErrors.setFieldError('address', validation.reason);
       return;
     }
 
     const guardReason = guardWhitelistAction(entries, address, 'add');
     if (guardReason) {
-      setFormError(guardReason);
+      fieldErrors.setFieldError('address', guardReason);
       return;
     }
 
-    setFormError(null);
+    fieldErrors.clearAll();
     setPendingAction({ action: 'add', address, note: newNote.trim() || undefined });
   };
 
@@ -124,6 +127,13 @@ export default function WhitelistManager() {
             onChange={(e) => setNewAddress(e.target.value)}
             placeholder="GABC…"
             className="w-full border border-slate-300 rounded p-2 font-mono text-sm focus:ring-2 focus:ring-aegis-brand outline-none"
+            aria-describedby={
+              fieldErrors.errorFor('address') ? 'whitelist-new-address-error' : undefined
+            }
+          />
+          <FormFieldError
+            id="whitelist-new-address-error"
+            message={fieldErrors.errorFor('address')}
           />
         </div>
 
@@ -143,13 +153,6 @@ export default function WhitelistManager() {
             className="w-full border border-slate-300 rounded p-2 text-sm focus:ring-2 focus:ring-aegis-brand outline-none"
           />
         </div>
-
-        {formError && (
-          <p role="alert" className="flex items-center gap-2 text-sm text-red-600">
-            <AlertTriangle size={14} className="shrink-0" aria-hidden="true" />
-            {formError}
-          </p>
-        )}
 
         <button
           type="submit"
