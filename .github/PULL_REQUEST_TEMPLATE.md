@@ -73,11 +73,16 @@ npm run lint
 
 - [ ] All acceptance criteria from the linked issue have been satisfied
 - **Criteria Mapping:**
-  <!-- Map each acceptance criterion to the evidence that satisfies it -->
+  <!-- Map each acceptance criterion to the evidence that satisfies it. See the Acceptance Criteria Audit (../docs/acceptance-criteria-audit.md) for the full process. -->
   | Acceptance Criterion | Evidence |
   | -------------------- | -------- |
   | Criterion 1          | How it was met |
   | Criterion 2          | How it was met |
+
+### 7. Self-Assessment
+
+- [ ] The [Contributor Self-Assessment Form](../docs/self-assessment-checklist.md) has been completed and attached to this PR
+- **Form Location:** <!-- e.g., pasted in Reviewer Notes, attached as a file comment -->
 
 ---
 

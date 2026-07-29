@@ -175,11 +175,11 @@ silence.
 npm test          # runs the vitest suite (src/**/*.test.ts[x])
 ```
 
-`npm test` is not currently part of the CI pipeline (`.github/workflows/ci.yml`
-runs lint, typecheck, and build only), so a green CI badge does not mean the
-test suite passed. Run `npm test` locally before requesting review and paste
-the summary output into the PR's **Commands Run** / **Testing** sections —
-this is the only signal a reviewer has that the suite was run at all.
+CI runs `npm test` as part of the pipeline defined in `.github/workflows/ci.yml`
+(lint, typecheck, test, build), so a green CI badge confirms the test suite
+passed in CI. Run `npm test` locally before pushing to catch failures early,
+and paste the summary output into the PR's **Commands Run** / **Testing** sections
+to give reviewers additional confidence.
 
 ## Related documentation
 

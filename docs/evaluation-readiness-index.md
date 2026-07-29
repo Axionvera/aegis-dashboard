@@ -20,6 +20,9 @@ This page is the single entry point for every requirement a contributor must sat
 | Acceptance Criteria Audit | [Acceptance Criteria Audit](acceptance-criteria-audit.md) | How to map each criterion to evidence and verify completeness |
 | Self-Assessment | [Self-Assessment Checklist](self-assessment-checklist.md) | Pre-submit review checklist for contributors |
 | Reviewer Checklist | [Reviewer Quality Checklist](reviewer-checklist.md) | What reviewers check before approving a PR |
+| Self-Assessment | [Contributor Self-Assessment Form](self-assessment-checklist.md) | Pre-submit self-assessment form for contributors |
+| Reviewer Checklist | [Reviewer Quality Checklist](reviewer-checklist.md) | What reviewers check before approving a PR |
+| Reviewer Evidence | [PR Reviewer Evidence Checklist](pr-reviewer-evidence-checklist.md) | Structured reference for reviewers to verify PR evidence completeness and quality |
 | Communication & Conduct | [Payment-Period Conduct](payment-period-conduct.md) | Conduct expectations during payment periods |
 | PR Evidence Structure | [PR Evidence Checklist](pr-evidence-checklist.md) | How to structure evidence in the PR description |
 | Low-Effort PR Examples | [Low-Effort PR Examples](low-effort-pr-examples.md) | Examples of weak vs. strong PRs |
@@ -49,6 +52,10 @@ Run `npm run verify` (or the individual commands) to confirm your branch is gree
 → [Self-Assessment Checklist](self-assessment-checklist.md)
 
 Work through every item on the checklist. Do not skip this step.
+### Step 4: Complete the Self-Assessment Form
+→ [Contributor Self-Assessment Form](self-assessment-checklist.md)
+
+Fill out the form and work through every item. Do not skip this step.
 
 ### Step 5: Prepare Your PR Description
 → [PR Evidence Checklist](pr-evidence-checklist.md) · [Acceptance Criteria Audit](acceptance-criteria-audit.md)
@@ -67,6 +74,7 @@ Structure your PR description with all required evidence and map every acceptanc
 
 - [Contributing Guide](../CONTRIBUTING.md) — Branch naming, component rules, and review process
 - [PR Template](../.github/pull_request_template.md) — Auto-loaded when opening a new PR
+- [PR Reviewer Evidence Checklist](pr-reviewer-evidence-checklist.md) — Structured evidence verification checklist for reviewers
 - [Architecture Overview](architecture.md) — Component hierarchy and state management
 - [Frontend Developer Guide](frontend-guide.md) — Styling conventions and page creation
 - [Route Access](route-access.md) — Role-aware route guards and page mapping

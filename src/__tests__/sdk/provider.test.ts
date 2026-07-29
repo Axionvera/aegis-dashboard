@@ -34,9 +34,16 @@ describe('getAegisProvider', () => {
   });
 
   it('returns a MockAegisProvider when NEXT_PUBLIC_MOCK_MODE is "true"', () => {
+    const originalNodeEnv = process.env.NODE_ENV;
     process.env.NEXT_PUBLIC_MOCK_MODE = 'true';
-    const provider = getAegisProvider();
-    expect(provider).toBeInstanceOf(MockAegisProvider);
+    // assertMockModeSafe requires NODE_ENV === 'development' when mock mode is on.
+    (process.env as Record<string, string>).NODE_ENV = 'development';
+    try {
+      const provider = getAegisProvider();
+      expect(provider).toBeInstanceOf(MockAegisProvider);
+    } finally {
+      (process.env as Record<string, string>).NODE_ENV = originalNodeEnv ?? 'test';
+    }
   });
 
   it('returns the same singleton instance on repeated calls', () => {
@@ -52,8 +59,15 @@ describe('isProviderMocked', () => {
   });
 
   it('returns true when the mock provider is active', () => {
+    const originalNodeEnv = process.env.NODE_ENV;
     process.env.NEXT_PUBLIC_MOCK_MODE = 'true';
-    expect(isProviderMocked()).toBe(true);
+    // assertMockModeSafe requires NODE_ENV === 'development' when mock mode is on.
+    (process.env as Record<string, string>).NODE_ENV = 'development';
+    try {
+      expect(isProviderMocked()).toBe(true);
+    } finally {
+      (process.env as Record<string, string>).NODE_ENV = originalNodeEnv ?? 'test';
+    }
   });
 });
 

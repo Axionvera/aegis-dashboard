@@ -1,6 +1,7 @@
-import Link from 'next/link';
-import { RouteAccessResult } from '@/features/auth/types';
-import { useWallet } from '@/hooks/useWallet';
+import Link from "next/link";
+import { RouteAccessResult } from "@/features/auth/types";
+import { useWallet } from "@/hooks/useWallet";
+import { AlertCircle } from "lucide-react";
 
 interface AccessUnavailableProps {
   access: RouteAccessResult;
@@ -8,19 +9,19 @@ interface AccessUnavailableProps {
 
 const prettyRole = (role: string): string =>
   role
-    .split('_')
+    .split("_")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
+    .join(" ");
 
 export default function AccessUnavailable({ access }: AccessUnavailableProps) {
-  const { connect, isConnecting } = useWallet();
+  const { connect, isConnecting, connectionError, address } = useWallet();
 
   const title =
-    access.state === 'wallet_required'
-      ? 'Wallet Connection Required'
-      : access.state === 'role_loading'
-        ? 'Checking Access'
-        : 'Access Unavailable';
+    access.state === "wallet_required"
+      ? "Wallet Connection Required"
+      : access.state === "role_loading"
+        ? "Checking Access"
+        : "Access Unavailable";
 
   return (
     <div className="max-w-2xl mx-auto text-center py-20 px-4">
@@ -30,7 +31,7 @@ export default function AccessUnavailable({ access }: AccessUnavailableProps) {
 
         {access.requiredRoles.length > 0 && (
           <p className="text-sm text-slate-500 mt-4">
-            Required role(s): {access.requiredRoles.map(prettyRole).join(', ')}
+            Required role(s): {access.requiredRoles.map(prettyRole).join(", ")}
           </p>
         )}
 
@@ -41,19 +42,34 @@ export default function AccessUnavailable({ access }: AccessUnavailableProps) {
         )}
 
         <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-          {access.state === 'wallet_required' && (
-            <button
-              onClick={connect}
-              disabled={isConnecting}
-              className="bg-aegis-brand hover:bg-blue-600 text-white px-5 py-2 rounded-md font-medium transition disabled:opacity-50"
-            >
-              {isConnecting ? 'Connecting...' : 'Connect Wallet'}
-            </button>
+          {access.state === "wallet_required" && (
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={connect}
+                disabled={isConnecting}
+                className="bg-aegis-brand hover:bg-blue-600 text-white px-5 py-2 rounded-md font-medium transition disabled:opacity-50"
+              >
+                {isConnecting ? "Connecting..." : "Connect Wallet"}
+              </button>
+              {connectionError && !address && (
+                <span
+                  role="alert"
+                  title={connectionError}
+                  className="flex items-center gap-1 text-xs text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded max-w-xs"
+                >
+                  <AlertCircle
+                    className="h-3.5 w-3.5 shrink-0"
+                    aria-hidden="true"
+                  />
+                  <span className="">{connectionError}</span>
+                </span>
+              )}
+            </div>
           )}
 
-          {access.state === 'role_unavailable' && (
+          {access.state === "role_unavailable" && (
             <>
-              {access.currentRole === 'read_only' ? (
+              {access.currentRole === "read_only" ? (
                 <Link
                   href="/transactions"
                   className="bg-aegis-brand hover:bg-blue-600 text-white px-5 py-2 rounded-md font-medium transition"
@@ -81,7 +97,8 @@ export default function AccessUnavailable({ access }: AccessUnavailableProps) {
         </div>
 
         <p className="text-xs text-slate-400 mt-6">
-          UI role checks improve safety but do not replace on-chain authorization.
+          UI role checks improve safety but do not replace on-chain
+          authorization.
         </p>
       </div>
     </div>
