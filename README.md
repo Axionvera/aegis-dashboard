@@ -10,13 +10,13 @@ The official web interface for the **Aegis RWA Protocol**. Built with Next.js, t
 ## Local Setup
 
 1. Clone the repository and install dependencies:
-   ```bash
+```bash
    npm install
-   ```
+```
 2. Run the development server:
-   ```bash
+```bash
    npm run dev
-   ```
+```
 3. Open http://localhost:3000 in your browser.
 ## Contribution Guidelines
 We welcome frontend contributions! Check [CONTRIBUTING.md](CONTRIBUTING.md) for our branching strategies and Tailwind styling rules. Look for `// TODO:` comments in the codebase for easy wins.
@@ -42,7 +42,7 @@ Key resources for contributors:
 
 > **Note:** All pull requests must follow the [PR Evidence Checklist](docs/pr-evidence-checklist.md) and be audited against the [Evaluation Readiness Dashboard](docs/evaluation-readiness.md) before requesting review.
 
-The transactions page also includes a contributor-ready fixture gallery for transaction review, progress, and receipt states. See [docs/transaction-components.md](docs/transaction-components.md) for the shared component contract and fixture expectations. For compliance-safe wording conventions across all surfaces, see the [Compliance-Safe Wording Guidance](docs/compliance-safe-wording.md).
+The transactions page also includes a contributor-ready fixture gallery for transaction review, progress, and receipt states. See [docs/transaction-components.md](docs/transaction-components.md) for the shared component contract, fixture expectations, and compliance-safe wording guidance.
 
 ## Evaluation Readiness
 Before submitting a pull request for maintainer review or payment evaluation, review the [Evaluation Readiness Dashboard](docs/evaluation-readiness.md). It links testing standards, CI status expectations, PR evidence templates, acceptance criteria mapping, and conduct guidelines into a single scorecard.
