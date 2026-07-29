@@ -179,3 +179,4 @@ A: Only if you provide a justification in the corresponding section. Unchecked i
 - [Aegis SDK Testing Standard](./sdk-testing-standard.md) — Minimum test coverage expected for compliance, KYC, RWA metadata, investor reads, admin actions, and transaction receipts
 - [Architecture Overview](./architecture.md) — Component hierarchy and state management
 - [Frontend Developer Guide](./frontend-guide.md) — Styling conventions and page creation
+- [Acceptance Criteria Audit](./acceptance-criteria-audit.md) — Process for mapping each criterion to verifiable evidence

@@ -86,7 +86,7 @@ A pull request description must not use default text or unverified checkmarks. T
 
 ## 6. Acceptance Criteria Mapping Protocol
 
-Submitting a PR with unaddressed acceptance criteria or vague claims of completeness is a primary cause of review failure. Refer to [Low-Effort PR Examples](low-effort-pr-examples.md) to understand common anti-patterns.
+Submitting a PR with unaddressed acceptance criteria or vague claims of completeness is a primary cause of review failure. Follow the [Acceptance Criteria Audit](acceptance-criteria-audit.md) for the full mapping process. Refer to [Low-Effort PR Examples](low-effort-pr-examples.md) to understand common anti-patterns.
 
 ### Acceptance Criteria Mapping Template
 
