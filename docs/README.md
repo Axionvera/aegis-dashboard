@@ -38,6 +38,7 @@ Reference material for contributors implementing new functionality.
 | [investor-transfer-eligibility.md](investor-transfer-eligibility.md) | Eligibility checks before transfer submission |
 | [admin-role-management-design.md](admin-role-management-design.md) | Admin role resolution, whitelist heuristic, mock admin address |
 | [compliance-reviewer-workflow.md](compliance-reviewer-workflow.md) | Compliance operator workflow for reviewing investor eligibility |
+| [compliance-safe-wording.md](compliance-safe-wording.md) | Compliance-safe wording guidance, shared disclaimer helper, and reviewer checklist |
 | [feature-flags.md](feature-flags.md) | Feature flag hook, panel location, flag naming conventions |
 | [form-idempotency.md](form-idempotency.md) | Content-derived idempotency key, double-submit guard, TTL |
 | [sdk-error-recovery.md](sdk-error-recovery.md) | Error categories, retry policy, compliance wording |
