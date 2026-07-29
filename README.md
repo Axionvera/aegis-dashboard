@@ -44,13 +44,14 @@ Key resources for contributors:
 - [RWA Asset Lifecycle Status](docs/asset-lifecycle-status.md) — Lifecycle state machine, transition validation, and status UI for already-minted RWA assets
 - [Bulk Compliance Review](docs/bulk-compliance-review.md) — Bulk compliance review table with action confirmation modal
 - [Compliance Status Panel](docs/compliance-status-panel.md) — Address-level compliance status for investor and admin views (Issue #175)
+- [Transaction Review Modal](docs/transaction-review-modal.md) — Pre-signature review modal, operation summary mapper, and risk notes (Issue #177)
 - [Environment Mismatch Blocking Screen](docs/environment-mismatch-blocking.md) — Full-page blocking screen when the wallet network does not match the dashboard target network
 - [Investor Onboarding Eligibility](docs/investor-onboarding-eligibility.md) — Investor onboarding eligibility page, evaluation precedence, and SDK mapping
 - [Performance Budget Review](docs/performance-budget-review.md) — Typed budget threshold evaluation, edge cases, and reviewer checklist
 
 > **Note:** All pull requests must follow the [PR Evidence Checklist](docs/pr-evidence-checklist.md) and be audited against the [Evaluation Readiness Dashboard](docs/evaluation-readiness.md) before requesting review.
 
-The transactions page also includes a contributor-ready fixture gallery for transaction review, progress, and receipt states. See [docs/transaction-components.md](docs/transaction-components.md) for the shared component contract, fixture expectations, and compliance-safe wording guidance.
+The transactions page also includes a contributor-ready fixture gallery for transaction review, progress, and receipt states. See [docs/transaction-components.md](docs/transaction-components.md) for the shared component contract and [docs/transaction-review-modal.md](docs/transaction-review-modal.md) for review-before-sign behaviour, risk notes, and the operation summary mapper.
 
 ## Evaluation Readiness
 Before submitting a pull request for maintainer review or payment evaluation, review the [Evaluation Readiness Dashboard](docs/evaluation-readiness.md). It links testing standards, CI status expectations, PR evidence templates, acceptance criteria mapping, and conduct guidelines into a single scorecard.

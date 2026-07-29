@@ -9,6 +9,7 @@ describe('TransactionFixtureGallery', () => {
       screen.getByRole('heading', { name: /component fixture gallery/i }),
     ).toBeInTheDocument();
     expect(screen.getByText(/review transfer before signing/i)).toBeInTheDocument();
+    expect(screen.getByText(/review whitelist update/i)).toBeInTheDocument();
     expect(screen.getByText(/waiting for signature/i)).toBeInTheDocument();
     // expect(screen.getByText(/submitting to the network/i)).toBeInTheDocument();
     expect(screen.getAllByText(/submitting to the network/i),).toHaveLength(2);

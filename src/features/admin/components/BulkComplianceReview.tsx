@@ -28,6 +28,7 @@ import { useTableFilters } from "@/hooks/useTableFilters";
 import type { SortState } from "@/hooks/useTableFilters";
 import ComplianceUpdateModal, { ACTION_LABELS } from "./ComplianceUpdateModal";
 import type { TransactionResult } from "@/components/transactions/types";
+import { useWallet } from "@/hooks/useWallet";
 
 const STATUS_BADGE: Record<ComplianceStatus, string> = {
   pending: "bg-amber-100 text-amber-800",
@@ -89,6 +90,7 @@ export default function BulkComplianceReview({
   canAct,
   onAction,
 }: BulkComplianceReviewProps) {
+  const { network } = useWallet();
   const [state, setState] = useState<ComplianceReviewState>(() =>
     recomputeSelection(initialSubjects.map((s) => ({ ...s, selected: false }))),
   );
@@ -266,6 +268,7 @@ export default function BulkComplianceReview({
         <ComplianceUpdateModal
           subjects={state.subjects.filter((s) => s.selected)}
           action={pendingAction}
+          network={network ?? undefined}
           onConfirm={() => handleConfirmAction(pendingAction)}
           onClose={() => setPendingAction(null)}
         />

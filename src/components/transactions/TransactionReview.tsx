@@ -1,4 +1,4 @@
-import { ShieldCheck } from 'lucide-react';
+import { AlertTriangle, ShieldCheck } from 'lucide-react';
 import { TRANSACTION_ACTION_LABELS, type TransactionDetails } from './types';
 
 interface TransactionReviewProps {
@@ -19,6 +19,8 @@ export default function TransactionReview({
   onCancel,
   isSubmitting = false,
 }: TransactionReviewProps) {
+  const riskNotes = details.riskNotes ?? [];
+
   return (
     <div className="space-y-5">
       <header>
@@ -34,7 +36,7 @@ export default function TransactionReview({
       <dl className="divide-y divide-slate-100 rounded-lg border border-slate-200">
         {details.rows.map((row) => (
           <div
-            key={row.label}
+            key={`${row.label}-${row.value}`}
             className="flex flex-col gap-1 px-3 py-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4"
           >
             <dt className="text-sm text-slate-500">{row.label}</dt>
@@ -48,6 +50,29 @@ export default function TransactionReview({
           </div>
         ))}
       </dl>
+
+      {details.expectedResult && (
+        <div className="rounded-lg border border-emerald-100 bg-emerald-50 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800">
+            Expected result
+          </p>
+          <p className="mt-1 text-sm text-emerald-900">{details.expectedResult}</p>
+        </div>
+      )}
+
+      {riskNotes.length > 0 && (
+        <div className="rounded-lg border border-amber-100 bg-amber-50 p-3">
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-amber-800">
+            <AlertTriangle size={14} aria-hidden="true" />
+            Risk notes
+          </p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-amber-900">
+            {riskNotes.map((note) => (
+              <li key={note}>{note}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <p className="flex items-start gap-2 rounded-lg bg-slate-50 p-3 text-xs text-slate-600">
         <ShieldCheck size={16} className="mt-px shrink-0 text-aegis-accent" />

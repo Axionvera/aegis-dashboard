@@ -27,3 +27,7 @@ The UI is strictly separated into pages and domain-specific features:
   - address-level compliance status panel
   - SDK raw-record mapping and safe explanatory copy
   - fixtures covering approved / blocked / pending / revoked / unknown / unavailable
+- `src/components/transactions/` provides the shared review-before-sign UI:
+  - `TransactionReview` / `TransactionReviewModal`
+  - `operationSummary` mapper for transfer, mint, whitelist, and compliance updates
+  - progress / receipt / status mapping used by all sensitive signing flows

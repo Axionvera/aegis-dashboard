@@ -1,4 +1,10 @@
 import type { TransactionDetails, TransactionResult } from './types';
+import {
+  buildComplianceUpdateSummary,
+  buildMintSummary,
+  buildTransferSummary,
+  buildWhitelistSummary,
+} from './operationSummary';
 
 interface TransactionFixtureGalleryEntry {
   id: string;
@@ -17,53 +23,41 @@ interface TransactionFixtureGalleryEntry {
  * mocked `useAegis` hook never produces on its own.
  */
 
-export const transferDetailsFixture: TransactionDetails = {
-  action: 'transfer',
-  title: 'Transfer AEGIS',
-  description: 'Review the details before signing this transfer.',
+export const transferDetailsFixture: TransactionDetails = buildTransferSummary({
+  assetTicker: 'AEGIS',
+  amount: 250,
+  recipient: 'GBRPYHIL2CI3FNQ4BXLFMNDLFJUNPU2HY3ZMFSHONUCEOASW7QC7OX2H',
   network: 'TESTNET',
-  rows: [
-    { label: 'Asset', value: 'AEGIS' },
-    { label: 'Amount', value: '250.00 AEGIS' },
-    {
-      label: 'Recipient',
-      value: 'GBRPYHIL2CI3FNQ4BXLFMNDLFJUNPU2HY3ZMFSHONUCEOASW7QC7OX2H',
-      mono: true,
-    },
-    { label: 'Network', value: 'TESTNET' },
-  ],
-};
+});
 
-export const mintDetailsFixture: TransactionDetails = {
-  action: 'mint',
-  title: 'Mint AEGIS',
-  description: 'This issues new supply to the target address.',
+export const mintDetailsFixture: TransactionDetails = buildMintSummary({
+  assetTicker: 'AEGIS',
+  amount: 1000,
+  recipient: 'GA6HCMBLTZS5VYYBCATRBRZ3BZJMAFUDKB6YSQVWPFPRLE7MRCQ4BQ7A',
   network: 'TESTNET',
-  rows: [
-    { label: 'Amount', value: '1,000.00 AEGIS' },
-    {
-      label: 'Target address',
-      value: 'GA6HCMBLTZS5VYYBCATRBRZ3BZJMAFUDKB6YSQVWPFPRLE7MRCQ4BQ7A',
-      mono: true,
-    },
-    { label: 'Network', value: 'TESTNET' },
-  ],
-};
+});
 
-export const complianceDetailsFixture: TransactionDetails = {
-  action: 'compliance-update',
-  title: 'Update compliance status',
-  description: 'Marks the investor as KYC whitelisted on-chain.',
+export const whitelistDetailsFixture: TransactionDetails = buildWhitelistSummary({
+  action: 'add',
+  address: 'GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOKY3B2WSQHG4W37',
+  note: 'KYC case ref-001',
   network: 'TESTNET',
-  rows: [
+});
+
+export const complianceDetailsFixture: TransactionDetails = buildComplianceUpdateSummary({
+  action: 'approve',
+  actionLabel: 'Approve',
+  network: 'TESTNET',
+  subjects: [
     {
-      label: 'Investor',
-      value: 'GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOKY3B2WSQHG4W37',
-      mono: true,
+      id: 'GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOKY3B2WSQHG4W37',
+      status: 'pending',
+      severity: 'medium',
+      checks: [],
+      selected: true,
     },
-    { label: 'New status', value: 'Whitelisted' },
   ],
-};
+});
 
 export const successResultFixture: TransactionResult = {
   status: 'success',
@@ -99,6 +93,13 @@ export const transactionResultFixtures: TransactionResult[] = [
   unknownResultFixture,
 ];
 
+export const transactionReviewFixtures: TransactionDetails[] = [
+  transferDetailsFixture,
+  mintDetailsFixture,
+  whitelistDetailsFixture,
+  complianceDetailsFixture,
+];
+
 export const transactionFixtureGalleryEntries: TransactionFixtureGalleryEntry[] = [
   {
     id: 'review-transfer',
@@ -113,6 +114,13 @@ export const transactionFixtureGalleryEntries: TransactionFixtureGalleryEntry[] 
     title: 'Review mint request',
     description: 'Preview the confirmation copy for an issuance workflow.',
     details: mintDetailsFixture,
+  },
+  {
+    id: 'review-whitelist',
+    kind: 'review',
+    title: 'Review whitelist update',
+    description: 'Preview the confirmation screen for a whitelist add action.',
+    details: whitelistDetailsFixture,
   },
   {
     id: 'review-compliance',
