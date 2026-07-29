@@ -20,6 +20,7 @@ This page is the single entry point for every requirement a contributor must sat
 | Acceptance Criteria Audit | [Acceptance Criteria Audit](acceptance-criteria-audit.md) | How to map each criterion to evidence and verify completeness |
 | Self-Assessment | [Contributor Self-Assessment Form](self-assessment-checklist.md) | Pre-submit self-assessment form for contributors |
 | Reviewer Checklist | [Reviewer Quality Checklist](reviewer-checklist.md) | What reviewers check before approving a PR |
+| Reviewer Evidence | [PR Reviewer Evidence Checklist](pr-reviewer-evidence-checklist.md) | Structured reference for reviewers to verify PR evidence completeness and quality |
 | Communication & Conduct | [Payment-Period Conduct](payment-period-conduct.md) | Conduct expectations during payment periods |
 | PR Evidence Structure | [PR Evidence Checklist](pr-evidence-checklist.md) | How to structure evidence in the PR description |
 | Low-Effort PR Examples | [Low-Effort PR Examples](low-effort-pr-examples.md) | Examples of weak vs. strong PRs |
@@ -67,6 +68,7 @@ Structure your PR description with all required evidence and map every acceptanc
 
 - [Contributing Guide](../CONTRIBUTING.md) — Branch naming, component rules, and review process
 - [PR Template](../.github/pull_request_template.md) — Auto-loaded when opening a new PR
+- [PR Reviewer Evidence Checklist](pr-reviewer-evidence-checklist.md) — Structured evidence verification checklist for reviewers
 - [Architecture Overview](architecture.md) — Component hierarchy and state management
 - [Frontend Developer Guide](frontend-guide.md) — Styling conventions and page creation
 - [Route Access](route-access.md) — Role-aware route guards and page mapping
