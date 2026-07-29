@@ -16,6 +16,7 @@
 
 import type { IAegisProvider, PhaseListener } from './IAegisProvider';
 import type { PortfolioReadModel } from '@/lib/aegis/types';
+import type { WhitelistEntry } from '@/lib/whitelist';
 import type { RawTransactionOutcome } from '@/components/transactions/types';
 import * as aegisClient from '@/lib/aegis/client';
 
@@ -28,6 +29,26 @@ export class LiveAegisProvider implements IAegisProvider {
 
   checkWhitelist(address: string): Promise<boolean> {
     return aegisClient.checkWhitelist(address);
+  }
+
+  listWhitelist(): Promise<WhitelistEntry[]> {
+    return aegisClient.listWhitelist();
+  }
+
+  addToWhitelist(
+    address: string,
+    actor: string,
+    onPhase?: PhaseListener,
+  ): Promise<RawTransactionOutcome> {
+    return aegisClient.addToWhitelist(address, actor, onPhase);
+  }
+
+  removeFromWhitelist(
+    address: string,
+    actor: string,
+    onPhase?: PhaseListener,
+  ): Promise<RawTransactionOutcome> {
+    return aegisClient.removeFromWhitelist(address, actor, onPhase);
   }
 
   transfer(
