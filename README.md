@@ -44,6 +44,9 @@ The transactions page also includes a contributor-ready fixture gallery for tran
 ## Evaluation Readiness
 Before submitting a pull request for maintainer review or payment evaluation, review the [Evaluation Readiness Dashboard](docs/evaluation-readiness.md). It links testing standards, CI status expectations, PR evidence templates, acceptance criteria mapping, and conduct guidelines into a single scorecard.
 
+## Payment-Period Conduct
+During GrantFox evaluation windows, all contributors must follow the [Payment-Period Conduct Policy](docs/payment-period-conduct.md). Repeated spam, payout-related complaints, or harassment in community channels will not be tolerated. Self-review your PR thoroughly before raising payment concerns.
+
 ## Route Access
 Role-aware route guards protect admin, issuer, investor, and read-only sections. See `docs/route-access.md` for route mapping, guard states, SDK assumptions, and mock wallet fixtures.
 
