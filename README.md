@@ -30,6 +30,7 @@ Key resources for contributors:
 - [Evaluation Readiness Dashboard](docs/evaluation-readiness.md) — Central summary page for testing standards, CI workflow, PR evidence, acceptance criteria mapping, self-review, and payment guidance
 - [Contributing Guide](CONTRIBUTING.md) — Branch naming, component rules, PR evidence checklist, and review process
 - [Evaluation-Readiness Index](docs/evaluation-readiness-index.md) — Central page linking every requirement for GrantFox evaluation: payment expectations, testing standards, CI guidance, acceptance criteria audit, self-assessment, and reviewer checklist
+- [Issue Approval Readiness Checklist](docs/issue-approval-readiness-checklist.md) — Pre-evaluation checklist for contributors and reviewers to verify implementation completeness, testing, CI, acceptance criteria, documentation, and known limitations before GrantFox evaluation
 - [PR Evidence Checklist](docs/pr-evidence-checklist.md) — Detailed requirements for pull request evidence and documentation
 - [Test-First Contribution Guide](docs/test-first-contribution-guide.md) — How to write tests before code, with area-specific patterns and examples
 - [Aegis Dashboard Minimum Testing Standard](docs/testing-standard.md) — Minimum test coverage for admin workflows, investor views, compliance screens, asset registration, minting, wallet connection, and diagnostics

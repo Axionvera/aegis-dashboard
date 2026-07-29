@@ -18,6 +18,8 @@ This page is the single entry point for every requirement a contributor must sat
 | Testing Evidence | [Testing Evidence Requirement](testing-evidence-requirement.md) | What evidence each PR must include (tests, screenshots, commands run) |
 | CI Guidance | [CI Guidance](ci-guidance.md) | CI pipeline steps, running checks locally, common failures and fixes |
 | Acceptance Criteria Audit | [Acceptance Criteria Audit](acceptance-criteria-audit.md) | How to map each criterion to evidence and verify completeness |
+| Self-Assessment | [Self-Assessment Checklist](self-assessment-checklist.md) | Pre-submit review checklist for contributors |
+| Reviewer Checklist | [Reviewer Quality Checklist](reviewer-checklist.md) | What reviewers check before approving a PR |
 | Self-Assessment | [Contributor Self-Assessment Form](self-assessment-checklist.md) | Pre-submit self-assessment form for contributors |
 | Reviewer Checklist | [Reviewer Quality Checklist](reviewer-checklist.md) | What reviewers check before approving a PR |
 | Reviewer Evidence | [PR Reviewer Evidence Checklist](pr-reviewer-evidence-checklist.md) | Structured reference for reviewers to verify PR evidence completeness and quality |
@@ -46,6 +48,10 @@ Ensure your change meets the minimum test coverage for the affected areas.
 
 Run `npm run verify` (or the individual commands) to confirm your branch is green.
 
+### Step 4: Complete the Self-Assessment
+→ [Self-Assessment Checklist](self-assessment-checklist.md)
+
+Work through every item on the checklist. Do not skip this step.
 ### Step 4: Complete the Self-Assessment Form
 → [Contributor Self-Assessment Form](self-assessment-checklist.md)
 
