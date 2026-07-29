@@ -85,7 +85,8 @@ for the area you are working in:
 ## Pull Request Requirements
 
 Every PR must satisfy the checklist in `.github/pull_request_template.md`, which
-renders automatically when you open a new PR. The short version:
+renders automatically when you open a new PR. Before opening, complete the
+[Contributor Self-Assessment Form](docs/self-assessment-checklist.md). The short version:
 
 - **UI changes**: attach before/after screenshots at every affected viewport width
 - **Logic changes**: add or update automated tests; paste the `npm test` output
