@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { getAegisProvider } from '@/lib/sdk';
 import type { PortfolioReadModel } from '@/lib/aegis/types';
+import type { WhitelistEntry } from '@/lib/whitelist';
 import type {
   RawTransactionOutcome,
   TransactionPhase,
@@ -66,6 +67,67 @@ export const useAegis = () => {
           : 'Recipient failed compliance checks',
       });
       return isCompliant;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const listWhitelist = async (): Promise<WhitelistEntry[]> => {
+    setIsLoading(true);
+    try {
+      return await getAegisProvider().listWhitelist();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const addToWhitelist = async (
+    target: string,
+    onPhase?: PhaseListener,
+  ): Promise<RawTransactionOutcome> => {
+    setIsLoading(true);
+    try {
+      const outcome = await getAegisProvider().addToWhitelist(target, actor, onPhase);
+      const txHash = outcome.hash ?? outcome.txHash ?? `tx_whitelist_add_${Date.now()}`;
+
+      addRecord({
+        kind: 'sdk_receipt',
+        txHash,
+        successful: mapOutcomeSuccessful(outcome),
+        signer: actor,
+        recipient: target,
+        createdAt: new Date().toISOString(),
+        action: 'compliance_update',
+        notes: 'Admin added address to KYC whitelist',
+      });
+
+      return outcome;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const removeFromWhitelist = async (
+    target: string,
+    onPhase?: PhaseListener,
+  ): Promise<RawTransactionOutcome> => {
+    setIsLoading(true);
+    try {
+      const outcome = await getAegisProvider().removeFromWhitelist(target, actor, onPhase);
+      const txHash = outcome.hash ?? outcome.txHash ?? `tx_whitelist_remove_${Date.now()}`;
+
+      addRecord({
+        kind: 'sdk_receipt',
+        txHash,
+        successful: mapOutcomeSuccessful(outcome),
+        signer: actor,
+        recipient: target,
+        createdAt: new Date().toISOString(),
+        action: 'compliance_update',
+        notes: 'Admin removed address from KYC whitelist',
+      });
+
+      return outcome;
     } finally {
       setIsLoading(false);
     }
@@ -144,6 +206,9 @@ export const useAegis = () => {
 
   return {
     checkWhitelist,
+    listWhitelist,
+    addToWhitelist,
+    removeFromWhitelist,
     transfer,
     mint,
     getPortfolio,

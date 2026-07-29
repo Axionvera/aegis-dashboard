@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import AdminPanel from '@/features/admin/components/AdminPanel';
 import FeatureFlagsPanel from '@/features/admin/components/FeatureFlagsPanel';
+import WhitelistManager from '@/features/compliance/components/WhitelistManager';
 import RouteGuard from '@/components/RouteGuard';
 
 export default function Admin() {
@@ -14,6 +15,8 @@ export default function Admin() {
           <h1 className="text-3xl font-bold text-slate-900 mb-8">Protocol Administration</h1>
           <AdminPanel />
         </div>
+
+        <WhitelistManager />
 
         <FeatureFlagsPanel />
       </div>

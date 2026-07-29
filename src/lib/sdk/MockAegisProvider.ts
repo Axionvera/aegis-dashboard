@@ -19,6 +19,7 @@
 
 import type { IAegisProvider, PhaseListener } from './IAegisProvider';
 import type { PortfolioReadModel } from '@/lib/aegis/types';
+import type { WhitelistEntry } from '@/lib/whitelist';
 import type { RawTransactionOutcome } from '@/components/transactions/types';
 import type { BudgetReviewResult } from '@/lib/performanceBudget';
 import { mockPortfolioFixture } from '@/fixtures/portfolio';
@@ -61,6 +62,15 @@ export class MockAegisProvider implements IAegisProvider {
   /** Visible label used by the DiagnosticsPanel and the mock banner. */
   readonly providerName = 'MockAegisProvider';
 
+  /**
+   * In-memory copy of the whitelist fixture, mutated by add/remove calls so
+   * the admin dashboard sees its own changes reflected within a session.
+   * Resets on page reload — this is a mock, not persistence.
+   */
+  private whitelist: WhitelistEntry[] = sampleWhitelistEntries.map((entry) => ({
+    ...entry,
+  }));
+
   async getPortfolio(investorAddress: string): Promise<PortfolioReadModel> {
     if (!investorAddress) {
       throw new Error('[MOCK] An investor address is required to load a portfolio.');
@@ -78,6 +88,59 @@ export class MockAegisProvider implements IAegisProvider {
     // Mimic the real client's heuristic: Stellar G-addresses above a minimum
     // length are considered whitelisted in the mock.
     return address.startsWith('G') && address.length > 50;
+  }
+
+  async listWhitelist(): Promise<WhitelistEntry[]> {
+    await wait(MOCK_LATENCY_MS);
+    // Return copies so callers can't mutate our internal state directly.
+    return this.whitelist.map((entry) => ({ ...entry }));
+  }
+
+  async addToWhitelist(
+    address: string,
+    actor: string,
+    onPhase?: PhaseListener,
+  ): Promise<RawTransactionOutcome> {
+    if (!address) {
+      throw new Error('[MOCK] An address is required to add to the whitelist.');
+    }
+    await simulateSubmission(onPhase);
+
+    const now = new Date().toISOString();
+    const existing = this.whitelist.find((entry) => entry.address === address);
+    if (existing) {
+      existing.status = 'whitelisted';
+      existing.updatedBy = actor;
+      existing.updatedAt = now;
+    } else {
+      this.whitelist = [
+        { address, status: 'whitelisted', updatedBy: actor, updatedAt: now },
+        ...this.whitelist,
+      ];
+    }
+
+    return { status: 'SUCCESS', hash: `mock_tx_hash_whitelist_add_${Date.now()}` };
+  }
+
+  async removeFromWhitelist(
+    address: string,
+    actor: string,
+    onPhase?: PhaseListener,
+  ): Promise<RawTransactionOutcome> {
+    if (!address) {
+      throw new Error('[MOCK] An address is required to remove from the whitelist.');
+    }
+    await simulateSubmission(onPhase);
+
+    const now = new Date().toISOString();
+    const existing = this.whitelist.find((entry) => entry.address === address);
+    if (existing) {
+      existing.status = 'revoked';
+      existing.updatedBy = actor;
+      existing.updatedAt = now;
+    }
+
+    return { status: 'SUCCESS', hash: `mock_tx_hash_whitelist_remove_${Date.now()}` };
   }
 
   async transfer(
