@@ -65,6 +65,7 @@ All fixture files live in `src/fixtures/`. They are imported only by
 | `transactions.ts` | Re-exports the canonical transaction history fixtures from `src/features/transactions/fixtures.ts` |
 | `diagnostics.ts` | Mock diagnostics report with `[MOCK]` labels |
 | `index.ts` | Barrel that re-exports all of the above |
+| `flows.ts` | Named end-to-end investor journeys that link the files above together by address/asset — see [mock-flow-fixtures.md](mock-flow-fixtures.md) |
 
 To add or change fixture data, edit the relevant file. Changes take effect
 on the next hot reload — no server restart required.
