@@ -7,13 +7,14 @@ interface WalletState {
   isConnecting: boolean;
   connect: () => Promise<void>;
   disconnect: () => void;
+  errorConnecting: boolean;
 }
 
 export const useWallet = create<WalletState>((set) => ({
   address: null,
   network: null,
   isConnecting: false,
-
+  errorConnecting: false,
   connect: async () => {
     set({ isConnecting: true });
     try {
@@ -26,18 +27,20 @@ export const useWallet = create<WalletState>((set) => ({
           address: access,
           network: networkDetails,
           isConnecting: false,
+          errorConnecting: false,
         });
       } else {
-        alert("Please install Freighter wallet!");
-        set({ isConnecting: false });
+        // alert("Please install Freighter wallet!");
+        // We use the error state to display a message in the UI instead of using alert
+        set({ isConnecting: false, errorConnecting: true });
       }
     } catch (error) {
       console.error("Wallet connection failed", error);
-      set({ isConnecting: false });
+      set({ isConnecting: false, errorConnecting: true });
     }
   },
 
   disconnect: () => {
-    set({ address: null, network: null });
+    set({ address: null, network: null, errorConnecting: false });
   },
 }));

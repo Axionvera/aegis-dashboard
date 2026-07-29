@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { useAegis } from '@/hooks/useAegis';
+import { useState } from "react";
+import { useAegis } from "@/hooks/useAegis";
 
 export default function AdminPanel() {
-  const { mint, checkWhitelist, isLoading } = useAegis();
-  const [address, setAddress] = useState('');
+  // The success state should be used to display a success message/modal after minting or whitelisting instead of an alert. This is a better UX practice.
+  const { mint, checkWhitelist, isLoading, error, success } = useAegis();
+  const [address, setAddress] = useState("");
 
   const handleWhitelist = async () => {
     // In reality, this would call a contract.whitelist(address) method
@@ -11,8 +12,8 @@ export default function AdminPanel() {
   };
 
   const handleMint = async () => {
-    await mint(address, 1000);
-    alert(`Minted 1000 tokens to: ${address}`);
+      await mint(address, 1000);
+      alert(`Minted 1000 tokens to: ${address}`);
   };
 
   return (
@@ -21,7 +22,9 @@ export default function AdminPanel() {
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Target Address</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            Target Address
+          </label>
           <input
             type="text"
             className="w-full border border-slate-300 rounded p-2 focus:ring-2 focus:ring-aegis-brand outline-none"
@@ -44,9 +47,13 @@ export default function AdminPanel() {
             disabled={isLoading || !address}
             className="flex-1 bg-aegis-dark hover:bg-slate-800 text-white py-2 rounded font-medium transition disabled:opacity-50"
           >
-            Mint Asset
+            {isLoading ? "Minting..." : "Mint Asset"}
           </button>
         </div>
+
+        {error && (
+          <p className="text-red-500 text-center text-sm mt-2">{error}</p>
+        )}
       </div>
     </div>
   );

@@ -27,6 +27,7 @@ interface MobileNavProps {
   isConnecting: boolean;
   onConnectWallet: () => void;
   onClose: () => void;
+  errorConnecting: boolean;
 }
 
 export default function MobileNav({
@@ -37,6 +38,7 @@ export default function MobileNav({
   isConnecting,
   onConnectWallet,
   onClose,
+  errorConnecting,
 }: MobileNavProps) {
   return (
     <div
@@ -93,7 +95,7 @@ export default function MobileNav({
               </button>
             </div>
           ) : (
-            <div className="flex justify-center">
+            <div className="flex flex-col items-center">
               <button
                 type="button"
                 onClick={onConnectWallet}
@@ -101,6 +103,11 @@ export default function MobileNav({
               >
                 {isConnecting ? "Connecting..." : "Connect Wallet"}
               </button>
+              {errorConnecting && !isConnecting && (
+                <p className="text-red-500 text-sm mt-2">
+                  Error connecting to wallet. Please try again.
+                </p>
+              )}
             </div>
           )}
         </div>

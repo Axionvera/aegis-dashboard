@@ -6,7 +6,14 @@ import MobileNav from "./MobileNav";
 import { useState } from "react";
 
 export default function Navbar() {
-  const { address, network, isConnecting, connect, disconnect } = useWallet();
+  const {
+    address,
+    network,
+    isConnecting,
+    connect,
+    disconnect,
+    errorConnecting,
+  } = useWallet();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
@@ -43,16 +50,26 @@ export default function Navbar() {
             </button>
           </div>
         ) : (
-          <button
-            onClick={connect}
-            disabled={isConnecting}
-            className="bg-aegis-brand hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium text-sm transition disabled:opacity-50"
-          >
-            {isConnecting ? "Connecting..." : "Connect Wallet"}
-          </button>
+          <div className="flex flex-col items-center">
+            <button
+              onClick={connect}
+              disabled={isConnecting}
+              className="bg-aegis-brand hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium text-sm transition disabled:opacity-50"
+            >
+              {isConnecting ? "Connecting..." : "Connect Wallet"}
+            </button>
+            {errorConnecting && !isConnecting && (
+              <p className="text-red-500 text-sm mt-2">
+                Error connecting to wallet. Please try again.
+              </p>
+            )}
+          </div>
         )}
       </div>
-      <Menu className="md:hidden cursor-pointer" onClick={() => setShowMobileMenu(true)} />
+      <Menu
+        className="md:hidden cursor-pointer"
+        onClick={() => setShowMobileMenu(true)}
+      />
       <MobileNav
         isConnected={!!address}
         disconnect={disconnect}
@@ -61,6 +78,7 @@ export default function Navbar() {
         onClose={() => setShowMobileMenu(false)}
         isConnecting={isConnecting}
         isMobileMenuOpen={showMobileMenu}
+        errorConnecting={errorConnecting}
       />
     </nav>
   );
