@@ -105,6 +105,7 @@ export const useAegis = () => {
     to: string,
     amount: number,
     onPhase?: PhaseListener,
+    assetTicker?: string,
   ): Promise<RawTransactionOutcome> => {
     setIsLoading(true);
     try {
@@ -119,6 +120,8 @@ export const useAegis = () => {
         recipient: to,
         createdAt: new Date().toISOString(),
         action: 'mint',
+        amount,
+        assetTicker,
         notes: 'Admin mint action from dashboard',
       });
 
