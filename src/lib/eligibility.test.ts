@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { evaluateEligibility, evaluateBothDirections } from './eligibility';
+import { evaluateEligibility, evaluateBothDirections, evaluateOnboardingEligibility } from './eligibility';
 import {
   FIXTURE_COMPLIANT_SEND,
   FIXTURE_COMPLIANT_RECEIVE,
@@ -9,6 +9,10 @@ import {
   FIXTURE_UNAVAILABLE_PAUSED,
   FIXTURE_UNKNOWN_SERVICE_DOWN,
   FIXTURE_UNKNOWN_PARTIAL,
+  ONBOARDING_COMPLIANT,
+  ONBOARDING_BLOCKED_NETWORK,
+  ONBOARDING_BLOCKED_KYC,
+  ONBOARDING_UNKNOWN_SERVICE_DOWN,
 } from './__fixtures__/eligibility';
 
 describe('evaluateEligibility — compliant', () => {
@@ -132,6 +136,122 @@ describe('fixtures coverage', () => {
     expect(states.has('compliant')).toBe(true);
     expect(states.has('blocked')).toBe(true);
     expect(states.has('unavailable')).toBe(true);
+    expect(states.has('unknown')).toBe(true);
+  });
+});
+
+describe('evaluateOnboardingEligibility — compliant', () => {
+  it('returns compliant when all checks pass', () => {
+    const r = evaluateOnboardingEligibility({
+      walletOnSupportedNetwork: true,
+      kycCompleted: true,
+      alreadyOnboarded: false,
+      serviceAvailable: true,
+    });
+    expect(r.state).toBe('compliant');
+    expect(r.title).toBe('Eligible to onboard');
+  });
+
+  it('returns compliant with "Already onboarded" when already onboarded', () => {
+    const r = evaluateOnboardingEligibility({
+      walletOnSupportedNetwork: true,
+      kycCompleted: true,
+      alreadyOnboarded: true,
+      serviceAvailable: true,
+    });
+    expect(r.state).toBe('compliant');
+    expect(r.title).toBe('Already onboarded');
+    expect(r.hint).toMatch(/portfolio/i);
+  });
+});
+
+describe('evaluateOnboardingEligibility — blocked', () => {
+  it('blocks when wallet is on unsupported network', () => {
+    const r = evaluateOnboardingEligibility({
+      walletOnSupportedNetwork: false,
+      kycCompleted: true,
+      alreadyOnboarded: false,
+      serviceAvailable: true,
+    });
+    expect(r.state).toBe('blocked');
+    expect(r.message).toMatch(/network/i);
+  });
+
+  it('blocks when KYC is not completed', () => {
+    const r = evaluateOnboardingEligibility({
+      walletOnSupportedNetwork: true,
+      kycCompleted: false,
+      alreadyOnboarded: false,
+      serviceAvailable: true,
+    });
+    expect(r.state).toBe('blocked');
+    expect(r.title).toBe('KYC required');
+  });
+});
+
+describe('evaluateOnboardingEligibility — unknown (no overclaiming)', () => {
+  it('returns unknown when service is unavailable', () => {
+    const r = evaluateOnboardingEligibility({
+      walletOnSupportedNetwork: true,
+      kycCompleted: true,
+      alreadyOnboarded: false,
+      serviceAvailable: false,
+    });
+    expect(r.state).toBe('unknown');
+  });
+
+  it('returns unknown when KYC status is unknown', () => {
+    const r = evaluateOnboardingEligibility({
+      walletOnSupportedNetwork: true,
+      // kycCompleted omitted
+      alreadyOnboarded: false,
+      serviceAvailable: true,
+    });
+    expect(r.state).toBe('unknown');
+  });
+
+  it('unknown copy avoids confirming allow/block', () => {
+    const r = evaluateOnboardingEligibility({
+      walletOnSupportedNetwork: true,
+      kycCompleted: true,
+      alreadyOnboarded: false,
+      serviceAvailable: false,
+    });
+    expect(r.message).toMatch(/not a confirmation|allowed or blocked/i);
+  });
+});
+
+describe('evaluateOnboardingEligibility — precedence', () => {
+  it('service-down wins over everything (fail-closed)', () => {
+    const r = evaluateOnboardingEligibility({
+      walletOnSupportedNetwork: false,
+      kycCompleted: false,
+      alreadyOnboarded: false,
+      serviceAvailable: false,
+    });
+    expect(r.state).toBe('unknown');
+  });
+
+  it('network block beats KYC block', () => {
+    const r = evaluateOnboardingEligibility({
+      walletOnSupportedNetwork: false,
+      kycCompleted: false,
+      alreadyOnboarded: false,
+      serviceAvailable: true,
+    });
+    expect(r.state).toBe('blocked');
+    expect(r.message).toMatch(/network/i);
+  });
+});
+
+describe('onboarding fixture coverage', () => {
+  it('covers all major states across the onboarding fixture set', () => {
+    const states = new Set(
+      [ONBOARDING_COMPLIANT, ONBOARDING_BLOCKED_NETWORK, ONBOARDING_BLOCKED_KYC, ONBOARDING_UNKNOWN_SERVICE_DOWN]
+        .map((f) => evaluateOnboardingEligibility(f).state),
+    );
+    expect(states.has('compliant')).toBe(true);
+    expect(states.has('blocked')).toBe(true);
     expect(states.has('unknown')).toBe(true);
   });
 });
