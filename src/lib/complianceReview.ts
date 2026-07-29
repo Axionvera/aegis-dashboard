@@ -5,10 +5,38 @@
  * engine can be unit-tested without a DOM and reused by both the dashboard
  * UI and any future SDK/dashboard boundary.
  *
- * NOTE: This implements *protocol-level* compliance mechanics only. It is not
- * legal, regulatory, or financial advice, and does not determine whether any
- * specific investor is permitted to hold an RWA token under applicable law.
+ * NOTE: This implements *protocol-level* compliance mechanics only. User-facing
+ * copy derived from this module should use {@link COMPLIANCE_DISCLAIMER} (or
+ * {@link withDisclaimer}) to ensure the mandated "not legal, regulatory, or
+ * financial advice" message is always present.
  */
+
+/**
+ * Canonical disclaimer for any compliance-facing copy in the Aegis ecosystem.
+ * Kept as a single source of truth so all surfaces present the same message.
+ *
+ * This disclaimer must accompany any user-facing text that describes
+ * protocol-level compliance results. It must not be removed, shortened, or
+ * embedded inside copy that implies legal or financial authority.
+ */
+export const COMPLIANCE_DISCLAIMER =
+  "Protocol-level compliance information. Not legal, regulatory, or financial advice.";
+
+/**
+ * Wrap a string with the compliance disclaimer, separated by `separator`.
+ * Returns a single string suitable for rendering in a badge, tooltip, footer,
+ * or accessibility label.
+ *
+ * When `text` is empty, only the disclaimer is returned — callers do not need
+ * to guard against empty input.
+ *
+ * @example
+ * withDisclaimer("Subject is KYC-verified")
+ * // => "Subject is KYC-verified — Protocol-level compliance information. Not legal, regulatory, or financial advice."
+ */
+export function withDisclaimer(text: string, separator = " — "): string {
+  return text ? `${text}${separator}${COMPLIANCE_DISCLAIMER}` : COMPLIANCE_DISCLAIMER;
+}
 
 /** Lifecycle state of a single compliance subject (e.g. an investor address). */
 export type ComplianceStatus =

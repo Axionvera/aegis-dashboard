@@ -9,6 +9,8 @@ import {
   toggleSelection,
   setSelectionAll,
   applyBulkAction,
+  COMPLIANCE_DISCLAIMER,
+  withDisclaimer,
   type ComplianceCheck,
   type ComplianceSubject,
   type ComplianceReviewState,
@@ -164,6 +166,39 @@ describe("applyBulkAction", () => {
     const next = applyBulkAction(s, "approve", [id]);
     expect(next.subjects[3].status).toBe("approved");
     expect(next.selectedCount).toBe(0);
+  });
+});
+
+describe("compliance wording", () => {
+  it("COMPLIANCE_DISCLAIMER contains the mandated wording", () => {
+    expect(COMPLIANCE_DISCLAIMER).toMatch(/not legal, regulatory, or financial advice/i);
+  });
+
+  it("COMPLIANCE_DISCLAIMER includes 'protocol-level'", () => {
+    expect(COMPLIANCE_DISCLAIMER).toMatch(/protocol-level/i);
+  });
+
+  it("withDisclaimer prepends text before the disclaimer", () => {
+    const result = withDisclaimer("Subject is KYC-verified");
+    expect(result).toContain("Subject is KYC-verified");
+    expect(result).toContain(COMPLIANCE_DISCLAIMER);
+  });
+
+  it("withDisclaimer uses custom separator", () => {
+    const result = withDisclaimer("Blocked", " | ");
+    expect(result).toBe(`Blocked | ${COMPLIANCE_DISCLAIMER}`);
+  });
+
+  it("withDisclaimer returns only the disclaimer for empty text", () => {
+    expect(withDisclaimer("")).toBe(COMPLIANCE_DISCLAIMER);
+    expect(withDisclaimer("", " — ")).toBe(COMPLIANCE_DISCLAIMER);
+  });
+
+  it("withDisclaimer composes with itself (caller can wrap already-disclaimed text)", () => {
+    const inner = withDisclaimer("Eligible");
+    const outer = withDisclaimer(inner);
+    expect(outer).toContain("Eligible");
+    expect(outer.includes(COMPLIANCE_DISCLAIMER)).toBe(true);
   });
 });
 

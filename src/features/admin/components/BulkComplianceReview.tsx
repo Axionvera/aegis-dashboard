@@ -14,6 +14,7 @@ import {
   toggleSelection,
   setSelectionAll,
   applyBulkAction,
+  COMPLIANCE_DISCLAIMER,
   type BulkAction,
 } from "@/lib/complianceReview";
 import { EmptyState } from "@/components/states";
@@ -150,7 +151,7 @@ export default function BulkComplianceReview({
         <div>
           <h2 className="text-xl font-bold">Bulk Compliance Review</h2>
           <p className="text-sm text-slate-500 mt-1">
-            Protocol-level compliance triage. Not legal, regulatory, or financial advice.
+            {COMPLIANCE_DISCLAIMER}
           </p>
         </div>
         <div className="flex items-center gap-2">
