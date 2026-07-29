@@ -7,15 +7,15 @@ beforeEach(() => {
 describe('useFeatureFlags', () => {
   it('has the expected default values', () => {
     const { flags } = useFeatureFlags.getState();
-    expect(flags.newMintFlow).toBe(false);
+    expect(flags.newMintFlow).toBe(true);
     expect(flags.complianceBanner).toBe(true);
     expect(flags.darkMode).toBe(false);
   });
 
-  it('toggles a flag from false to true', () => {
+  it('toggles a flag from true to false', () => {
     const { toggleFlag } = useFeatureFlags.getState();
     toggleFlag('newMintFlow');
-    expect(useFeatureFlags.getState().flags.newMintFlow).toBe(true);
+    expect(useFeatureFlags.getState().flags.newMintFlow).toBe(false);
   });
 
   it('toggles a flag back to its original value', () => {
@@ -63,16 +63,16 @@ describe('useFeatureFlags', () => {
     resetFlags();
 
     const { flags } = useFeatureFlags.getState();
-    expect(flags.newMintFlow).toBe(false);
+    expect(flags.newMintFlow).toBe(true);
     expect(flags.darkMode).toBe(false);
   });
 
   it('isEnabled reflects current flag state', () => {
     const { setFlag, isEnabled } = useFeatureFlags.getState();
-    expect(isEnabled('newMintFlow')).toBe(false);
+    expect(isEnabled('newMintFlow')).toBe(true);
 
-    setFlag('newMintFlow', true);
-    expect(useFeatureFlags.getState().isEnabled('newMintFlow')).toBe(true);
+    setFlag('newMintFlow', false);
+    expect(useFeatureFlags.getState().isEnabled('newMintFlow')).toBe(false);
   });
 
   // --- mockMode flag ---

@@ -26,7 +26,7 @@ When opening a GitHub Issue or requesting support in Discord, click **Copy Repor
   "wallet": "GBXY...WXYZ",
   "network": "TESTNET",
   "flags": {
-    "newMintFlow": false,
+    "newMintFlow": true,
     "complianceBanner": true,
     "darkMode": false
   }

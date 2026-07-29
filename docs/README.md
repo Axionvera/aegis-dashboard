@@ -37,6 +37,7 @@ Reference material for contributors implementing new functionality.
 | [investor-dashboard.md](investor-dashboard.md) | Portfolio page data flow, mock portfolio shape, SDK assumptions |
 | [investor-transfer-eligibility.md](investor-transfer-eligibility.md) | Eligibility checks before transfer submission |
 | [investor-transfer-request-flow.md](investor-transfer-request-flow.md) | Request-validation layer: address/amount edge cases, RPC-failure vs. not-whitelisted (Issue #41) |
+| [rwa-asset-minting-workflow.md](rwa-asset-minting-workflow.md) | Admin RWA mint workflow: asset selector, compliance pre-check, review, Freighter signing, receipt (Issue #6) |
 | [asset-lifecycle-status.md](asset-lifecycle-status.md) | RWA asset lifecycle state machine, transition validation, badge/timeline UI (Issue #30) |
 | [investor-onboarding-eligibility.md](investor-onboarding-eligibility.md) | Investor onboarding eligibility page, evaluation precedence, SDK mapping (Issue #28) |
 | [admin-role-management-design.md](admin-role-management-design.md) | Admin role resolution, whitelist heuristic, mock admin address |
