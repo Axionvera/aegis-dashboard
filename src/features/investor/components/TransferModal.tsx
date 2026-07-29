@@ -14,6 +14,7 @@ import type {
   TransactionState,
 } from '@/components/transactions/types';
 import { useIdempotentSubmit } from '@/features/forms/idempotency';
+import { validateTransferRequest, TRANSFER_ERROR_MESSAGES } from '@/lib/transferRequest';
 import {
   buildRecoveryPlan,
   classifySdkError,
@@ -85,17 +86,29 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
 
   const handleReview = async () => {
     setError('');
-    if (!cleanRecipient || !amount) return setError('Fill all fields');
 
-    if (Number.isNaN(numericAmount) || numericAmount <= 0) {
-      return setError('Enter a valid amount.');
-    }
-    if (numericAmount > asset.balance) {
-      return setError('Amount exceeds your available balance.');
+    // Covers missing fields, malformed addresses, self-transfer, non-positive
+    // amounts, balance overflow, and decimal precision beyond what the asset
+    // supports. See src/lib/transferRequest.ts and
+    // docs/investor-transfer-request-flow.md for the full edge-case list.
+    const validation = validateTransferRequest(
+      { recipient, amount },
+      { senderAddress: address, availableBalance: asset.balance, maxDecimals: asset.decimals }
+    );
+
+    if (!validation.valid || validation.parsedAmount === undefined) {
+      return setError(TRANSFER_ERROR_MESSAGES[validation.error!]);
     }
 
-    // Compliance Check
-    const isCompliant = await checkWhitelist(cleanRecipient);
+    // Compliance Check. A thrown error here means the check itself failed
+    // (e.g. RPC unreachable) — distinct from checkWhitelist resolving false,
+    // which means the recipient was checked and is not whitelisted.
+    let isCompliant: boolean;
+    try {
+      isCompliant = await checkWhitelist(cleanRecipient);
+    } catch {
+      return setError('Could not verify compliance status. Please try again.');
+    }
     if (!isCompliant) {
       return setError('Recipient is not KYC whitelisted.');
     }
