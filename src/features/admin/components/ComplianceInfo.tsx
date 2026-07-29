@@ -1,9 +1,8 @@
 import { ComplianceStatus, COMPLIANCE_CONFIG } from '@/types/compliance';
-import ComplianceBadge from '@/features/assets/components/ComplianceBadge';
 
 const ALL_STATUSES: ComplianceStatus[] = [
   'approved',
-  'not-approved',
+  'revoked',
   'pending',
   'blocked',
   'unknown',

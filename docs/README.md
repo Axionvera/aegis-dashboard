@@ -44,6 +44,7 @@ Reference material for contributors implementing new functionality.
 | [audit-log.md](audit-log.md) | Audit log data model, filtering, safe CSV/JSON export, redaction |
 | [compliance-reviewer-workflow.md](compliance-reviewer-workflow.md) | Compliance operator workflow for reviewing investor eligibility |
 | [compliance-safe-wording.md](compliance-safe-wording.md) | Compliance-safe wording guidance, shared disclaimer helper, and reviewer checklist |
+| [compliance-status-panel.md](compliance-status-panel.md) | Address-level compliance status panel for investor/admin views (Issue #175) |
 | [performance-budget-review.md](performance-budget-review.md) | Typed budget threshold evaluation, edge cases, and reviewer checklist |
 | [feature-flags.md](feature-flags.md) | Feature flag hook, panel location, flag naming conventions |
 | [form-idempotency.md](form-idempotency.md) | Content-derived idempotency key, double-submit guard, TTL |

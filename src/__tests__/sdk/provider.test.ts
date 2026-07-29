@@ -116,6 +116,25 @@ describe('MockAegisProvider', () => {
     expect(await provider.checkWhitelist('GABC')).toBe(false);
   });
 
+  it('getAddressCompliance returns fixture status for known addresses', async () => {
+    const record = await provider.getAddressCompliance(
+      'GCFXCOMPREVOKED000000000000000000000000000000000000000',
+    );
+    expect(record.status).toBe('revoked');
+    expect(record.address).toContain('REVOKED');
+  });
+
+  it('getAddressCompliance falls back to approved for long G-addresses', async () => {
+    const address = 'G' + 'A'.repeat(54);
+    const record = await provider.getAddressCompliance(address);
+    expect(record.status).toBe('approved');
+  });
+
+  it('getAddressCompliance returns unknown for unsupported addresses', async () => {
+    const record = await provider.getAddressCompliance('INVALID');
+    expect(record.status).toBe('unknown');
+  });
+
   it('transfer returns SUCCESS for a standard amount', async () => {
     const result = await provider.transfer('GCFXTEST', 100);
     expect(result.status).toBe('SUCCESS');

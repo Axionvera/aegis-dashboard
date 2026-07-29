@@ -6,6 +6,8 @@ import type {
   TransactionPhase,
 } from '@/components/transactions/types';
 import type { BudgetReviewResult } from '@/lib/performanceBudget';
+import type { RawAddressComplianceRecord } from '@/features/compliance/types';
+import { addressComplianceFixtureByAddress } from '@/features/compliance/fixtures';
 import { sampleBudgetResults } from '@/lib/__fixtures__/performanceBudget';
 
 /**
@@ -183,6 +185,40 @@ export async function removeFromWhitelist(
   void actor;
   await simulateSubmission(onPhase);
   return { status: 'SUCCESS', hash: `mock_tx_hash_whitelist_remove_${Date.now()}` };
+}
+
+/**
+ * Mocks address-level compliance registry lookup.
+ * Returns a raw record for the dashboard status panel mapper.
+ */
+export async function getAddressCompliance(
+  address: string,
+): Promise<RawAddressComplianceRecord> {
+  await wait(500);
+
+  const fixture = addressComplianceFixtureByAddress[address];
+  if (fixture) {
+    return { ...fixture, address };
+  }
+
+  const normalized = address.toUpperCase();
+  if (normalized.includes('REVOKED')) {
+    return { address, status: 'revoked', reasonCode: 'APPROVAL_REVOKED' };
+  }
+  if (normalized.includes('BLOCK') || normalized.includes('DENY')) {
+    return { address, status: 'blocked', reasonCode: 'REGISTRY_BLOCKED' };
+  }
+  if (normalized.includes('PENDING') || normalized.includes('REVIEW')) {
+    return { address, status: 'pending', reasonCode: 'AWAITING_REVIEW' };
+  }
+  if (normalized.includes('UNAVAILABLE') || normalized.includes('TIMEOUT')) {
+    return { address, status: 'unavailable', unavailable: true, reasonCode: 'REGISTRY_TIMEOUT' };
+  }
+  if (address.startsWith('G') && address.length > 50) {
+    return { address, status: 'approved', reasonCode: 'REGISTRY_APPROVED' };
+  }
+
+  return { address, status: 'unknown', reasonCode: 'NO_RECORD' };
 }
 
 /** Called as the transaction moves from wallet signature to network submission. */

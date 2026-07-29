@@ -14,6 +14,7 @@ import type {
   TransactionPhase,
 } from '@/components/transactions/types';
 import type { BudgetReviewResult } from '@/lib/performanceBudget';
+import type { RawAddressComplianceRecord } from '@/features/compliance/types';
 
 /** Called as the transaction moves from wallet signature to network submission. */
 export type PhaseListener = (phase: TransactionPhase) => void;
@@ -53,6 +54,14 @@ export interface IAegisProvider {
     actor: string,
     onPhase?: PhaseListener,
   ): Promise<RawTransactionOutcome>;
+
+  /**
+   * Fetch address-level compliance status from the protocol registry.
+   * Returns a raw record that the dashboard maps into panel-safe copy.
+   */
+  getAddressCompliance(
+    address: string,
+  ): Promise<RawAddressComplianceRecord>;
 
   /**
    * Initiate a compliant asset transfer.
