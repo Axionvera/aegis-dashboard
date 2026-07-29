@@ -58,6 +58,7 @@ Read before opening a pull request tied to a GrantFox-evaluated issue.
 | [contribution-quality-examples.md](contribution-quality-examples.md) | Low-effort, partial, under-tested, failing-CI, and acceptable contribution examples |
 | [low-effort-pr-examples.md](low-effort-pr-examples.md) | Additional screenshot and CI-specific anti-patterns |
 | [pr-evidence-checklist.md](pr-evidence-checklist.md) | Structured checklist for what every PR description must include |
+| [acceptance-criteria-audit.md](acceptance-criteria-audit.md) | Process for mapping each issue criterion to verifiable evidence |
 | [testing-evidence-requirement.md](testing-evidence-requirement.md) | What the PR template requires and why |
 | [test-first-contribution-guide.md](test-first-contribution-guide.md) | Practical test-first workflow with area-specific patterns and examples |
 | [testing-standard.md](testing-standard.md) | Minimum test coverage required per kind of dashboard change |
