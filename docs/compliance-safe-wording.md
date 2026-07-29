@@ -93,7 +93,8 @@ withDisclaimer("") // → "Protocol-level compliance information. Not legal, reg
 
 ## Related
 
-- [Bulk Compliance Review](bulk-compliance-review.md) — Technical implementation of the compliance review table
+- [Bulk Compliance Review](bulk-compliance-review.md) — Technical implementation of the compliance review table, including the `ComplianceUpdateModal` review modal (Issue #27)
+- [Compliance Update Modal](bulk-compliance-review.md#compliance-update-review-modal) — The confirmation modal that wraps `TransactionReview` and `TransactionReceipt` with the disclaimer
 - [Compliance Reviewer Workflow](compliance-reviewer-workflow.md) — Operator-facing workflow documentation
 - [SDK Error Recovery](sdk-error-recovery.md) — Recovery plans that also include compliance-safe wording
 - [Transaction Components](transaction-components.md) — Notes on conservative compliance copy in transaction flows
