@@ -37,12 +37,16 @@ Reference material for contributors implementing new functionality.
 | [investor-dashboard.md](investor-dashboard.md) | Portfolio page data flow, mock portfolio shape, SDK assumptions |
 | [investor-transfer-eligibility.md](investor-transfer-eligibility.md) | Eligibility checks before transfer submission |
 | [investor-transfer-request-flow.md](investor-transfer-request-flow.md) | Request-validation layer: address/amount edge cases, RPC-failure vs. not-whitelisted (Issue #41) |
+| [asset-lifecycle-status.md](asset-lifecycle-status.md) | RWA asset lifecycle state machine, transition validation, badge/timeline UI (Issue #30) |
+| [investor-onboarding-eligibility.md](investor-onboarding-eligibility.md) | Investor onboarding eligibility page, evaluation precedence, SDK mapping (Issue #28) |
 | [admin-role-management-design.md](admin-role-management-design.md) | Admin role resolution, whitelist heuristic, mock admin address |
+| [audit-log.md](audit-log.md) | Audit log data model, filtering, safe CSV/JSON export, redaction |
 | [compliance-reviewer-workflow.md](compliance-reviewer-workflow.md) | Compliance operator workflow for reviewing investor eligibility |
 | [compliance-safe-wording.md](compliance-safe-wording.md) | Compliance-safe wording guidance, shared disclaimer helper, and reviewer checklist |
 | [feature-flags.md](feature-flags.md) | Feature flag hook, panel location, flag naming conventions |
 | [form-idempotency.md](form-idempotency.md) | Content-derived idempotency key, double-submit guard, TTL |
 | [sdk-error-recovery.md](sdk-error-recovery.md) | Error categories, retry policy, compliance wording |
+| [environment-mismatch-blocking.md](environment-mismatch-blocking.md) | Full-page blocking screen for wallet network mismatch, data model, edge cases, reviewer checklist |
 | [bulk-compliance-review.md](bulk-compliance-review.md) | Bulk compliance table engine, KYC import CSV template |
 | [kyc-bulk-import-design.md](kyc-bulk-import-design.md) | KYC bulk import design, field mapping, validation rules |
 | [kyc-bulk-import-template.csv](kyc-bulk-import-template.csv) | Example CSV for the bulk import flow |
