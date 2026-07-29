@@ -42,6 +42,7 @@ Reference material for contributors implementing new functionality.
 | [feature-flags.md](feature-flags.md) | Feature flag hook, panel location, flag naming conventions |
 | [form-idempotency.md](form-idempotency.md) | Content-derived idempotency key, double-submit guard, TTL |
 | [sdk-error-recovery.md](sdk-error-recovery.md) | Error categories, retry policy, compliance wording |
+| [environment-mismatch-blocking.md](environment-mismatch-blocking.md) | Full-page blocking screen for wallet network mismatch, data model, edge cases, reviewer checklist |
 | [bulk-compliance-review.md](bulk-compliance-review.md) | Bulk compliance table engine, KYC import CSV template |
 | [kyc-bulk-import-design.md](kyc-bulk-import-design.md) | KYC bulk import design, field mapping, validation rules |
 | [kyc-bulk-import-template.csv](kyc-bulk-import-template.csv) | Example CSV for the bulk import flow |

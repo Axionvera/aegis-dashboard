@@ -38,6 +38,7 @@ Key resources for contributors:
 - [Frontend Developer Guide](docs/frontend-guide.md) — Styling conventions and page creation
 - [Compliance Reviewer Workflow](docs/compliance-reviewer-workflow.md) — Guide for compliance operators reviewing investor eligibility
 - [Compliance-Safe Wording Guidance](docs/compliance-safe-wording.md) — Canonical disclaimer text, typed helper, and reviewer checklist for compliance-facing copy
+- [Environment Mismatch Blocking Screen](docs/environment-mismatch-blocking.md) — Full-page blocking screen when the wallet network does not match the dashboard target network
 
 > **Note:** All pull requests must follow the [PR Evidence Checklist](docs/pr-evidence-checklist.md) and be audited against the [Evaluation Readiness Dashboard](docs/evaluation-readiness.md) before requesting review.
 
