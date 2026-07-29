@@ -17,7 +17,8 @@ export type FeatureFlagKey =
   | 'newMintFlow'
   | 'complianceBanner'
   | 'darkMode'
-  | 'mockMode';
+  | 'mockMode'
+  | 'performanceBudgetReview';
 
 export interface FeatureFlagMeta {
   label: string;
@@ -42,15 +43,19 @@ export const FLAG_METADATA: Record<FeatureFlagKey, FeatureFlagMeta> = {
     description:
       'Uses local fixture data instead of live SDK calls. For local development only — never enable on testnet or mainnet.',
   },
+  performanceBudgetReview: {
+    label: 'Performance Budget Review',
+    description:
+      'Enables the performance budget review panel in the diagnostics section. For testing budget threshold evaluation.',
+  },
 };
 
 const DEFAULT_FLAGS: Record<FeatureFlagKey, boolean> = {
   newMintFlow: false,
   complianceBanner: true,
   darkMode: false,
-  // Seed from the env var so the Diagnostics page and FeatureFlagsPanel reflect
-  // the true initial state without the user having to toggle manually.
   mockMode: isMockModeEnabled(),
+  performanceBudgetReview: false,
 };
 
 interface FeatureFlagsState {

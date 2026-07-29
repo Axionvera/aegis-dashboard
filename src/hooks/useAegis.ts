@@ -5,6 +5,7 @@ import type {
   RawTransactionOutcome,
   TransactionPhase,
 } from '@/components/transactions/types';
+import type { BudgetReviewResult } from '@/lib/performanceBudget';
 import { resolveWalletRole } from '@/features/auth/resolveRole';
 import { useTransactionHistoryStore } from '@/features/transactions/store';
 import { useWallet } from '@/hooks/useWallet';
@@ -127,11 +128,23 @@ export const useAegis = () => {
     }
   };
 
+  const getPerformanceBudget = async (
+    portfolioId: string,
+  ): Promise<BudgetReviewResult[]> => {
+    setIsLoading(true);
+    try {
+      return await getAegisProvider().getPerformanceBudget(portfolioId);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     checkWhitelist,
     transfer,
     mint,
     getPortfolio,
+    getPerformanceBudget,
     getWalletRole: resolveWalletRole,
     isLoading,
   };
