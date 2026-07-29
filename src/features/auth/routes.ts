@@ -36,6 +36,13 @@ export const dashboardRoutes: RouteAccessConfig[] = [
     walletRequired: true,
     description: 'Bulk compliance review for admin operators.',
   },
+  {
+    path: '/onboarding',
+    label: 'Onboarding',
+    requiredRoles: ['investor', 'issuer', 'admin', 'read_only'],
+    walletRequired: false,
+    description: 'Investor onboarding eligibility check.',
+  },
 ];
 
 export const getRouteAccessConfig = (path: string): RouteAccessConfig | undefined =>
