@@ -9,12 +9,17 @@ All of it lives in `src/components/transactions/`.
 | File | What it is |
 | --- | --- |
 | `types.ts` | Shared vocabulary: `TransactionState`, `TransactionAction`, `TransactionDetails`, `TransactionResult` |
-| `TransactionReview.tsx` | Pre-signature confirmation screen |
+| `TransactionReview.tsx` | Pre-signature confirmation screen (operation rows, expected result, risk notes) |
+| `TransactionReviewModal.tsx` | Dialog shell for standalone review-before-sign flows |
+| `operationSummary.ts` | Mapper that builds consistent review details per sensitive operation |
 | `TransactionProgress.tsx` | In-flight indicator (`signing` / `pending`) |
 | `TransactionReceipt.tsx` | Terminal screen for all four outcomes |
 | `statusMapper.ts` | `mapToTransactionResult(outcome)` — normalises any RPC response or thrown error |
 | `explorerLink.ts` | `getExplorerUrl(txHash, network)` — stellar.expert link |
 | `fixtures.ts` | Sample details/results for previewing each state |
+
+See also [transaction-review-modal.md](transaction-review-modal.md) for Issue #177
+behaviour, risk-note rules, and mapper usage.
 
 ## The flow
 
@@ -34,7 +39,7 @@ The components are layout-agnostic: `TransferModal` renders them inside a modal,
 
 ```tsx
 <TransactionReview
-  details={details}       // TransactionDetails
+  details={details}       // TransactionDetails from operationSummary
   onConfirm={handleConfirm}
   onCancel={() => setState('idle')}
   isSubmitting={false}    // optional — disables both buttons
@@ -44,6 +49,26 @@ The components are layout-agnostic: `TransferModal` renders them inside a modal,
 Renders the action label, title, optional description and a `label / value` table
 built from `details.rows`. Set `mono: true` on a row for addresses and hashes so
 they render in a monospace font and wrap instead of overflowing.
+
+When present, `details.expectedResult` and `details.riskNotes` are shown above
+the wallet-signature reminder so every sensitive action surfaces the same
+pre-sign safety information. Prefer `buildTransferSummary`, `buildMintSummary`,
+`buildWhitelistSummary`, or `buildComplianceUpdateSummary` over hand-built rows.
+
+### `TransactionReviewModal`
+
+```tsx
+<TransactionReviewModal
+  details={details}
+  onConfirm={handleConfirm}
+  onCancel={onClose}
+  footer={COMPLIANCE_DISCLAIMER} // optional
+/>
+```
+
+Use this for standalone confirmation dialogs (whitelist, bulk compliance). Flows
+that already own a modal shell, such as transfers, should keep rendering
+`TransactionReview` inline.
 
 ### `TransactionProgress`
 
@@ -175,16 +200,17 @@ status as legal or financial advice.
 ## Flows using these components
 
 - **`src/features/investor/components/TransferModal.tsx`** — the KYC whitelist check runs first,
-  then `Review Transfer` opens `TransactionReview`, confirming signs and submits
-  the transfer, and the receipt replaces the old `alert("Transfer Successful!")`.
+  then `Review Transfer` opens `TransactionReview` via `buildTransferSummary`.
 - **`src/features/minting/components/MintWorkflow.tsx`** — guided admin mint (Issue #6):
   asset selector, amount/recipient validation, compliance pre-check, then
-  `TransactionReview` → progress → receipt / SDK recovery. Wired from
-  `AdminPanel` when `newMintFlow` is enabled (default on). See
-  [rwa-asset-minting-workflow.md](rwa-asset-minting-workflow.md).
+  `TransactionReview` via `buildMintSummary` → progress → receipt / SDK recovery.
+- **`src/features/compliance/components/WhitelistActionModal.tsx`** — opens
+  `TransactionReviewModal` with `buildWhitelistSummary` before add/remove.
+- **`src/features/admin/components/ComplianceUpdateModal.tsx`** — opens
+  `TransactionReviewModal` with `buildComplianceUpdateSummary` before bulk actions.
 - **`src/features/admin/components/AdminPanel.tsx`** — hosts the mint workflow
   (or the legacy fixed-amount panel when `newMintFlow` is off).
 
 `Whitelist User` in the legacy admin panel still uses an inline confirmation: it does not go
-through `useAegis` and has no contract call or hash behind it yet. It should move
-onto these components (`action: 'compliance-update'`) as soon as it does.
+through `useAegis` and has no contract call or hash behind it yet. Prefer
+`WhitelistManager` / `WhitelistActionModal` for signed whitelist changes.

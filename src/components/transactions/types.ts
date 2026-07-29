@@ -61,6 +61,16 @@ export interface TransactionDetails {
   rows: TransactionDetailRow[];
   /** Stellar network name as reported by the wallet, e.g. `TESTNET`. */
   network?: string;
+  /**
+   * Short statement of what should happen if the wallet signature is accepted
+   * and the network confirms the transaction.
+   */
+  expectedResult?: string;
+  /**
+   * Operation-specific caveats shown before signing. Keep these protocol-level
+   * and avoid legal / financial advice wording.
+   */
+  riskNotes?: string[];
 }
 
 /** Normalised outcome, produced by `mapToTransactionResult`. */

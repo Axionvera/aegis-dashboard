@@ -2,15 +2,14 @@ import { useState } from 'react';
 import { useAegis } from '@/hooks/useAegis';
 import { useWallet } from '@/hooks/useWallet';
 import { useFeatureFlags } from '@/hooks/useFeatureFlags';
-import { formatAmount } from '@/utils/formatting';
 import TransactionReview from '@/components/transactions/TransactionReview';
 import TransactionProgress from '@/components/transactions/TransactionProgress';
 import TransactionReceipt from '@/components/transactions/TransactionReceipt';
 import { mapToTransactionResult } from '@/components/transactions/statusMapper';
 import { getExplorerUrl } from '@/components/transactions/explorerLink';
+import { buildMintSummary } from '@/components/transactions/operationSummary';
 import { CheckCircle } from 'lucide-react';
 import type {
-  TransactionDetails,
   TransactionResult,
   TransactionState,
 } from '@/components/transactions/types';
@@ -32,17 +31,11 @@ function LegacyMintPanel() {
 
   const cleanAddress = address.trim();
 
-  const details: TransactionDetails = {
-    action: 'mint',
-    title: 'Mint asset',
-    description: 'This issues new supply directly to the target address.',
-    network: network ?? undefined,
-    rows: [
-      { label: 'Amount', value: formatAmount(MINT_AMOUNT) },
-      { label: 'Target address', value: cleanAddress, mono: true },
-      { label: 'Network', value: network ?? 'Unknown' },
-    ],
-  };
+  const details = buildMintSummary({
+    amount: MINT_AMOUNT,
+    recipient: cleanAddress,
+    network,
+  });
 
   const handleWhitelist = async () => {
     // TODO: replace with a real contract.whitelist(address) call once the SDK is live.

@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { useAegis } from '@/hooks/useAegis';
 import { useWallet } from '@/hooks/useWallet';
-import { formatAmount, truncateAddress } from '@/utils/formatting';
 import TransactionReview from '@/components/transactions/TransactionReview';
 import TransactionProgress from '@/components/transactions/TransactionProgress';
 import TransactionReceipt from '@/components/transactions/TransactionReceipt';
 import { mapToTransactionResult } from '@/components/transactions/statusMapper';
 import { getExplorerUrl } from '@/components/transactions/explorerLink';
+import { buildMintSummary } from '@/components/transactions/operationSummary';
 import type {
   RawTransactionOutcome,
-  TransactionDetails,
   TransactionResult,
   TransactionState,
 } from '@/components/transactions/types';
@@ -77,31 +76,15 @@ export default function MintWorkflow({
     },
   });
 
-  const details: TransactionDetails = {
-    action: 'mint',
-    title: selectedAsset ? `Mint ${selectedAsset.ticker}` : 'Mint asset',
-    description: 'This issues new supply directly to the recipient address.',
-    network: network ?? undefined,
-    rows: [
-      ...(selectedAsset
-        ? [
-            { label: 'Asset', value: `${selectedAsset.name} (${selectedAsset.ticker})` },
-            { label: 'Asset class', value: selectedAsset.assetClass },
-          ]
-        : []),
-      {
-        label: 'Amount',
-        value: selectedAsset
-          ? `${formatAmount(parseFloat(amount) || 0)} ${selectedAsset.ticker}`
-          : formatAmount(parseFloat(amount) || 0),
-      },
-      { label: 'Recipient', value: cleanRecipient, mono: true },
-      ...(address
-        ? [{ label: 'Signer', value: truncateAddress(address), mono: true }]
-        : []),
-      { label: 'Network', value: network ?? 'Unknown' },
-    ],
-  };
+  const details = buildMintSummary({
+    assetTicker: selectedAsset?.ticker,
+    assetName: selectedAsset?.name,
+    assetClass: selectedAsset?.assetClass,
+    amount: Number.isFinite(numericAmount) ? numericAmount : 0,
+    recipient: cleanRecipient,
+    signerAddress: address,
+    network,
+  });
 
   const handleReview = async () => {
     setError('');
