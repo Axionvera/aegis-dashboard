@@ -1,8 +1,12 @@
 import type { PortfolioAsset, PortfolioReadModel } from './types';
+import type { WhitelistEntry } from '@/lib/whitelist';
+import { sampleWhitelistEntries } from '@/lib/__fixtures__/whitelist';
 import type {
   RawTransactionOutcome,
   TransactionPhase,
 } from '@/components/transactions/types';
+import type { BudgetReviewResult } from '@/lib/performanceBudget';
+import { sampleBudgetResults } from '@/lib/__fixtures__/performanceBudget';
 
 /**
  * Stand-in for `@aegis/sdk`. The real SDK is not published to this
@@ -138,6 +142,49 @@ export async function checkWhitelist(address: string): Promise<boolean> {
   return address.startsWith('G') && address.length > 50;
 }
 
+/**
+ * Stand-in for `AegisClient.compliance.listWhitelist()`. Returns every
+ * address the admin dashboard knows about (whitelisted and revoked) so the
+ * compliance management UI can render the full history.
+ *
+ * TODO(@aegis/sdk): replace with a real contract read once the whitelist
+ * registry is queryable on-chain.
+ */
+export async function listWhitelist(): Promise<WhitelistEntry[]> {
+  await wait(600);
+  return sampleWhitelistEntries.map((entry) => ({ ...entry }));
+}
+
+/**
+ * Stand-in for `AegisClient.compliance.addToWhitelist(address)`.
+ *
+ * TODO(@aegis/sdk): replace with the real signed contract invocation.
+ */
+export async function addToWhitelist(
+  address: string,
+  actor: string,
+  onPhase?: PhaseListener,
+): Promise<RawTransactionOutcome> {
+  void actor;
+  await simulateSubmission(onPhase);
+  return { status: 'SUCCESS', hash: `mock_tx_hash_whitelist_add_${Date.now()}` };
+}
+
+/**
+ * Stand-in for `AegisClient.compliance.removeFromWhitelist(address)`.
+ *
+ * TODO(@aegis/sdk): replace with the real signed contract invocation.
+ */
+export async function removeFromWhitelist(
+  address: string,
+  actor: string,
+  onPhase?: PhaseListener,
+): Promise<RawTransactionOutcome> {
+  void actor;
+  await simulateSubmission(onPhase);
+  return { status: 'SUCCESS', hash: `mock_tx_hash_whitelist_remove_${Date.now()}` };
+}
+
 /** Called as the transaction moves from wallet signature to network submission. */
 type PhaseListener = (phase: TransactionPhase) => void;
 
@@ -198,4 +245,17 @@ export async function mint(
   void to;
   await simulateSubmission(onPhase);
   return mockOutcome(amount, 'mock_tx_hash_0987654321');
+}
+
+/**
+ * Mocks fetching performance budget review results for a portfolio.
+ * Returns the sample fixture data so the PerformanceBudgetPanel can
+ * render meaningful results in mock mode.
+ */
+export async function getPerformanceBudget(
+  portfolioId: string,
+): Promise<BudgetReviewResult[]> {
+  void portfolioId;
+  await wait(500);
+  return sampleBudgetResults;
 }

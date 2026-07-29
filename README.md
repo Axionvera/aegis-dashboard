@@ -40,7 +40,6 @@ Key resources for contributors:
 - [Compliance Reviewer Workflow](docs/compliance-reviewer-workflow.md) — Guide for compliance operators reviewing investor eligibility
 - [Investor Transfer Request Flow](docs/investor-transfer-request-flow.md) — Request-validation edge cases (address, self-transfer, amount, precision) and RPC-failure handling for the transfer modal
 - [RWA Asset Minting Workflow](docs/rwa-asset-minting-workflow.md) — Admin mint: asset selector, compliance pre-check, review, Freighter signing, receipt (Issue #6)
-- [RWA Asset Creation Wizard](docs/rwa-asset-creation-wizard.md) — Issuer Console: submit a new asset for compliance review (Issue #29)
 - [Compliance-Safe Wording Guidance](docs/compliance-safe-wording.md) — Canonical disclaimer text, typed helper, and reviewer checklist for compliance-facing copy
 - [RWA Asset Lifecycle Status](docs/asset-lifecycle-status.md) — Lifecycle state machine, transition validation, and status UI for already-minted RWA assets
 - [Bulk Compliance Review](docs/bulk-compliance-review.md) — Bulk compliance review table with action confirmation modal

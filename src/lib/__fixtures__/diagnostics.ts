@@ -6,7 +6,7 @@ export const healthyDiagnostics = {
   wallet: 'GBXY...WXYZ',
   network: 'TESTNET',
   flags: {
-    newMintFlow: false,
+    newMintFlow: true,
     complianceBanner: true,
     darkMode: false
   }
@@ -20,7 +20,7 @@ export const brokenDiagnostics = {
   wallet: 'Not connected',
   network: 'Not connected',
   flags: {
-    newMintFlow: false,
+    newMintFlow: true,
     complianceBanner: true,
     darkMode: false
   }

@@ -85,6 +85,38 @@ boundary.
   - [ ] `unknown` never collapses to `approved`.
   - [ ] Bulk actions clear selection and preserve unselected rows.
   - [ ] No PIII is introduced into `meta` or `detail`.
+  - [ ] `ComplianceUpdateModal` shows `COMPLIANCE_DISCLAIMER` in the review phase.
+
+## Compliance Update Review Modal
+
+Issue: [#27](https://github.com/Axionvera/aegis-dashboard/issues/27)
+
+Action buttons for **Approve**, **Reject**, and **Flag for Review** now open a
+confirmation modal (`ComplianceUpdateModal`) before applying the action.
+The **Clear** button applies immediately (no modal needed).
+
+### Modal flow
+
+1. **Review phase** — Displays the action label, subject count (with truncated
+   addresses, max 5 shown), and `COMPLIANCE_DISCLAIMER`. User can Confirm & Sign
+   or Cancel.
+2. **Confirm phase** — Calls `onConfirm`, which runs `applyBulkAction` and
+   returns a `TransactionResult`. The modal then renders `TransactionReceipt`
+   with either a success or failure result.
+3. **Dismiss** — Close button or X returns to the table.
+
+### Implementation
+
+- `ComplianceUpdateModal` (`src/features/admin/components/ComplianceUpdateModal.tsx`)
+  is a controlled component receiving `subjects`, `action`, `onConfirm`, and
+  `onClose` as props.
+- The component reuses `TransactionReview` in the review phase and
+  `TransactionReceipt` in the receipt phase — both from the shared transaction
+  components.
+- State management is local (`useState` with `"review" | "receipt"` phases).
+- 16 tests in `ComplianceUpdateModal.test.tsx` cover review phase rendering,
+  confirm flow, subject rendering (including overflow for 5+ subjects), and edge
+  cases (empty subjects, different action types, failure result).
 
 ## Compatibility
 

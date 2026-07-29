@@ -20,7 +20,7 @@ export const mockDiagnosticsFixture = {
   wallet: 'GCFXMOCKWALLET0000000000000000000000000000000000000000',
   network: 'LOCAL_MOCK',
   flags: {
-    newMintFlow: false,
+    newMintFlow: true,
     complianceBanner: true,
     darkMode: false,
     mockMode: true,

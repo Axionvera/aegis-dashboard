@@ -1,4 +1,4 @@
-import type { EligibilityInput } from '../eligibility';
+import type { EligibilityInput, OnboardingEligibilityInput } from '../eligibility';
 
 // Representative inputs covering the major eligibility states (issue #55).
 // Used by unit tests and as sample data for the panel.
@@ -76,4 +76,57 @@ export const ALL_FIXTURES: EligibilityInput[] = [
   FIXTURE_UNAVAILABLE_PAUSED,
   FIXTURE_UNKNOWN_SERVICE_DOWN,
   FIXTURE_UNKNOWN_PARTIAL,
+];
+
+// ── Onboarding Eligibility Fixtures ──
+
+export const ONBOARDING_COMPLIANT: OnboardingEligibilityInput = {
+  walletOnSupportedNetwork: true,
+  kycCompleted: true,
+  alreadyOnboarded: false,
+  serviceAvailable: true,
+};
+
+export const ONBOARDING_ALREADY_ONBOARDED: OnboardingEligibilityInput = {
+  walletOnSupportedNetwork: true,
+  kycCompleted: true,
+  alreadyOnboarded: true,
+  serviceAvailable: true,
+};
+
+export const ONBOARDING_BLOCKED_NETWORK: OnboardingEligibilityInput = {
+  walletOnSupportedNetwork: false,
+  kycCompleted: true,
+  alreadyOnboarded: false,
+  serviceAvailable: true,
+};
+
+export const ONBOARDING_BLOCKED_KYC: OnboardingEligibilityInput = {
+  walletOnSupportedNetwork: true,
+  kycCompleted: false,
+  alreadyOnboarded: false,
+  serviceAvailable: true,
+};
+
+export const ONBOARDING_UNKNOWN_SERVICE_DOWN: OnboardingEligibilityInput = {
+  walletOnSupportedNetwork: true,
+  kycCompleted: true,
+  alreadyOnboarded: false,
+  serviceAvailable: false,
+};
+
+export const ONBOARDING_UNKNOWN_PARTIAL: OnboardingEligibilityInput = {
+  walletOnSupportedNetwork: true,
+  // kycCompleted omitted -> unknown
+  alreadyOnboarded: false,
+  serviceAvailable: true,
+};
+
+export const ALL_ONBOARDING_FIXTURES: OnboardingEligibilityInput[] = [
+  ONBOARDING_COMPLIANT,
+  ONBOARDING_ALREADY_ONBOARDED,
+  ONBOARDING_BLOCKED_NETWORK,
+  ONBOARDING_BLOCKED_KYC,
+  ONBOARDING_UNKNOWN_SERVICE_DOWN,
+  ONBOARDING_UNKNOWN_PARTIAL,
 ];

@@ -4,6 +4,7 @@ import { redactUrl, redactContractId } from '@/lib/diagnostics/redact';
 import { useWallet } from '@/hooks/useWallet';
 import { useFeatureFlags } from '@/hooks/useFeatureFlags';
 import { isProviderMocked } from '@/lib/sdk';
+import { validateDashboardConfig } from '@/config/validate';
 
 export default function DiagnosticsPanel() {
   const { address, network } = useWallet();
@@ -18,6 +19,29 @@ export default function DiagnosticsPanel() {
 
   const mockActive = isProviderMocked();
 
+  // Config validation (Issue #8). Only the issue *count* and *field names* are
+  // surfaced here — never raw env values — so this stays safe to include in a
+  // diagnostics report someone might paste into a support channel.
+  const configResult = validateDashboardConfig();
+  const configErrorCount = configResult.issues.filter((i) => i.level === 'error').length;
+  const configWarningCount = configResult.issues.filter((i) => i.level === 'warning').length;
+
+  let configStatusValue: string;
+  let configStatus: 'ok' | 'warning' | 'error' | 'unknown';
+  if (mockActive) {
+    configStatusValue = '[MOCK] Skipped — mock provider active';
+    configStatus = 'warning';
+  } else if (configErrorCount > 0) {
+    configStatusValue = `${configErrorCount} error(s), ${configWarningCount} warning(s)`;
+    configStatus = 'error';
+  } else if (configWarningCount > 0) {
+    configStatusValue = `Valid — ${configWarningCount} warning(s)`;
+    configStatus = 'warning';
+  } else {
+    configStatusValue = 'Valid';
+    configStatus = 'ok';
+  }
+
   const reportData = {
     timestamp: new Date().toISOString(),
     sdkVersion: mockActive ? '[MOCK] v0.0.0-local' : 'Mocked v0.0.0',
@@ -25,6 +49,12 @@ export default function DiagnosticsPanel() {
     contract: mockActive ? '[MOCK] Not deployed — mock provider active' : redactedContract,
     wallet: address ? redactContractId(address) : 'Not connected',
     network: mockActive ? 'LOCAL_MOCK' : network || 'Not connected',
+    configValidation: {
+      valid: mockActive ? true : configResult.valid,
+      errorCount: mockActive ? 0 : configErrorCount,
+      warningCount: mockActive ? 0 : configWarningCount,
+      fields: mockActive ? [] : configResult.issues.map((i) => `${i.field} (${i.level})`),
+    },
     flags: flags,
     provider: mockActive ? 'MockAegisProvider' : 'LiveAegisProvider',
   };
@@ -66,6 +96,11 @@ export default function DiagnosticsPanel() {
           title="Active Provider"
           value={reportData.provider}
           status={mockActive ? 'warning' : 'ok'}
+        />
+        <StatusCard
+          title="Config Validation"
+          value={configStatusValue}
+          status={configStatus}
         />
         <StatusCard
           title="RPC URL"

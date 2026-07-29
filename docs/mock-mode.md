@@ -107,9 +107,11 @@ The `MockAegisProvider` maps the transfer/mint `amount` to a specific outcome:
 | `0.03` | Unknown status (exercises the fallback UI path) |
 | Any other value | `SUCCESS` |
 
-This lets you exercise every receipt state without touching any code. Open the
-Admin page, enter any G-address longer than 50 characters, and mint with one of
-these amounts.
+This lets you exercise every receipt state without touching any code. On the
+Admin page with the guided mint workflow (`newMintFlow`, default on), select an
+asset, enter any G-address longer than 50 characters, and mint with one of
+these amounts (0.01 / 0.02 / 0.03). See
+[rwa-asset-minting-workflow.md](rwa-asset-minting-workflow.md).
 
 ---
 

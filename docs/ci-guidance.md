@@ -48,6 +48,12 @@ npm run verify
 | Build failure | Syntax error, missing import, broken module | Check build output for specific error messages |
 | Test failure | Assertion failure, broken test | Run `npm test` locally and debug the failing test |
 
+## CI Status on PRs
+
+- All CI checks must be **green** before a PR can be merged.
+- If a CI step fails, investigate the root cause and push a fix.
+- Pre-existing failures unrelated to your change should be noted in the PR description.
+- If CI is flaky (e.g., a timeout), you may re-run the failed job from the Actions tab.
 ## CI Pass Requirement
 
 A pull request satisfies the CI pass requirement only when all four checks — **Lint**, **Type check**, **Test**, and **Build** — report a green (passing) status in GitHub Actions.

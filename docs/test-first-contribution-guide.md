@@ -25,7 +25,7 @@ Each area below links to an existing test file that shows the pattern to follow.
 | **Investor views** | `src/features/investor/InvestorEligibilityPanel.test.tsx` | Render the view under loading, empty, error, and populated states. Assert on screen text, badge labels, and presence/absence of elements. |
 | **Compliance screens** | `src/features/admin/components/ComplianceInfo.test.tsx` | Test each verdict (pass, fail, pending, unknown) — never default an unknown verdict to a safe badge. |
 | **Asset registration** | `src/lib/eligibility.test.ts` | Test card rendering with valid, malformed, and missing metadata. Assert the UI shows an error state rather than rendering blank or incorrect values. |
-| **Minting** | `src/features/investor/components/TransferModal.test.tsx` | Test input validation before submit. Cover invalid address, empty input, provider rejection, and double-submit. |
+| **Minting** | `src/features/minting/components/MintWorkflow.test.tsx` | Test input validation before submit. Cover invalid address, empty input, not-whitelisted, provider rejection, and double-submit. |
 | **Wallet connection** | `src/lib/route-guard.test.ts` (mock wallet pattern) | Test `connect`, `disconnect`, and `tryAutoReconnect` state transitions. Cover Freighter-not-installed, rejected prompt, and network mismatch. |
 | **Diagnostics** | `src/lib/diagnostics/redact.test.ts` | Test redaction rules, env-var fallbacks, and malformed input. Assert the report renders without throwing and secrets remain redacted. |
 

@@ -154,4 +154,57 @@ describe('MockAegisProvider', () => {
     expect(phases).toContain('signing');
     expect(phases).toContain('pending');
   });
+
+  it('listWhitelist returns the fixture entries', async () => {
+    const entries = await provider.listWhitelist();
+    expect(entries.length).toBeGreaterThan(0);
+    expect(entries[0]).toHaveProperty('address');
+    expect(entries[0]).toHaveProperty('status');
+  });
+
+  it('listWhitelist returns copies, not internal references', async () => {
+    const first = await provider.listWhitelist();
+    first[0].status = 'revoked';
+    const second = await provider.listWhitelist();
+    expect(second[0].status).not.toBe('revoked');
+  });
+
+  it('addToWhitelist throws when no address is provided', async () => {
+    await expect(provider.addToWhitelist('', 'GCFXADMIN')).rejects.toThrow('[MOCK]');
+  });
+
+  it('addToWhitelist adds a new entry with status whitelisted', async () => {
+    const address = 'GCFXNEWUSER000000000000000000000000000000000000000000';
+    const outcome = await provider.addToWhitelist(address, 'GCFXADMIN');
+    expect(outcome.status).toBe('SUCCESS');
+
+    const entries = await provider.listWhitelist();
+    const entry = entries.find((e) => e.address === address);
+    expect(entry?.status).toBe('whitelisted');
+    expect(entry?.updatedBy).toBe('GCFXADMIN');
+  });
+
+  it('removeFromWhitelist throws when no address is provided', async () => {
+    await expect(provider.removeFromWhitelist('', 'GCFXADMIN')).rejects.toThrow('[MOCK]');
+  });
+
+  it('removeFromWhitelist marks an existing entry as revoked', async () => {
+    const entries = await provider.listWhitelist();
+    const whitelisted = entries.find((e) => e.status === 'whitelisted');
+    expect(whitelisted).toBeDefined();
+
+    await provider.removeFromWhitelist(whitelisted!.address, 'GCFXADMIN');
+
+    const updated = await provider.listWhitelist();
+    const entry = updated.find((e) => e.address === whitelisted!.address);
+    expect(entry?.status).toBe('revoked');
+    expect(entry?.updatedBy).toBe('GCFXADMIN');
+  });
+
+  it('phase callbacks are called during addToWhitelist', async () => {
+    const phases: string[] = [];
+    await provider.addToWhitelist('GCFXTEST', 'GCFXADMIN', (phase) => phases.push(phase));
+    expect(phases).toContain('signing');
+    expect(phases).toContain('pending');
+  });
 });
