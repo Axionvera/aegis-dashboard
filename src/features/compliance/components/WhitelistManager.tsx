@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
-import { ShieldCheck, ShieldX, Plus, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, Plus, AlertTriangle } from 'lucide-react';
 import { useAegis } from '@/hooks/useAegis';
 import { useWallet } from '@/hooks/useWallet';
 import TableSearch from '@/components/table/TableSearch';
@@ -13,6 +13,8 @@ import {
 } from '@/lib/whitelist';
 import { useFormErrors, FormFieldError } from '@/features/forms/validation';
 import { formatTimestamp, truncateAddress } from '@/utils/formatting';
+import { StatusBadge } from '@/components/status';
+import { statusForWhitelistEntry } from '@/lib/status';
 
 type WhitelistFormField = 'address';
 
@@ -214,20 +216,7 @@ export default function WhitelistManager() {
                     {truncateAddress(entry.address)}
                   </td>
                   <td className="py-3 pr-4">
-                    <span
-                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        entry.status === 'whitelisted'
-                          ? 'bg-emerald-50 text-emerald-700'
-                          : 'bg-slate-100 text-slate-600'
-                      }`}
-                    >
-                      {entry.status === 'whitelisted' ? (
-                        <ShieldCheck size={12} aria-hidden="true" />
-                      ) : (
-                        <ShieldX size={12} aria-hidden="true" />
-                      )}
-                      {entry.status === 'whitelisted' ? 'Whitelisted' : 'Revoked'}
-                    </span>
+                    <StatusBadge status={statusForWhitelistEntry(entry.status)} variant="pill" />
                   </td>
                   <td className="py-3 pr-4 text-slate-500">{formatTimestamp(entry.updatedAt)}</td>
                   <td className="py-3 pr-4 text-slate-500">{entry.note ?? '\u2014'}</td>
