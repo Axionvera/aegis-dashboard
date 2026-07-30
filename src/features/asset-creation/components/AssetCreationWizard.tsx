@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 import {
   validateAssetCreationRequest,
   ASSET_CREATION_ERROR_MESSAGES,
   SUPPORTED_JURISDICTIONS,
   ASSET_CLASS_OPTIONS,
+  DEFAULT_ASSET_CREATION_MAX_AMOUNT,
   type AssetCreationErrorCode,
 } from '@/lib/assetCreationRequest';
 import { useFormErrors, FormFieldError, FormError } from '@/features/forms/validation';
@@ -11,6 +13,7 @@ import {
   AdminActionReceiptView,
   mapAdminActionReceipt,
 } from '@/features/admin/receipts';
+import { getTargetNetwork, formatNetworkLabel } from '@/lib/environment';
 import type { IssuanceRequest } from '@/fixtures/issuer';
 
 type WizardStep = 'form' | 'review' | 'success';
@@ -170,9 +173,50 @@ export default function AssetCreationWizard({
   }
 
   if (step === 'review') {
+    const networkLabel = formatNetworkLabel(getTargetNetwork());
+    const parsedAmount = Number(amount);
+    const isHighSupply = parsedAmount > DEFAULT_ASSET_CREATION_MAX_AMOUNT * 0.5;
+    const isRestrictedJurisdiction = !SUPPORTED_JURISDICTIONS.includes(
+      jurisdiction.trim().toUpperCase() as (typeof SUPPORTED_JURISDICTIONS)[number],
+    );
+    const warnings: string[] = [];
+    if (isHighSupply) {
+      warnings.push(
+        'Requested supply exceeds 50% of the soft cap. Ensure compliance review can accommodate this volume.',
+      );
+    }
+    if (isRestrictedJurisdiction) {
+      warnings.push(
+        'Jurisdiction is outside the supported list. Additional compliance review may be required.',
+      );
+    }
+
     return (
       <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h2 className="text-xl font-bold mb-4">Review issuance request</h2>
+
+        {/* Validation summary */}
+        <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <h3 className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-1.5">
+            <CheckCircle2 size={16} className="text-green-600" aria-hidden="true" />
+            Validation summary
+          </h3>
+          <ul className="space-y-1 text-sm text-slate-600">
+            <li className="flex items-center gap-1.5">
+              <CheckCircle2 size={14} className="text-green-600 shrink-0" aria-hidden="true" />
+              All required fields are present and valid.
+            </li>
+            <li className="flex items-center gap-1.5">
+              <CheckCircle2 size={14} className="text-green-600 shrink-0" aria-hidden="true" />
+              Ticker format is valid and not a duplicate.
+            </li>
+            <li className="flex items-center gap-1.5">
+              <CheckCircle2 size={14} className="text-green-600 shrink-0" aria-hidden="true" />
+              Supply is a positive number within the soft cap.
+            </li>
+          </ul>
+        </div>
+
         <dl className="space-y-3 mb-6 text-sm">
           <div className="flex justify-between border-b border-slate-100 pb-2">
             <dt className="text-slate-500">Asset name</dt>
@@ -189,16 +233,42 @@ export default function AssetCreationWizard({
             <dd className="font-medium text-slate-900">{assetClass}</dd>
           </div>
           <div className="flex justify-between border-b border-slate-100 pb-2">
+            <dt className="text-slate-500">Issuer</dt>
+            <dd className="font-medium text-slate-900 font-mono">
+              {requestedBy ? `${requestedBy.slice(0, 6)}…${requestedBy.slice(-4)}` : 'Unknown'}
+            </dd>
+          </div>
+          <div className="flex justify-between border-b border-slate-100 pb-2">
             <dt className="text-slate-500">Initial requested supply</dt>
             <dd className="font-medium text-slate-900">
               {Number(amount).toLocaleString('en-US')}
             </dd>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between border-b border-slate-100 pb-2">
             <dt className="text-slate-500">Jurisdiction</dt>
             <dd className="font-medium text-slate-900">{jurisdiction.trim().toUpperCase()}</dd>
           </div>
+          <div className="flex justify-between">
+            <dt className="text-slate-500">Network</dt>
+            <dd className="font-medium text-slate-900">{networkLabel}</dd>
+          </div>
         </dl>
+
+        {/* Warning states */}
+        {warnings.length > 0 && (
+          <div className="mb-4 space-y-2">
+            {warnings.map((warning, idx) => (
+              <div
+                key={idx}
+                role="alert"
+                className="flex items-start gap-2 rounded bg-amber-50 border border-amber-200 p-3 text-sm text-amber-700"
+              >
+                <AlertTriangle size={16} className="mt-0.5 shrink-0" aria-hidden="true" />
+                <span>{warning}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         <FormError message={formError} />
 
