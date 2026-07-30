@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import StatusCard from './StatusCard';
-import { redactUrl, redactContractId } from '@/lib/diagnostics/redact';
+import { buildDiagnosticsReport } from '@/lib/diagnostics/buildReport';
 import { useWallet } from '@/hooks/useWallet';
 import { useFeatureFlags } from '@/hooks/useFeatureFlags';
 import { isProviderMocked } from '@/lib/sdk';
@@ -14,50 +14,21 @@ export default function DiagnosticsPanel() {
   const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || '';
   const contractId = process.env.NEXT_PUBLIC_AEGIS_CONTRACT_ID || '';
 
-  const redactedRpc = redactUrl(rpcUrl);
-  const redactedContract = redactContractId(contractId);
-
   const mockActive = isProviderMocked();
-
-  // Config validation (Issue #8). Only the issue *count* and *field names* are
-  // surfaced here — never raw env values — so this stays safe to include in a
-  // diagnostics report someone might paste into a support channel.
   const configResult = validateDashboardConfig();
-  const configErrorCount = configResult.issues.filter((i) => i.level === 'error').length;
-  const configWarningCount = configResult.issues.filter((i) => i.level === 'warning').length;
 
-  let configStatusValue: string;
-  let configStatus: 'ok' | 'warning' | 'error' | 'unknown';
-  if (mockActive) {
-    configStatusValue = '[MOCK] Skipped — mock provider active';
-    configStatus = 'warning';
-  } else if (configErrorCount > 0) {
-    configStatusValue = `${configErrorCount} error(s), ${configWarningCount} warning(s)`;
-    configStatus = 'error';
-  } else if (configWarningCount > 0) {
-    configStatusValue = `Valid — ${configWarningCount} warning(s)`;
-    configStatus = 'warning';
-  } else {
-    configStatusValue = 'Valid';
-    configStatus = 'ok';
-  }
-
-  const reportData = {
-    timestamp: new Date().toISOString(),
-    sdkVersion: mockActive ? '[MOCK] v0.0.0-local' : 'Mocked v0.0.0',
-    rpc: mockActive ? '[MOCK] Not connected — mock provider active' : redactedRpc,
-    contract: mockActive ? '[MOCK] Not deployed — mock provider active' : redactedContract,
-    wallet: address ? redactContractId(address) : 'Not connected',
-    network: mockActive ? 'LOCAL_MOCK' : network || 'Not connected',
-    configValidation: {
-      valid: mockActive ? true : configResult.valid,
-      errorCount: mockActive ? 0 : configErrorCount,
-      warningCount: mockActive ? 0 : configWarningCount,
-      fields: mockActive ? [] : configResult.issues.map((i) => `${i.field} (${i.level})`),
+  const { report: reportData, cards } = buildDiagnosticsReport(
+    {
+      walletAddress: address,
+      walletNetwork: typeof network === 'string' ? network : null,
+      flags,
+      mockActive,
+      rpcUrl,
+      contractId,
+      sdkVersion: 'Mocked v0.0.0',
     },
-    flags: flags,
-    provider: mockActive ? 'MockAegisProvider' : 'LiveAegisProvider',
-  };
+    configResult,
+  );
 
   const handleCopy = () => {
     navigator.clipboard.writeText(JSON.stringify(reportData, null, 2));
@@ -91,42 +62,14 @@ export default function DiagnosticsPanel() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Provider row — always shown so the active provider is visible */}
-        <StatusCard
-          title="Active Provider"
-          value={reportData.provider}
-          status={mockActive ? 'warning' : 'ok'}
-        />
-        <StatusCard
-          title="Config Validation"
-          value={configStatusValue}
-          status={configStatus}
-        />
-        <StatusCard
-          title="RPC URL"
-          value={mockActive ? '[MOCK] Not connected' : redactedRpc}
-          status={mockActive ? 'warning' : rpcUrl ? 'ok' : 'error'}
-        />
-        <StatusCard
-          title="Contract ID"
-          value={mockActive ? '[MOCK] Not deployed' : redactedContract}
-          status={mockActive ? 'warning' : contractId ? 'ok' : 'error'}
-        />
-        <StatusCard
-          title="SDK Version"
-          value={reportData.sdkVersion}
-          status="warning"
-        />
-        <StatusCard
-          title="Wallet Address"
-          value={address ? redactContractId(address) : 'Not connected'}
-          status={address ? 'ok' : 'unknown'}
-        />
-        <StatusCard
-          title="Wallet Network"
-          value={mockActive ? 'LOCAL_MOCK' : network || 'Not connected'}
-          status={mockActive ? 'warning' : network ? 'ok' : 'unknown'}
-        />
+        {cards.map((card) => (
+          <StatusCard
+            key={card.title}
+            title={card.title}
+            value={card.value}
+            status={card.status}
+          />
+        ))}
       </div>
 
       <div className="mt-6">
