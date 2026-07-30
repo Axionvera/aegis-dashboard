@@ -7,6 +7,7 @@ import { usePortfolio } from '../hooks/usePortfolio';
 import { EmptyState } from '@/components/states';
 import PortfolioDisclaimer from './PortfolioDisclaimer';
 import TransferModal from './TransferModal';
+import InvestorPortfolioTable from './InvestorPortfolioTable';
 
 const SKELETON_COUNT = 3;
 
@@ -60,31 +61,10 @@ export default function PortfolioList() {
     );
   }
 
-  if (assets.length === 0) {
-    return (
-      <EmptyState
-        icon={undefined}
-        title="No holdings yet"
-        description="This address does not currently hold any Aegis RWA tokens. Once an issuer mints assets to your wallet, they will appear here."
-        variant="no-data"
-        docsLink={{
-          label: 'Learn about RWA tokens',
-          href: '/docs/rwa-tokens',
-        }}
-      />
-    );
-  }
-
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {assets.map((asset) => (
-          <AssetCard key={asset.id} asset={asset} onTransferClick={() => setActiveAsset(asset)} />
-        ))}
-      </div>
-
+      <InvestorPortfolioTable assets={assets} onTransferClick={setActiveAsset} />
       <PortfolioDisclaimer />
-
       {activeAsset && <TransferModal asset={activeAsset} onClose={() => setActiveAsset(null)} />}
     </div>
   );
