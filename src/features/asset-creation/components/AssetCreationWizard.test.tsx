@@ -61,6 +61,25 @@ describe('AssetCreationWizard', () => {
     expect(screen.getByText('Request submitted')).toBeInTheDocument();
   });
 
+  it('shows review details including issuer, network, and warnings', () => {
+    render(<AssetCreationWizard onCreate={vi.fn()} requestedBy="ABCDEF1234567890" />);
+
+    fireEvent.change(screen.getByLabelText(/asset name/i), {
+      target: { value: 'Frankfurt Logistics Fund' },
+    });
+    fireEvent.change(screen.getByLabelText(/ticker/i), { target: { value: 'FR-LOG2' } });
+    fireEvent.change(screen.getByLabelText(/initial requested supply/i), {
+      target: { value: '600000000' },
+    });
+
+    fireEvent.click(screen.getByText('Review request'));
+
+    expect(screen.getByText('ABCDEF…7890')).toBeInTheDocument();
+    expect(screen.getByText(/Network/)).toBeInTheDocument();
+    expect(screen.getByText(/Validation summary/)).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(/exceeds 50% of the soft cap/i);
+  });
+
   it('lets the user go back from review to fix the form', () => {
     render(<AssetCreationWizard onCreate={vi.fn()} />);
     fillValidForm();
