@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import TransactionReviewModal from '@/components/transactions/TransactionReviewModal';
 import TransactionProgress from '@/components/transactions/TransactionProgress';
-import TransactionReceipt from '@/components/transactions/TransactionReceipt';
-import { mapToTransactionResult } from '@/components/transactions/statusMapper';
 import { buildWhitelistSummary } from '@/components/transactions/operationSummary';
+import {
+  AdminActionReceiptView,
+  mapAdminActionReceipt,
+  type AdminActionReceipt,
+} from '@/features/admin/receipts';
 import { COMPLIANCE_DISCLAIMER } from '@/lib/complianceReview';
-import type {
-  TransactionPhase,
-  TransactionResult,
-} from '@/components/transactions/types';
+import type { TransactionPhase } from '@/components/transactions/types';
 
 export type WhitelistAction = 'add' | 'remove';
 
@@ -42,7 +42,7 @@ export default function WhitelistActionModal({
   onClose,
 }: WhitelistActionModalProps) {
   const [phase, setPhase] = useState<Phase>('review');
-  const [result, setResult] = useState<TransactionResult | null>(null);
+  const [receipt, setReceipt] = useState<AdminActionReceipt | null>(null);
 
   const details = buildWhitelistSummary({ action, address, note, network });
 
@@ -50,15 +50,31 @@ export default function WhitelistActionModal({
     setPhase('signing');
     try {
       const outcome = await onSubmit((nextPhase) => setPhase(nextPhase));
-      setResult(mapToTransactionResult(outcome));
+      setReceipt(
+        mapAdminActionReceipt({
+          operation: action === 'add' ? 'whitelist-add' : 'whitelist-remove',
+          target: address,
+          outcome,
+          network,
+          metadata: { note },
+        }),
+      );
     } catch (err) {
-      setResult(mapToTransactionResult(err));
+      setReceipt(
+        mapAdminActionReceipt({
+          operation: action === 'add' ? 'whitelist-add' : 'whitelist-remove',
+          target: address,
+          outcome: err,
+          network,
+          metadata: { note },
+        }),
+      );
     } finally {
       setPhase('receipt');
     }
   };
 
-  const succeeded = result?.status === 'success';
+  const succeeded = receipt?.result.status === 'success';
 
   if (phase === 'review') {
     return (
@@ -84,10 +100,10 @@ export default function WhitelistActionModal({
             <TransactionProgress state={phase} />
           )}
 
-          {phase === 'receipt' && result && (
-            <TransactionReceipt
-              result={result}
-              details={details}
+          {phase === 'receipt' && receipt && (
+            <AdminActionReceiptView
+              receipt={receipt}
+              onNextAction={() => onClose(succeeded)}
               onClose={() => onClose(succeeded)}
             />
           )}

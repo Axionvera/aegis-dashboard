@@ -94,6 +94,11 @@ const outcome = await transfer(recipient, amount, setState);
   details={details}       // same object used for the review
   onClose={reset}
   explorerUrl={getExplorerUrl(result.txHash, network)}
+  nextAction={{           // optional — used by admin receipts
+    label: 'Mint another',
+    description: 'Review the confirmed amount before starting another mint.',
+    onClick: reset,
+  }}
 />
 ```
 
@@ -108,6 +113,9 @@ Handles all four outcomes with its own icon, colour and badge:
 
 The transaction hash row and the explorer link are only rendered when available,
 so a failure that never reached the network shows neither.
+`nextAction` and `limitation` are optional. The admin receipt feature uses them
+for operation-specific follow-up guidance and to explain missing chain evidence.
+See [admin-action-receipts.md](admin-action-receipts.md).
 
 ## Status mapping
 

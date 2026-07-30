@@ -7,6 +7,10 @@ import {
   type AssetCreationErrorCode,
 } from '@/lib/assetCreationRequest';
 import { useFormErrors, FormFieldError, FormError } from '@/features/forms/validation';
+import {
+  AdminActionReceiptView,
+  mapAdminActionReceipt,
+} from '@/features/admin/receipts';
 import type { IssuanceRequest } from '@/fixtures/issuer';
 
 type WizardStep = 'form' | 'review' | 'success';
@@ -143,31 +147,24 @@ export default function AssetCreationWizard({
   };
 
   if (step === 'success' && lastCreated) {
+    const receipt = mapAdminActionReceipt({
+      operation: 'asset-registration',
+      target: lastCreated.ticker,
+      outcome: { status: 'SUCCESS' },
+      metadata: {
+        asset: `${lastCreated.assetName} (${lastCreated.ticker})`,
+        amount: lastCreated.amount.toLocaleString('en-US'),
+        requestId: lastCreated.id,
+      },
+    });
+
     return (
       <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 className="text-xl font-bold mb-2">Request submitted</h2>
-        <p className="text-sm text-slate-500 mb-4">
-          <span className="font-medium text-slate-700">{lastCreated.ticker}</span> has been
-          submitted for compliance review with status{' '}
-          <span className="font-medium text-amber-700">pending</span>. It will appear as
-          mintable once approved.
-        </p>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={handleReset}
-            className="flex-1 bg-aegis-dark hover:bg-slate-800 text-white py-2 rounded font-medium transition"
-          >
-            Create another
-          </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="flex-1 border border-slate-300 hover:bg-slate-50 text-slate-700 py-2 rounded font-medium transition"
-          >
-            Done
-          </button>
-        </div>
+        <AdminActionReceiptView
+          receipt={receipt}
+          onNextAction={handleReset}
+          onClose={onCancel ?? handleReset}
+        />
       </div>
     );
   }

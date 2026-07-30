@@ -32,6 +32,7 @@ Reference material for contributors implementing new functionality.
 |---|---|
 | [transaction-components.md](transaction-components.md) | Transfer modal, history table, and operation-type mapping |
 | [transaction-review-modal.md](transaction-review-modal.md) | Pre-signature review modal, operation summary mapper, risk notes (Issue #177) |
+| [admin-action-receipts.md](admin-action-receipts.md) | Admin operation receipts, explorer links, next actions, limitations (Issue #179) |
 | [transaction-history.md](transaction-history.md) | Normalised transaction model, supported operation types, fixture coverage |
 | [table-filtering.md](table-filtering.md) | Reusable table filtering, sorting, search, and saved-views pattern |
 | [empty-state-components.md](empty-state-components.md) | Reusable `EmptyState` component — variants, props, and usage examples |

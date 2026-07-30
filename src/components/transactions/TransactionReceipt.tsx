@@ -14,6 +14,12 @@ import {
   type TransactionStatus,
 } from './types';
 
+export interface TransactionReceiptAction {
+  label: string;
+  onClick: () => void;
+  description?: string;
+}
+
 interface TransactionReceiptProps {
   result: TransactionResult;
   details: TransactionDetails;
@@ -23,6 +29,10 @@ interface TransactionReceiptProps {
    * `getExplorerUrl` — `null` simply hides the link.
    */
   explorerUrl?: string | null;
+  /** Optional operation-specific action shown above the generic close button. */
+  nextAction?: TransactionReceiptAction;
+  /** Explains why a hash or explorer link may not be available. */
+  limitation?: string;
 }
 
 const STATUS_STYLES: Record<
@@ -65,6 +75,8 @@ export default function TransactionReceipt({
   details,
   onClose,
   explorerUrl,
+  nextAction,
+  limitation,
 }: TransactionReceiptProps) {
   const { Icon, iconClass, badgeClass, label } = STATUS_STYLES[result.status];
 
@@ -122,10 +134,37 @@ export default function TransactionReceipt({
         </a>
       )}
 
+      {limitation && (
+        <p className="rounded-lg bg-slate-50 p-3 text-xs text-slate-600">
+          {limitation}
+        </p>
+      )}
+
+      {nextAction && (
+        <div className="space-y-2">
+          {nextAction.description && (
+            <p className="text-center text-xs text-slate-500">
+              {nextAction.description}
+            </p>
+          )}
+          <button
+            type="button"
+            onClick={nextAction.onClick}
+            className="w-full rounded bg-aegis-brand py-2 font-medium text-white transition hover:bg-blue-600"
+          >
+            {nextAction.label}
+          </button>
+        </div>
+      )}
+
       <button
         type="button"
         onClick={onClose}
-        className="w-full rounded bg-aegis-dark py-2 font-medium text-white transition hover:bg-slate-800"
+        className={`w-full rounded py-2 font-medium transition ${
+          nextAction
+            ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            : 'bg-aegis-dark text-white hover:bg-slate-800'
+        }`}
       >
         Close
       </button>

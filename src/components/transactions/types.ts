@@ -35,7 +35,9 @@ export type TransactionAction =
   | 'transfer'
   | 'mint'
   | 'whitelist'
-  | 'compliance-update';
+  | 'compliance-update'
+  | 'asset-registration'
+  | 'role-change';
 
 /** Human-readable label for each action, shared by review and receipt. */
 export const TRANSACTION_ACTION_LABELS: Record<TransactionAction, string> = {
@@ -43,6 +45,8 @@ export const TRANSACTION_ACTION_LABELS: Record<TransactionAction, string> = {
   mint: 'Mint',
   whitelist: 'Whitelist',
   'compliance-update': 'Compliance update',
+  'asset-registration': 'Asset registration',
+  'role-change': 'Role change',
 };
 
 /** A single label/value line in the review and receipt summaries. */
