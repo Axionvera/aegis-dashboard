@@ -31,3 +31,7 @@ The UI is strictly separated into pages and domain-specific features:
   - `TransactionReview` / `TransactionReviewModal`
   - `operationSummary` mapper for transfer, mint, whitelist, and compliance updates
   - progress / receipt / status mapping used by all sensitive signing flows
+- `src/features/admin/receipts/` encapsulates:
+  - admin operation receipt types for whitelist, mint, asset registration, and role changes
+  - SDK/local-outcome mapping onto shared transaction status and explorer helpers
+  - next-action guidance and fixtures for all receipt states

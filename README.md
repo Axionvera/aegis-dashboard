@@ -45,6 +45,7 @@ Key resources for contributors:
 - [Bulk Compliance Review](docs/bulk-compliance-review.md) — Bulk compliance review table with action confirmation modal
 - [Compliance Status Panel](docs/compliance-status-panel.md) — Address-level compliance status for investor and admin views (Issue #175)
 - [Transaction Review Modal](docs/transaction-review-modal.md) — Pre-signature review modal, operation summary mapper, and risk notes (Issue #177)
+- [Admin Action Receipts](docs/admin-action-receipts.md) — Privileged action status, target, hash, explorer link, and next-step guidance (Issue #179)
 - [Environment Mismatch Blocking Screen](docs/environment-mismatch-blocking.md) — Full-page blocking screen when the wallet network does not match the dashboard target network
 - [Investor Onboarding Eligibility](docs/investor-onboarding-eligibility.md) — Investor onboarding eligibility page, evaluation precedence, and SDK mapping
 - [Performance Budget Review](docs/performance-budget-review.md) — Typed budget threshold evaluation, edge cases, and reviewer checklist

@@ -153,6 +153,15 @@ export const transactionFixtureGalleryEntries: TransactionFixtureGalleryEntry[] 
     explorerUrl: 'https://stellar.expert/explorer/testnet/tx/b9d0e1f2a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e',
   },
   {
+    id: 'receipt-pending',
+    kind: 'receipt',
+    title: 'Pending receipt',
+    description: 'Preview the submitted-but-unconfirmed receipt state.',
+    details: transferDetailsFixture,
+    result: pendingResultFixture,
+    explorerUrl: 'https://stellar.expert/explorer/testnet/tx/c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f60718293a4b5c6d7e8f9a0b1c2d3e4f50',
+  },
+  {
     id: 'receipt-failure',
     kind: 'receipt',
     title: 'Failure receipt',

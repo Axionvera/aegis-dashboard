@@ -3,10 +3,13 @@ import { useAegis } from '@/hooks/useAegis';
 import { useWallet } from '@/hooks/useWallet';
 import TransactionReview from '@/components/transactions/TransactionReview';
 import TransactionProgress from '@/components/transactions/TransactionProgress';
-import TransactionReceipt from '@/components/transactions/TransactionReceipt';
 import { mapToTransactionResult } from '@/components/transactions/statusMapper';
 import { getExplorerUrl } from '@/components/transactions/explorerLink';
 import { buildMintSummary } from '@/components/transactions/operationSummary';
+import {
+  AdminActionReceiptView,
+  mapAdminActionReceipt,
+} from '@/features/admin/receipts';
 import type {
   RawTransactionOutcome,
   TransactionResult,
@@ -206,12 +209,26 @@ export default function MintWorkflow({
     }
 
     if (result) {
+      const receipt = mapAdminActionReceipt({
+        operation: 'mint',
+        target: cleanRecipient,
+        outcome: result,
+        network,
+        metadata: {
+          asset: selectedAsset
+            ? `${selectedAsset.name} (${selectedAsset.ticker})`
+            : undefined,
+          amount: selectedAsset
+            ? `${numericAmount.toLocaleString('en-US')} ${selectedAsset.ticker}`
+            : numericAmount.toLocaleString('en-US'),
+        },
+      });
+
       return (
-        <TransactionReceipt
-          result={result}
-          details={details}
+        <AdminActionReceiptView
+          receipt={receipt}
+          onNextAction={handleReset}
           onClose={handleReset}
-          explorerUrl={getExplorerUrl(result.txHash, network)}
         />
       );
     }

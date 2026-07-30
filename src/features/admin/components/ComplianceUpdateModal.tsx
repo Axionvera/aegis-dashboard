@@ -2,6 +2,7 @@ import { useState } from 'react';
 import TransactionReceipt from '@/components/transactions/TransactionReceipt';
 import TransactionReviewModal from '@/components/transactions/TransactionReviewModal';
 import { buildComplianceUpdateSummary } from '@/components/transactions/operationSummary';
+import { getExplorerUrl } from '@/components/transactions/explorerLink';
 import { COMPLIANCE_DISCLAIMER } from '@/lib/complianceReview';
 import type { ComplianceSubject, BulkAction } from '@/lib/complianceReview';
 import type { TransactionResult } from '@/components/transactions/types';
@@ -78,6 +79,12 @@ export default function ComplianceUpdateModal({
               result={result}
               details={details}
               onClose={onClose}
+              explorerUrl={getExplorerUrl(result.txHash, network)}
+              limitation={
+                result.txHash
+                  ? undefined
+                  : 'Bulk compliance updates are applied locally in this dashboard build. No on-chain transaction hash or explorer link is available until a provider-backed write lands.'
+              }
             />
           )}
         </div>
