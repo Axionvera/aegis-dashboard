@@ -14,6 +14,7 @@ import {
   mapAdminActionReceipt,
 } from '@/features/admin/receipts';
 import { getTargetNetwork, formatNetworkLabel } from '@/lib/environment';
+import { NetworkGuardNotice, useNetworkGuard } from '@/features/wallet';
 import type { IssuanceRequest } from '@/fixtures/issuer';
 
 type WizardStep = 'form' | 'review' | 'success';
@@ -67,6 +68,10 @@ export default function AssetCreationWizard({
   onCreate,
   onCancel,
 }: AssetCreationWizardProps) {
+  // Warn-only: the request is recorded in the dashboard and never signed, so a
+  // network mismatch is worth naming but must not stop the issuer.
+  const networkGuard = useNetworkGuard('asset-registration');
+
   const [step, setStep] = useState<WizardStep>('form');
   const [assetName, setAssetName] = useState('');
   const [ticker, setTicker] = useState('');
@@ -271,6 +276,12 @@ export default function AssetCreationWizard({
         )}
 
         <FormError message={formError} />
+
+        {networkGuard.decision !== 'allow' && (
+          <div className="mb-4">
+            <NetworkGuardNotice guard={networkGuard} />
+          </div>
+        )}
 
         <p className="text-xs text-slate-500 mb-4">
           Submitting sends this asset for compliance review. This is a protocol-level

@@ -30,6 +30,7 @@ import {
   mintableAssetsFixture,
   type MintableAsset,
 } from '@/features/minting/fixtures';
+import { NetworkGuardNotice, useNetworkGuard } from '@/features/wallet';
 
 interface MintWorkflowProps {
   /** Optional override for the mintable asset catalogue (tests). */
@@ -65,6 +66,10 @@ export default function MintWorkflow({
   const cleanRecipient = recipient.trim();
   const numericAmount = parseFloat(amount);
 
+  // Minting is irreversible once signed, so a wrong or unconfirmed wallet
+  // network stops the flow rather than merely warning about it.
+  const networkGuard = useNetworkGuard('mint');
+
   // One key per (signer, asset, recipient, amount, network). Double-click on
   // Confirm or a recovery retry resolves to the same key and cannot produce a
   // second mint; editing any field produces a new key. See docs/form-idempotency.md.
@@ -92,6 +97,8 @@ export default function MintWorkflow({
   const handleReview = async () => {
     setError('');
 
+    if (networkGuard.isBlocked) return;
+
     const validation = validateMintRequest(
       { recipient, amount, assetId },
       { maxDecimals: selectedAsset?.decimals },
@@ -118,6 +125,8 @@ export default function MintWorkflow({
   };
 
   const handleConfirm = async () => {
+    if (networkGuard.isBlocked) return;
+
     setFailure(null);
     setState('signing');
 
@@ -244,6 +253,8 @@ export default function MintWorkflow({
           onConfirm={handleConfirm}
           onCancel={() => setState('idle')}
           isSubmitting={submission.isSubmitting}
+          canConfirm={!networkGuard.isBlocked}
+          notice={<NetworkGuardNotice guard={networkGuard} />}
         />
       );
     }
@@ -257,6 +268,12 @@ export default function MintWorkflow({
         </p>
 
         <FormError message={error} />
+
+        {networkGuard.decision !== 'allow' && (
+          <div className="mb-6">
+            <NetworkGuardNotice guard={networkGuard} />
+          </div>
+        )}
 
         <div className="space-y-4 mb-6">
           <div>
@@ -327,7 +344,7 @@ export default function MintWorkflow({
         <button
           type="button"
           onClick={handleReview}
-          disabled={isLoading || submission.isSubmitting}
+          disabled={isLoading || submission.isSubmitting || networkGuard.isBlocked}
           className="w-full bg-aegis-dark hover:bg-slate-800 text-white py-2 rounded font-medium transition disabled:opacity-50"
         >
           {isLoading ? 'Checking compliance…' : 'Review mint'}

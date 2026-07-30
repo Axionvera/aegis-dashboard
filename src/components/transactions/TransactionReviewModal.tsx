@@ -9,6 +9,10 @@ export interface TransactionReviewModalProps {
   onCancel: () => void;
   /** Disables review actions while a confirmation is in flight. */
   isSubmitting?: boolean;
+  /** Blocks the signature while leaving Cancel available. */
+  canConfirm?: boolean;
+  /** Rendered above the review buttons — used for the wallet network guard. */
+  notice?: ReactNode;
   /**
    * Optional footer beneath the review body — typically a compliance
    * disclaimer for whitelist / compliance-update actions.
@@ -31,6 +35,8 @@ export default function TransactionReviewModal({
   onConfirm,
   onCancel,
   isSubmitting = false,
+  canConfirm = true,
+  notice,
   footer,
   ariaLabel,
 }: TransactionReviewModalProps) {
@@ -63,6 +69,8 @@ export default function TransactionReviewModal({
             onConfirm={onConfirm}
             onCancel={onCancel}
             isSubmitting={isSubmitting}
+            canConfirm={canConfirm}
+            notice={notice}
           />
           {footer ? <div className="mt-4 text-center text-xs text-slate-400">{footer}</div> : null}
         </div>

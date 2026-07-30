@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { AlertTriangle, ShieldCheck } from 'lucide-react';
 import { TRANSACTION_ACTION_LABELS, type TransactionDetails } from './types';
 
@@ -7,6 +8,13 @@ interface TransactionReviewProps {
   onCancel: () => void;
   /** Disables both buttons while the confirmation is being handled. */
   isSubmitting?: boolean;
+  /**
+   * Blocks the signature without disabling Cancel, for conditions the user can
+   * still walk away from — a wrong wallet network, for example.
+   */
+  canConfirm?: boolean;
+  /** Rendered above the buttons, for guards that must be read before signing. */
+  notice?: ReactNode;
 }
 
 /**
@@ -18,6 +26,8 @@ export default function TransactionReview({
   onConfirm,
   onCancel,
   isSubmitting = false,
+  canConfirm = true,
+  notice,
 }: TransactionReviewProps) {
   const riskNotes = details.riskNotes ?? [];
 
@@ -82,6 +92,8 @@ export default function TransactionReview({
         </span>
       </p>
 
+      {notice}
+
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:space-x-3 sm:gap-0">
         <button
           type="button"
@@ -94,7 +106,7 @@ export default function TransactionReview({
         <button
           type="button"
           onClick={onConfirm}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !canConfirm}
           className="flex-1 rounded bg-aegis-brand py-2 font-medium text-white transition hover:bg-blue-600 disabled:opacity-50"
         >
           {isSubmitting ? 'Confirming...' : 'Confirm & Sign'}

@@ -43,6 +43,8 @@ The components are layout-agnostic: `TransferModal` renders them inside a modal,
   onConfirm={handleConfirm}
   onCancel={() => setState('idle')}
   isSubmitting={false}    // optional — disables both buttons
+  canConfirm={true}       // optional — disables Confirm only
+  notice={<NetworkGuardNotice guard={networkGuard} />} // optional
 />
 ```
 
@@ -55,6 +57,12 @@ the wallet-signature reminder so every sensitive action surfaces the same
 pre-sign safety information. Prefer `buildTransferSummary`, `buildMintSummary`,
 `buildWhitelistSummary`, or `buildComplianceUpdateSummary` over hand-built rows.
 
+`canConfirm` and `notice` exist for conditions the user can still walk away
+from — a wrong wallet network, for example. Unlike `isSubmitting`, `canConfirm`
+leaves Cancel enabled, and `notice` renders above the buttons so the reason is
+visible next to the disabled action. Both are forwarded by
+`TransactionReviewModal`. See [wallet-network-guard.md](wallet-network-guard.md).
+
 ### `TransactionReviewModal`
 
 ```tsx
@@ -62,7 +70,9 @@ pre-sign safety information. Prefer `buildTransferSummary`, `buildMintSummary`,
   details={details}
   onConfirm={handleConfirm}
   onCancel={onClose}
-  footer={COMPLIANCE_DISCLAIMER} // optional
+  canConfirm={!networkGuard.isBlocked}                  // optional
+  notice={<NetworkGuardNotice guard={networkGuard} />}  // optional
+  footer={COMPLIANCE_DISCLAIMER}                        // optional
 />
 ```
 

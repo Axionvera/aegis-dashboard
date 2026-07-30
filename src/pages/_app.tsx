@@ -10,6 +10,7 @@ import { useWallet } from '@/hooks/useWallet';
 import { isMockModeEnabled } from '@/config/mockMode';
 import { validateDashboardConfig } from '@/config/validate';
 import { evaluateEnvironmentMismatch, type EnvironmentMismatchResult } from '@/lib/environment';
+import { useWalletNetworkWatcher } from '@/features/wallet';
 
 function WalletAutoReconnect() {
   const tryAutoReconnect = useWallet((s) => s.tryAutoReconnect);
@@ -20,6 +21,17 @@ function WalletAutoReconnect() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  return null;
+}
+
+/**
+ * Keeps the stored wallet network current. Freighter fires no event when the
+ * user switches networks, so without this the store would keep the network
+ * captured at connect time and both the guard below and the per-action wallet
+ * network guard would judge against a stale value.
+ */
+function WalletNetworkWatcher() {
+  useWalletNetworkWatcher();
   return null;
 }
 
@@ -70,6 +82,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <WalletAutoReconnect />
+      <WalletNetworkWatcher />
       <EnvironmentBanner />
       <MockModeBanner />
       <Navbar />

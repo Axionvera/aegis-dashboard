@@ -21,6 +21,7 @@ import {
   type ClassifiedSdkError,
   type RecoveryPlan,
 } from '@/features/sdk-recovery';
+import { NetworkGuardNotice, useNetworkGuard } from '@/features/wallet';
 import type { PortfolioAsset } from '@/lib/aegis/types';
 
 interface TransferModalProps {
@@ -45,6 +46,10 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
   // guard, but this modal can be reached via any future entry point, so it
   // must not assume the caller already validated eligibility.
   const isEligible = asset.isDataAvailable && asset.transferEligibility.state === 'eligible';
+
+  // Re-read on every render: the user can switch networks in Freighter while
+  // this modal is open, including between the review screen and the signature.
+  const networkGuard = useNetworkGuard('transfer');
 
   // Pasted Stellar addresses often carry surrounding whitespace, which would
   // otherwise reach the compliance check and the transaction itself.
@@ -78,6 +83,10 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
   const handleReview = async () => {
     setError('');
 
+    // Checked again here rather than relying on the disabled button alone, so
+    // a network switch mid-form cannot slip a transfer onto the wrong ledger.
+    if (networkGuard.isBlocked) return;
+
     // Covers missing fields, malformed addresses, self-transfer, non-positive
     // amounts, balance overflow, and decimal precision beyond what the asset
     // supports. See src/lib/transferRequest.ts and
@@ -108,6 +117,8 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
   };
 
   const handleConfirm = async () => {
+    if (networkGuard.isBlocked) return;
+
     setFailure(null);
     setState('signing');
 
@@ -244,6 +255,8 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
           // The guard already blocks a duplicate submission; disabling the
           // button stops the user from having to discover that.
           isSubmitting={submission.isSubmitting}
+          canConfirm={!networkGuard.isBlocked}
+          notice={<NetworkGuardNotice guard={networkGuard} />}
         />
       );
     }
@@ -253,6 +266,12 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
         <h2 className="text-xl font-bold mb-4">Transfer {asset.ticker}</h2>
 
         {error && <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">{error}</div>}
+
+        {networkGuard.decision !== 'allow' && (
+          <div className="mb-4">
+            <NetworkGuardNotice guard={networkGuard} />
+          </div>
+        )}
 
         <div className="space-y-4 mb-6">
           <div>
@@ -288,7 +307,7 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
           </button>
           <button
             onClick={handleReview}
-            disabled={isLoading}
+            disabled={isLoading || networkGuard.isBlocked}
             className="flex-1 bg-aegis-brand hover:bg-blue-600 text-white py-2 rounded font-medium transition disabled:opacity-50"
           >
             {isLoading ? 'Checking...' : 'Review Transfer'}

@@ -71,6 +71,30 @@ export function resolvePassphrase(walletNetwork: unknown): string | null {
 }
 
 /**
+ * Collapse Freighter's `getNetwork()` payload into a stable string for the
+ * wallet store. Prefer the short name (`TESTNET` / `PUBLIC`) so explorer links
+ * and review rows keep working; fall back to the passphrase when that is all
+ * Freighter returns. Returns `null` when nothing usable is present.
+ */
+export function toStoredNetwork(walletNetwork: unknown): string | null {
+  if (!walletNetwork) return null;
+
+  if (typeof walletNetwork === 'string') {
+    return walletNetwork || null;
+  }
+
+  if (typeof walletNetwork === 'object') {
+    const record = walletNetwork as Record<string, unknown>;
+    if (typeof record.network === 'string' && record.network) return record.network;
+    if (typeof record.networkPassphrase === 'string' && record.networkPassphrase) {
+      return record.networkPassphrase;
+    }
+  }
+
+  return null;
+}
+
+/**
  * Evaluate whether the connected wallet's network matches the dashboard target.
  *
  * Fail-closed: when the wallet is not connected, returns no_wallet so the

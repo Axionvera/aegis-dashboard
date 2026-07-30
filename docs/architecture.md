@@ -35,3 +35,8 @@ The UI is strictly separated into pages and domain-specific features:
   - admin operation receipt types for whitelist, mint, asset registration, and role changes
   - SDK/local-outcome mapping onto shared transaction status and explorer helpers
   - next-action guidance and fixtures for all receipt states
+- `src/features/wallet/` encapsulates the per-action wallet network guard:
+  - `evaluateNetworkGuard` and the block-versus-warn policy per guarded action
+  - `useWalletNetworkWatcher` (live Freighter network detection) and `useNetworkGuard`
+  - `NetworkGuardNotice` plus fixtures for every mismatch state
+  - reuses the passphrase helpers in `src/lib/environment.ts` shared with the app-shell check
