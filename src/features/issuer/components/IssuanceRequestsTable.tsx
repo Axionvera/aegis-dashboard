@@ -9,14 +9,8 @@ import {
 import { useTableFilters } from '@/hooks/useTableFilters';
 import type { IssuanceRequest } from '@/fixtures/issuer';
 import { EmptyState } from '@/components/states';
-
-const STATUS_STYLES: Record<string, string> = {
-  draft: 'bg-slate-100 text-slate-600',
-  pending: 'bg-amber-100 text-amber-800',
-  approved: 'bg-sky-100 text-sky-800',
-  minted: 'bg-emerald-100 text-emerald-800',
-  rejected: 'bg-rose-100 text-rose-800',
-};
+import { StatusBadge } from '@/components/status';
+import { statusForIssuanceRequest } from '@/lib/status';
 
 function formatAmount(value: number): string {
   return new Intl.NumberFormat('en-US', {
@@ -201,11 +195,7 @@ export default function IssuanceRequestsTable({
                   </span>
                 </td>
                 <td className="p-2">
-                  <span
-                    className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[req.status]}`}
-                  >
-                    {req.status}
-                  </span>
+                  <StatusBadge status={statusForIssuanceRequest(req.status)} variant="pill" />
                 </td>
                 <td className="p-2 text-xs text-slate-400">
                   {new Date(req.requestedAt).toLocaleDateString('en-US', {
