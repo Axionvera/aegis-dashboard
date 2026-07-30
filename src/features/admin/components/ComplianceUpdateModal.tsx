@@ -4,6 +4,7 @@ import TransactionReviewModal from '@/components/transactions/TransactionReviewM
 import { buildComplianceUpdateSummary } from '@/components/transactions/operationSummary';
 import { getExplorerUrl } from '@/components/transactions/explorerLink';
 import { COMPLIANCE_DISCLAIMER } from '@/lib/complianceReview';
+import { NetworkGuardNotice, useNetworkGuard } from '@/features/wallet';
 import type { ComplianceSubject, BulkAction } from '@/lib/complianceReview';
 import type { TransactionResult } from '@/components/transactions/types';
 
@@ -42,6 +43,10 @@ export default function ComplianceUpdateModal({
     actionLabel,
   });
 
+  // Warn-only: this update is applied in the dashboard and never reaches the
+  // wallet, so a mismatch is worth flagging but must not stop the reviewer.
+  const networkGuard = useNetworkGuard('compliance-update');
+
   const handleConfirm = () => {
     const txResult = onConfirm();
     setResult(txResult);
@@ -54,6 +59,7 @@ export default function ComplianceUpdateModal({
         details={details}
         onConfirm={handleConfirm}
         onCancel={onClose}
+        notice={<NetworkGuardNotice guard={networkGuard} />}
         footer={COMPLIANCE_DISCLAIMER}
         ariaLabel="Compliance update review"
       />

@@ -4,6 +4,7 @@ import {
   getTargetNetwork,
   formatNetworkLabel,
   resolvePassphrase,
+  toStoredNetwork,
 } from './environment';
 import { ENVIRONMENT_MISMATCH_FIXTURES } from './__fixtures__/environment';
 
@@ -114,5 +115,32 @@ describe('resolvePassphrase', () => {
 
   it('returns null for an empty object', () => {
     expect(resolvePassphrase({})).toBeNull();
+  });
+});
+
+describe('toStoredNetwork', () => {
+  it('prefers Freighter\'s short network name over the passphrase', () => {
+    expect(
+      toStoredNetwork({
+        network: 'TESTNET',
+        networkPassphrase: 'Test SDF Network ; September 2015',
+      }),
+    ).toBe('TESTNET');
+  });
+
+  it('falls back to the passphrase when the short name is missing', () => {
+    expect(
+      toStoredNetwork({ networkPassphrase: 'Test SDF Network ; September 2015' }),
+    ).toBe('Test SDF Network ; September 2015');
+  });
+
+  it('passes a bare string through unchanged', () => {
+    expect(toStoredNetwork('PUBLIC')).toBe('PUBLIC');
+  });
+
+  it('returns null for empty or unusable values', () => {
+    expect(toStoredNetwork(null)).toBeNull();
+    expect(toStoredNetwork({})).toBeNull();
+    expect(toStoredNetwork('')).toBeNull();
   });
 });

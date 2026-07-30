@@ -8,6 +8,7 @@ import {
   type AdminActionReceipt,
 } from '@/features/admin/receipts';
 import { COMPLIANCE_DISCLAIMER } from '@/lib/complianceReview';
+import { NetworkGuardNotice, useNetworkGuard } from '@/features/wallet';
 import type { TransactionPhase } from '@/components/transactions/types';
 
 export type WhitelistAction = 'add' | 'remove';
@@ -45,8 +46,11 @@ export default function WhitelistActionModal({
   const [receipt, setReceipt] = useState<AdminActionReceipt | null>(null);
 
   const details = buildWhitelistSummary({ action, address, note, network });
+  const networkGuard = useNetworkGuard(action === 'add' ? 'whitelist-add' : 'whitelist-remove');
 
   const handleConfirm = async () => {
+    if (networkGuard.isBlocked) return;
+
     setPhase('signing');
     try {
       const outcome = await onSubmit((nextPhase) => setPhase(nextPhase));
@@ -82,6 +86,8 @@ export default function WhitelistActionModal({
         details={details}
         onConfirm={handleConfirm}
         onCancel={() => onClose(false)}
+        canConfirm={!networkGuard.isBlocked}
+        notice={<NetworkGuardNotice guard={networkGuard} />}
         footer={COMPLIANCE_DISCLAIMER}
       />
     );

@@ -1,11 +1,17 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
 import WhitelistActionModal from './WhitelistActionModal';
 import { COMPLIANCE_DISCLAIMER } from '@/lib/complianceReview';
+import { useWallet } from '@/hooks/useWallet';
 
 const ADDRESS = 'GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOKY3B2WSQHG4W37';
 
 describe('WhitelistActionModal', () => {
+  // Whitelist changes are signed, so the network guard blocks them unless a
+  // wallet is connected on the network the dashboard targets.
+  beforeEach(() => {
+    useWallet.setState({ address: ADDRESS, network: 'TESTNET' });
+  });
   it('shows operation summary, network, target, expected result, and risk notes before signing', () => {
     render(
       <WhitelistActionModal
@@ -110,5 +116,44 @@ describe('WhitelistActionModal', () => {
     await waitFor(() => {
       expect(screen.getByText(/whitelist update rejected/i)).toBeInTheDocument();
     });
+  });
+
+  it('blocks signing while the wallet is on another network', () => {
+    const onSubmit = vi.fn();
+    useWallet.setState({ address: ADDRESS, network: 'PUBLIC' });
+
+    render(
+      <WhitelistActionModal
+        action="add"
+        address={ADDRESS}
+        network="TESTNET"
+        onSubmit={onSubmit}
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Wrong wallet network')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /confirm & sign/i })).toBeDisabled();
+
+    fireEvent.click(screen.getByRole('button', { name: /confirm & sign/i }));
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('leaves Cancel usable while the network blocks the signature', () => {
+    const onClose = vi.fn();
+    useWallet.setState({ address: ADDRESS, network: 'PUBLIC' });
+
+    render(
+      <WhitelistActionModal
+        action="add"
+        address={ADDRESS}
+        network="TESTNET"
+        onSubmit={vi.fn()}
+        onClose={onClose}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+    expect(onClose).toHaveBeenCalledWith(false);
   });
 });

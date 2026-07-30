@@ -16,6 +16,7 @@ import type {
   TransactionState,
 } from '@/components/transactions/types';
 import MintWorkflow from '@/features/minting/components/MintWorkflow';
+import { NetworkGuardNotice, useNetworkGuard } from '@/features/wallet';
 
 const MINT_AMOUNT = 1000;
 
@@ -32,6 +33,7 @@ function LegacyMintPanel() {
   const [whitelistMessage, setWhitelistMessage] = useState<string | null>(null);
 
   const cleanAddress = address.trim();
+  const networkGuard = useNetworkGuard('mint');
 
   const details = buildMintSummary({
     amount: MINT_AMOUNT,
@@ -46,6 +48,8 @@ function LegacyMintPanel() {
   };
 
   const handleConfirmMint = async () => {
+    if (networkGuard.isBlocked) return;
+
     setState('signing');
     try {
       setResult(
@@ -90,6 +94,8 @@ function LegacyMintPanel() {
         details={details}
         onConfirm={handleConfirmMint}
         onCancel={reset}
+        canConfirm={!networkGuard.isBlocked}
+        notice={<NetworkGuardNotice guard={networkGuard} />}
       />
     );
   }
@@ -113,6 +119,8 @@ function LegacyMintPanel() {
           />
         </div>
 
+        {networkGuard.decision !== 'allow' && <NetworkGuardNotice guard={networkGuard} />}
+
         {whitelistMessage && (
           <div
             role="status"
@@ -135,7 +143,7 @@ function LegacyMintPanel() {
           <button
             type="button"
             onClick={() => setState('review')}
-            disabled={isLoading || !cleanAddress}
+            disabled={isLoading || !cleanAddress || networkGuard.isBlocked}
             className="flex-1 bg-aegis-dark hover:bg-slate-800 text-white py-2 rounded font-medium transition disabled:opacity-50"
           >
             Mint Asset
