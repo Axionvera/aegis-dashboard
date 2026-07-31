@@ -16,7 +16,10 @@
 
 import type { IAegisProvider, PhaseListener } from './IAegisProvider';
 import type { PortfolioReadModel } from '@/lib/aegis/types';
+import type { WhitelistEntry } from '@/lib/whitelist';
 import type { RawTransactionOutcome } from '@/components/transactions/types';
+import type { BudgetReviewResult } from '@/lib/performanceBudget';
+import type { RawAddressComplianceRecord } from '@/features/compliance/types';
 import * as aegisClient from '@/lib/aegis/client';
 
 export class LiveAegisProvider implements IAegisProvider {
@@ -28,6 +31,30 @@ export class LiveAegisProvider implements IAegisProvider {
 
   checkWhitelist(address: string): Promise<boolean> {
     return aegisClient.checkWhitelist(address);
+  }
+
+  listWhitelist(): Promise<WhitelistEntry[]> {
+    return aegisClient.listWhitelist();
+  }
+
+  addToWhitelist(
+    address: string,
+    actor: string,
+    onPhase?: PhaseListener,
+  ): Promise<RawTransactionOutcome> {
+    return aegisClient.addToWhitelist(address, actor, onPhase);
+  }
+
+  removeFromWhitelist(
+    address: string,
+    actor: string,
+    onPhase?: PhaseListener,
+  ): Promise<RawTransactionOutcome> {
+    return aegisClient.removeFromWhitelist(address, actor, onPhase);
+  }
+
+  getAddressCompliance(address: string): Promise<RawAddressComplianceRecord> {
+    return aegisClient.getAddressCompliance(address);
   }
 
   transfer(
@@ -44,5 +71,11 @@ export class LiveAegisProvider implements IAegisProvider {
     onPhase?: PhaseListener,
   ): Promise<RawTransactionOutcome> {
     return aegisClient.mint(to, amount, onPhase);
+  }
+
+  getPerformanceBudget(
+    portfolioId: string,
+  ): Promise<BudgetReviewResult[]> {
+    return aegisClient.getPerformanceBudget(portfolioId);
   }
 }

@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getAccessibleRoutes } from '@/features/auth/routes';
 import { useAuthStore } from '@/features/auth/store';
 import { useWallet } from '@/hooks/useWallet';
 import { truncateAddress } from '@/utils/formatting';
-import { Shield, AlertCircle } from 'lucide-react';
+import { Shield, AlertCircle, Menu } from 'lucide-react';
+import MobileNav from '@/components/layout/MobileNav';
 
 const prettyRole = (role: string): string =>
   role
@@ -14,6 +15,7 @@ const prettyRole = (role: string): string =>
 
 export default function Navbar() {
   const { address, network, isConnecting, connectionError, connect, disconnect } = useWallet();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const role = useAuthStore((state) => state.role);
   const isRoleLoading = useAuthStore((state) => state.isRoleLoading);
   const loadRoleForWallet = useAuthStore((state) => state.loadRoleForWallet);
@@ -50,12 +52,21 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setIsMobileMenuOpen(true)}
+          aria-label="Open navigation menu"
+          className="rounded-md p-2 text-slate-600 hover:bg-slate-100 transition md:hidden"
+        >
+          <Menu size={20} aria-hidden="true" />
+        </button>
+
         {/* Inline connection error — replaces the removed alert() */}
         {connectionError && !address && (
           <span
             role="alert"
             title={connectionError}
-            className="flex items-center gap-1 text-xs text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded max-w-xs truncate"
+            className="md:flex items-center hidden gap-1 text-xs text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded max-w-xs truncate"
           >
             <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span className="truncate">{connectionError}</span>
@@ -63,7 +74,7 @@ export default function Navbar() {
         )}
 
         {address ? (
-          <div className="flex items-center space-x-3">
+          <div className="md:flex items-center space-x-3 hidden">
             <span className="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500 font-mono">
               {network}
             </span>
@@ -87,12 +98,23 @@ export default function Navbar() {
           <button
             onClick={connect}
             disabled={isConnecting}
-            className="bg-aegis-brand hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium text-sm transition disabled:opacity-50"
+            className="bg-aegis-brand hidden md:block hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium text-sm transition disabled:opacity-50"
           >
             {isConnecting ? 'Connecting…' : 'Connect Wallet'}
           </button>
         )}
       </div>
+      <MobileNav
+        isConnected={Boolean(address)}
+        isMobileMenuOpen={isMobileMenuOpen}
+        address={address ?? undefined}
+        disconnect={disconnect}
+        isConnecting={isConnecting}
+        onConnectWallet={connect}
+        onClose={() => setIsMobileMenuOpen(false)}
+        routes={accessibleRoutes}
+        connectionError={connectionError}
+      />
     </nav>
   );
 }

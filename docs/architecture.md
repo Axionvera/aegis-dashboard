@@ -23,3 +23,20 @@ The UI is strictly separated into pages and domain-specific features:
   - dashboard role model and route access config
   - SDK-backed role resolution (mocked)
   - route guard hook and fixtures for access states
+- `src/features/compliance/` encapsulates:
+  - address-level compliance status panel
+  - SDK raw-record mapping and safe explanatory copy
+  - fixtures covering approved / blocked / pending / revoked / unknown / unavailable
+- `src/components/transactions/` provides the shared review-before-sign UI:
+  - `TransactionReview` / `TransactionReviewModal`
+  - `operationSummary` mapper for transfer, mint, whitelist, and compliance updates
+  - progress / receipt / status mapping used by all sensitive signing flows
+- `src/features/admin/receipts/` encapsulates:
+  - admin operation receipt types for whitelist, mint, asset registration, and role changes
+  - SDK/local-outcome mapping onto shared transaction status and explorer helpers
+  - next-action guidance and fixtures for all receipt states
+- `src/features/wallet/` encapsulates the per-action wallet network guard:
+  - `evaluateNetworkGuard` and the block-versus-warn policy per guarded action
+  - `useWalletNetworkWatcher` (live Freighter network detection) and `useNetworkGuard`
+  - `NetworkGuardNotice` plus fixtures for every mismatch state
+  - reuses the passphrase helpers in `src/lib/environment.ts` shared with the app-shell check

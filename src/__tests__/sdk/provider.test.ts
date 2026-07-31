@@ -34,9 +34,16 @@ describe('getAegisProvider', () => {
   });
 
   it('returns a MockAegisProvider when NEXT_PUBLIC_MOCK_MODE is "true"', () => {
+    const originalNodeEnv = process.env.NODE_ENV;
     process.env.NEXT_PUBLIC_MOCK_MODE = 'true';
-    const provider = getAegisProvider();
-    expect(provider).toBeInstanceOf(MockAegisProvider);
+    // assertMockModeSafe requires NODE_ENV === 'development' when mock mode is on.
+    (process.env as Record<string, string>).NODE_ENV = 'development';
+    try {
+      const provider = getAegisProvider();
+      expect(provider).toBeInstanceOf(MockAegisProvider);
+    } finally {
+      (process.env as Record<string, string>).NODE_ENV = originalNodeEnv ?? 'test';
+    }
   });
 
   it('returns the same singleton instance on repeated calls', () => {
@@ -52,8 +59,15 @@ describe('isProviderMocked', () => {
   });
 
   it('returns true when the mock provider is active', () => {
+    const originalNodeEnv = process.env.NODE_ENV;
     process.env.NEXT_PUBLIC_MOCK_MODE = 'true';
-    expect(isProviderMocked()).toBe(true);
+    // assertMockModeSafe requires NODE_ENV === 'development' when mock mode is on.
+    (process.env as Record<string, string>).NODE_ENV = 'development';
+    try {
+      expect(isProviderMocked()).toBe(true);
+    } finally {
+      (process.env as Record<string, string>).NODE_ENV = originalNodeEnv ?? 'test';
+    }
   });
 });
 
@@ -102,6 +116,25 @@ describe('MockAegisProvider', () => {
     expect(await provider.checkWhitelist('GABC')).toBe(false);
   });
 
+  it('getAddressCompliance returns fixture status for known addresses', async () => {
+    const record = await provider.getAddressCompliance(
+      'GCFXCOMPREVOKED000000000000000000000000000000000000000',
+    );
+    expect(record.status).toBe('revoked');
+    expect(record.address).toContain('REVOKED');
+  });
+
+  it('getAddressCompliance falls back to approved for long G-addresses', async () => {
+    const address = 'G' + 'A'.repeat(54);
+    const record = await provider.getAddressCompliance(address);
+    expect(record.status).toBe('approved');
+  });
+
+  it('getAddressCompliance returns unknown for unsupported addresses', async () => {
+    const record = await provider.getAddressCompliance('INVALID');
+    expect(record.status).toBe('unknown');
+  });
+
   it('transfer returns SUCCESS for a standard amount', async () => {
     const result = await provider.transfer('GCFXTEST', 100);
     expect(result.status).toBe('SUCCESS');
@@ -137,6 +170,59 @@ describe('MockAegisProvider', () => {
   it('phase callbacks are called during mint', async () => {
     const phases: string[] = [];
     await provider.mint('GCFXTEST', 100, (phase) => phases.push(phase));
+    expect(phases).toContain('signing');
+    expect(phases).toContain('pending');
+  });
+
+  it('listWhitelist returns the fixture entries', async () => {
+    const entries = await provider.listWhitelist();
+    expect(entries.length).toBeGreaterThan(0);
+    expect(entries[0]).toHaveProperty('address');
+    expect(entries[0]).toHaveProperty('status');
+  });
+
+  it('listWhitelist returns copies, not internal references', async () => {
+    const first = await provider.listWhitelist();
+    first[0].status = 'revoked';
+    const second = await provider.listWhitelist();
+    expect(second[0].status).not.toBe('revoked');
+  });
+
+  it('addToWhitelist throws when no address is provided', async () => {
+    await expect(provider.addToWhitelist('', 'GCFXADMIN')).rejects.toThrow('[MOCK]');
+  });
+
+  it('addToWhitelist adds a new entry with status whitelisted', async () => {
+    const address = 'GCFXNEWUSER000000000000000000000000000000000000000000';
+    const outcome = await provider.addToWhitelist(address, 'GCFXADMIN');
+    expect(outcome.status).toBe('SUCCESS');
+
+    const entries = await provider.listWhitelist();
+    const entry = entries.find((e) => e.address === address);
+    expect(entry?.status).toBe('whitelisted');
+    expect(entry?.updatedBy).toBe('GCFXADMIN');
+  });
+
+  it('removeFromWhitelist throws when no address is provided', async () => {
+    await expect(provider.removeFromWhitelist('', 'GCFXADMIN')).rejects.toThrow('[MOCK]');
+  });
+
+  it('removeFromWhitelist marks an existing entry as revoked', async () => {
+    const entries = await provider.listWhitelist();
+    const whitelisted = entries.find((e) => e.status === 'whitelisted');
+    expect(whitelisted).toBeDefined();
+
+    await provider.removeFromWhitelist(whitelisted!.address, 'GCFXADMIN');
+
+    const updated = await provider.listWhitelist();
+    const entry = updated.find((e) => e.address === whitelisted!.address);
+    expect(entry?.status).toBe('revoked');
+    expect(entry?.updatedBy).toBe('GCFXADMIN');
+  });
+
+  it('phase callbacks are called during addToWhitelist', async () => {
+    const phases: string[] = [];
+    await provider.addToWhitelist('GCFXTEST', 'GCFXADMIN', (phase) => phases.push(phase));
     expect(phases).toContain('signing');
     expect(phases).toContain('pending');
   });

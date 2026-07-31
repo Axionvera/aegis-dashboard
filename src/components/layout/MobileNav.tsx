@@ -1,16 +1,14 @@
 "use client";
 
 import { truncateAddress } from "@/utils/formatting";
-import { X } from "lucide-react";
+import { AlertCircle, X } from "lucide-react";
 import Link from "next/link";
+import type { RouteAccessConfig } from "@/features/auth/types";
 
-const NAV_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Portfolio", href: "/portfolio" },
-  { label: "Transactions", href: "/transactions" },
-  { label: "Admin", href: "/admin" },
-  { label: "Diagnostics", href: "/diagnostics" },
-];
+interface NavLink {
+  label: string;
+  href: string;
+}
 
 interface MobileNavProps {
   isConnected: boolean;
@@ -20,6 +18,8 @@ interface MobileNavProps {
   isConnecting: boolean;
   onConnectWallet: () => void;
   onClose: () => void;
+  routes: RouteAccessConfig[];
+  connectionError: string | null
 }
 
 export default function MobileNav({
@@ -30,7 +30,14 @@ export default function MobileNav({
   isConnecting,
   onConnectWallet,
   onClose,
+  routes,
+  connectionError
 }: MobileNavProps) {
+  const navLinks: NavLink[] = [
+    { label: "Home", href: "/" },
+    ...routes.map((r) => ({ label: r.label, href: r.path })),
+    { label: "Diagnostics", href: "/diagnostics" },
+  ];
   return (
     <div
       id="mobile-navigation"
@@ -59,7 +66,7 @@ export default function MobileNav({
         {/* Navigation Links */}
         <nav aria-label="Mobile navigation">
           <ul className="flex flex-col gap-1">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
@@ -89,7 +96,7 @@ export default function MobileNav({
               </button>
             </div>
           ) : (
-            <div className="flex justify-center">
+            <div className="flex flex-col items-center gap-3 justify-center">
               <button
                 type="button"
                 onClick={onConnectWallet}
@@ -98,6 +105,19 @@ export default function MobileNav({
               >
                 {isConnecting ? "Connecting…" : "Connect Wallet"}
               </button>
+               {connectionError && !address && (
+                <span
+                  role="alert"
+                  title={connectionError}
+                  className="flex items-center md:hidden gap-1 text-xs text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded max-w-xs truncate"
+                >
+                  <AlertCircle
+                    className="h-3.5 w-3.5 shrink-0"
+                    aria-hidden="true"
+                  />
+                  <span className="truncate">{connectionError}</span>
+                </span>
+              )}
             </div>
           )}
         </div>

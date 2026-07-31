@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { getAegisProvider } from '@/lib/sdk';
 import type { PortfolioReadModel } from '@/lib/aegis/types';
+import type { WhitelistEntry } from '@/lib/whitelist';
 import type {
   RawTransactionOutcome,
   TransactionPhase,
 } from '@/components/transactions/types';
+import type { BudgetReviewResult } from '@/lib/performanceBudget';
+import type { RawAddressComplianceRecord } from '@/features/compliance/types';
 import { resolveWalletRole } from '@/features/auth/resolveRole';
 import { useTransactionHistoryStore } from '@/features/transactions/store';
 import { useWallet } from '@/hooks/useWallet';
@@ -70,6 +73,78 @@ export const useAegis = () => {
     }
   };
 
+  const listWhitelist = async (): Promise<WhitelistEntry[]> => {
+    setIsLoading(true);
+    try {
+      return await getAegisProvider().listWhitelist();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const addToWhitelist = async (
+    target: string,
+    onPhase?: PhaseListener,
+  ): Promise<RawTransactionOutcome> => {
+    setIsLoading(true);
+    try {
+      const outcome = await getAegisProvider().addToWhitelist(target, actor, onPhase);
+      const txHash = outcome.hash ?? outcome.txHash ?? `tx_whitelist_add_${Date.now()}`;
+
+      addRecord({
+        kind: 'sdk_receipt',
+        txHash,
+        successful: mapOutcomeSuccessful(outcome),
+        signer: actor,
+        recipient: target,
+        createdAt: new Date().toISOString(),
+        action: 'compliance_update',
+        notes: 'Admin added address to KYC whitelist',
+      });
+
+      return outcome;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const removeFromWhitelist = async (
+    target: string,
+    onPhase?: PhaseListener,
+  ): Promise<RawTransactionOutcome> => {
+    setIsLoading(true);
+    try {
+      const outcome = await getAegisProvider().removeFromWhitelist(target, actor, onPhase);
+      const txHash = outcome.hash ?? outcome.txHash ?? `tx_whitelist_remove_${Date.now()}`;
+
+      addRecord({
+        kind: 'sdk_receipt',
+        txHash,
+        successful: mapOutcomeSuccessful(outcome),
+        signer: actor,
+        recipient: target,
+        createdAt: new Date().toISOString(),
+        action: 'compliance_update',
+        notes: 'Admin removed address from KYC whitelist',
+      });
+
+      return outcome;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getAddressCompliance = async (
+    target: string,
+  ): Promise<RawAddressComplianceRecord> => {
+    setIsLoading(true);
+    try {
+      return await getAegisProvider().getAddressCompliance(target);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const transfer = async (
     to: string,
     amount: number,
@@ -104,6 +179,7 @@ export const useAegis = () => {
     to: string,
     amount: number,
     onPhase?: PhaseListener,
+    assetTicker?: string,
   ): Promise<RawTransactionOutcome> => {
     setIsLoading(true);
     try {
@@ -118,6 +194,8 @@ export const useAegis = () => {
         recipient: to,
         createdAt: new Date().toISOString(),
         action: 'mint',
+        amount,
+        assetTicker,
         notes: 'Admin mint action from dashboard',
       });
 
@@ -127,11 +205,27 @@ export const useAegis = () => {
     }
   };
 
+  const getPerformanceBudget = async (
+    portfolioId: string,
+  ): Promise<BudgetReviewResult[]> => {
+    setIsLoading(true);
+    try {
+      return await getAegisProvider().getPerformanceBudget(portfolioId);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     checkWhitelist,
+    listWhitelist,
+    addToWhitelist,
+    removeFromWhitelist,
+    getAddressCompliance,
     transfer,
     mint,
     getPortfolio,
+    getPerformanceBudget,
     getWalletRole: resolveWalletRole,
     isLoading,
   };

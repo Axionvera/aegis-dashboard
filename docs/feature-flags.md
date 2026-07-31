@@ -7,8 +7,12 @@ Flags are managed by a [zustand](https://github.com/pmndrs/zustand) store at `sr
 import { useFeatureFlags } from '@/hooks/useFeatureFlags';
 
 const isNewMintFlowEnabled = useFeatureFlags((s) => s.flags.newMintFlow);
-
 ```
+
+`newMintFlow` defaults to **true** and gates the guided RWA mint workflow on
+`/admin` (Issue #6). Toggle it off in the feature-flags panel to fall back to
+the legacy fixed-amount mint panel. See
+[rwa-asset-minting-workflow.md](rwa-asset-minting-workflow.md).
 
 Adding a new flag
 

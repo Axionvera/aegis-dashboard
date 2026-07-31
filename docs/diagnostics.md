@@ -16,6 +16,12 @@ The diagnostics page safely aggregates:
 ## Sharing a Report
 When opening a GitHub Issue or requesting support in Discord, click **Copy Report**. This produces a sanitized JSON blob of your current application state.
 
+The report is built by `buildDiagnosticsReport()` in `src/lib/diagnostics/buildReport.ts`,
+a pure function that redacts all sensitive values (RPC URL paths, contract IDs, wallet
+addresses) via the shared `redact` helpers. The report and its status cards are
+unit-tested with healthy and failing fixtures in
+`src/lib/diagnostics/buildReport.test.ts`.
+
 **Example Redacted Report:**
 ```json
 {
@@ -26,7 +32,7 @@ When opening a GitHub Issue or requesting support in Discord, click **Copy Repor
   "wallet": "GBXY...WXYZ",
   "network": "TESTNET",
   "flags": {
-    "newMintFlow": false,
+    "newMintFlow": true,
     "complianceBanner": true,
     "darkMode": false
   }

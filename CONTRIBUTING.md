@@ -4,96 +4,123 @@ We love open-source contributions! To ensure a smooth and productive process, pl
 
 ---
 
-## Table of Contents
+## Setup
 
-- [Getting Started](#getting-started)
-- [Branch Naming](#branch-naming)
-- [Component Rules](#component-rules)
-- [Pull Request Evidence Checklist](#pull-request-evidence-checklist)
-- [Review and Merge Process](#review-and-merge-process)
+```bash
+git clone https://github.com/Axionvera/aegis-dashboard.git
+cd aegis-dashboard
+npm install
+cp .env.example .env.local
+npm run dev          # http://localhost:3000
+```
+
+The dev server requires no live Soroban contracts. Set `NEXT_PUBLIC_MOCK_MODE="true"`
+in `.env.local` to activate the built-in mock provider. See
+[docs/mock-mode.md](docs/mock-mode.md) for fixture data and mock wallet addresses.
 
 ---
 
-## Getting Started
+## Before You Push
 
-1. Fork the repository and clone your fork locally.
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a new branch from `main` using the naming conventions below.
-4. Make your changes, then push and open a pull request.
+Run the full local verification suite and confirm every check is clean:
+
+```bash
+npm run lint          # ESLint via next lint — must produce 0 errors
+npm run typecheck     # tsc --noEmit — must produce 0 errors
+npm test              # Vitest — all tests must pass
+npm run build         # Next.js production build — must succeed
+```
+
+> **Note:** The test runner is **Vitest**, not Jest. The `jest.config.js` in the
+> project root is stale and can be ignored. Do not write Jest-style setup — use the
+> Vitest patterns already present in `src/__tests__/`.
+
+CI runs all four steps in the same order. A PR with any red check will not be merged.
 
 ---
 
 ## Branch Naming
 
-Use descriptive prefixes to categorize your work:
+| Change type | Prefix | Example |
+|---|---|---|
+| New feature | `feat/` | `feat/kyc-badge-component` |
+| Bug fix | `fix/` | `fix/asset-card-null-guard` |
+| UI-only change | `ui/` | `ui/portfolio-card-spacing` |
+| Documentation | `docs/` | `docs/mock-sdk-reference` |
+| Refactor | `refactor/` | `refactor/normalise-transaction-status` |
 
-| Prefix   | Purpose                             | Example                        |
-|----------|-------------------------------------|--------------------------------|
-| `feat/`  | New features or functionality       | `feat/portfolio-export`        |
-| `fix/`   | Bug fixes                           | `fix/wallet-connection-error`  |
-| `ui/`    | UI/UX improvements                  | `ui/responsive-navbar`         |
-| `docs/`  | Documentation changes               | `docs/pr-evidence-checklist`   |
-| `refactor/` | Code restructuring               | `refactor/state-management`    |
-| `ci/`    | CI/CD pipeline changes              | `ci/add-lint-workflow`         |
-
----
-
-## Component Rules
-
-- All new UI components must be **fully responsive** using a mobile-first approach with Tailwind CSS.
-- Place reusable components in `src/components/` and page-level components in `src/pages/`.
-- Use the project's custom brand colors (`bg-aegis-brand`, `text-aegis-dark`, `text-aegis-accent`) defined in `tailwind.config.js`.
-- Avoid writing custom CSS in `globals.css` unless absolutely necessary.
-- Keep component state local unless it needs to be shared globally via `zustand`.
+Always include the issue number in the branch name when the branch closes a tracked
+issue, e.g. `feat/kyc-badge-component-42`.
 
 ---
 
-## Pull Request Evidence Checklist
+## Component Placement
 
-Every pull request must include structured evidence demonstrating that the work is complete, tested, and traceable. A PR template is automatically loaded when you open a new pull request on GitHub.
+| Location | Use for |
+|---|---|
+| `src/components/` | Shared, reusable components used across two or more pages or features |
+| `src/components/layout/` | Layout shell components (Navbar, MobileNav, RouteGuard) |
+| `src/components/transactions/` | Transaction-specific shared components |
+| `src/features/<domain>/components/` | Components owned by and used only within one feature domain |
 
-### Required Evidence
-
-Your PR must satisfy **all six** of the following categories:
-
-1. **Issue Reference** — Every PR must link to a tracked issue using closing keywords (e.g., `Closes #125`). PRs without an issue reference will not be reviewed.
-
-2. **Implementation Summary** — Describe what changed, why it changed, and list the key files affected. Reviewers should understand the scope of the PR from the summary alone.
-
-3. **Testing** — Include tests that cover your changes, or provide a clear justification if tests are not applicable (e.g., documentation-only changes).
-
-4. **Commands Run** — List the exact commands you ran locally to validate your change:
-   ```bash
-   npm install
-   npm run lint
-   npm run build
-   npm run dev
-   ```
-
-5. **CI Status** — All CI checks must pass before requesting a review. If a check fails for an unrelated reason, document it in the reviewer notes.
-
-6. **Acceptance Criteria Coverage** — Map each acceptance criterion from the linked issue to evidence that it has been satisfied. Use the table format provided in the PR template.
-
-### Screenshots
-
-If your PR includes UI changes, attach **before and after** screenshots or a screen recording in the designated section of the PR template.
-
-> For the full evidence checklist specification, including detailed requirements, the review process, and FAQs, see [docs/pr-evidence-checklist.md](docs/pr-evidence-checklist.md).
+When adding a new component directory outside `src/pages/` or `src/components/`,
+add its path to the `content` array in `tailwind.config.js` so Tailwind scans it.
+Omitting this causes utility classes to be silently dropped from the production build.
 
 ---
 
-## Review and Merge Process
+## Fixtures
 
-1. **Self-review** — Before requesting a review, verify that the PR template is fully completed and all CI checks pass.
-2. **Peer review** — At least one maintainer must approve the PR. Reviewers will use the evidence checklist as a structured evaluation guide.
-3. **Address feedback** — Respond to all review comments. Push follow-up commits rather than force-pushing so reviewers can track incremental changes.
-4. **Merge** — Once approved and all checks pass, a maintainer will merge the PR using a squash merge.
+Three fixture conventions coexist in this project. Follow the nearest existing pattern
+for the area you are working in:
+
+- **Colocated `fixtures.ts`** inside a feature or component folder
+  (`src/features/auth/fixtures.ts`, `src/components/transactions/fixtures.ts`)
+- **`src/lib/__fixtures__/`** for domain-logic fixtures used across multiple areas
+- Do not import fixtures from `src/lib/__fixtures__/` into production pages — use a
+  prop or a mock provider instead
 
 ---
 
-## Questions?
+## Pull Request Requirements
 
-If you are unsure about any of these guidelines, open a discussion or ask in the relevant issue thread before submitting your PR.
+Every PR must satisfy the checklist in `.github/pull_request_template.md`, which
+renders automatically when you open a new PR. Before opening, complete the
+[Contributor Self-Assessment Form](docs/self-assessment-checklist.md). The short version:
+
+- **UI changes**: attach before/after screenshots at every affected viewport width
+- **Logic changes**: add or update automated tests; paste the `npm test` output
+- **All changes**: CI must be green before requesting review
+
+See [docs/testing-evidence-requirement.md](docs/testing-evidence-requirement.md) for
+the full policy and [docs/contribution-quality-examples.md](docs/contribution-quality-examples.md)
+for concrete examples of what passes and what does not.
+
+During GrantFox evaluation windows, review the
+[Payment-Period Conduct Policy](docs/payment-period-conduct.md). Repeated payout
+complaints, tagging maintainers outside designated threads, and other prohibited
+conduct may result in exclusion from the current evaluation window.
+
+---
+
+## For Maintainers and Reviewers
+
+Before approving or merging a pull request, please follow the **[Reviewer Quality Checklist](docs/reviewer-checklist.md)**. This checklist covers:
+
+- PR hygiene and scope verification
+- Implementation completeness against acceptance criteria
+- Code quality and architectural consistency
+- Styling and responsiveness standards
+- Test coverage and manual verification
+- CI pipeline status
+- Security and sensitive data checks
+- Documentation completeness
+
+A condensed version of the checklist is also embedded in the [pull request template](.github/pull_request_template.md) for convenient use during reviews.
+
+---
+
+## Documentation Index
+
+A full index of every file in `docs/` organised by audience is at
+[docs/README.md](docs/README.md).

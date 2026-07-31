@@ -1,137 +1,187 @@
-# Aegis Dashboard — GrantFox PR Reviewer Checklist
+# Reviewer Quality Checklist
 
-This checklist provides a repeatable review process for every GrantFox-submitted PR to the Aegis RWA Dashboard. Complete all sections before approving a pull request.
-
----
-
-## 1. Implementation Verification
-
-- [ ] PR description clearly states what the change does and why
-- [ ] Implementation matches the linked issue's requirements and acceptance criteria
-- [ ] No unrelated changes, stray logs, or commented-out code are included
-- [ ] Branch name follows `CONTRIBUTING.md` conventions
-- [ ] No new dependencies added without justification in the PR description
-- [ ] Environment variables (if any) are documented in `.env.example`
-
-### Code quality
-- [ ] New code follows existing patterns and conventions in the codebase
-- [ ] No magic numbers or hardcoded strings — use constants or config where appropriate
-- [ ] Error states are handled (loading, empty, error, edge cases)
-- [ ] No `console.log` or `debugger` statements left in production code
-- [ ] TypeScript types are used — no `any` without explicit justification
-
-### Component review
-- [ ] Components are in the correct directory (`/components`, `/app`, etc.)
-- [ ] Shared components are extracted rather than duplicated
-- [ ] Props are typed with a clearly named interface
-- [ ] Components handle both connected and disconnected wallet states where relevant
-
-### Security
-- [ ] No private keys, mnemonics, or secrets exposed in client-side code
-- [ ] External links use `rel="noreferrer"` with `target="_blank"`
-- [ ] User input is validated before being used in transactions or API calls
-- [ ] No `eval()` or `dangerouslySetInnerHTML` introduced
+A standardized checklist for **Aegis Dashboard** maintainers to evaluate pull requests before merging. This guide ensures every contribution meets the project's quality, reliability, and compliance standards.
 
 ---
 
-## 2. Screenshots / Recordings Check
+## How to Use This Checklist
 
-- [ ] PR includes screenshots or screen recordings for all UI changes
-- [ ] Screenshots cover both light and dark mode (if theming exists)
-- [ ] Mobile/responsive views are shown for layout changes
-- [ ] All states are captured: loading, empty, error, success, and edge cases
-- [ ] Modals, dropdowns, and tooltips are shown in their open state
-- [ ] Before/after comparisons are included for UI refactors
+1. Open the pull request and review the description for context.
+2. Work through each section below in order.
+3. Mark each item as **Pass**, **Fail**, or **N/A**.
+4. A PR is merge-ready only when every applicable item passes.
+5. If any item fails, leave a clear, constructive comment explaining what needs to change.
 
-### Recording checklist (if applicable)
-- [ ] Screen recording shows full user flow from start to finish
-- [ ] Recording demonstrates wallet connection, transaction flow, and disconnection
-- [ ] Recording is at a reasonable playback speed (not sped up beyond readability)
-- [ ] Recording is embedded or linked, not attached as a large file
+> **Tip:** Copy the [Quick-Reference Checklist](#quick-reference-checklist) into your review comment for easy tracking.
 
 ---
 
-## 3. Tests and CI Verification
+## 1. PR Hygiene
 
-- [ ] All CI checks pass (build, lint, typecheck)
-- [ ] `npm run build` completes without TypeScript errors
-- [ ] `npm run lint` passes with no warnings or errors
-- [ ] New logic has corresponding unit or integration tests (if test framework is set up)
-
-### Manual testing confirmation
-- [ ] Reviewer has pulled the branch and tested locally
-- [ ] Feature works on both Stellar testnet and mainnet (if network-dependent)
-- [ ] Feature works with Freighter wallet connected and disconnected
-- [ ] No regressions in existing functionality observed
-
-### Common failure points
-
-| Check | Command | Expected |
-|---|---|---|
-| TypeScript | `npm run build` | No errors |
-| Lint | `npm run lint` | No warnings or errors |
-| Dev server | `npm run dev` | Loads at `http://localhost:3000` |
-| Production build | `npm run build && npm start` | Serves correctly |
+| # | Check | Details |
+|---|-------|---------|
+| 1.1 | **Branch naming** | Branch follows convention: `feat/`, `fix/`, `ui/`, or `docs/`. |
+| 1.2 | **PR description** | Description clearly explains *what* changed and *why*. |
+| 1.3 | **Issue reference** | PR links to a relevant GitHub issue (e.g., `Closes #123`). |
+| 1.4 | **Scope** | PR addresses a single concern. Large changes are split into reviewable units. |
+| 1.5 | **No unrelated changes** | Diff contains only changes relevant to the stated purpose. |
 
 ---
 
-## 4. Accessibility Check
+## 2. Implementation Completeness
 
-- [ ] All interactive elements (buttons, links, inputs) are keyboard-focusable
-- [ ] Tab order follows a logical visual flow
-- [ ] Form inputs have associated `<label>` elements or `aria-label` attributes
-- [ ] Color is not the only means of conveying information (icons, text accompany color)
-- [ ] Error messages are visible, descriptive, and not color-only
-- [ ] Modals trap focus when open and close on `Escape`
-- [ ] Images have meaningful `alt` text (or `alt=""` if decorative)
-- [ ] Heading hierarchy is logical (no skipped levels: h1 → h2 → h3)
+| # | Check | Details |
+|---|-------|---------|
+| 2.1 | **Acceptance criteria** | Every acceptance criterion listed in the linked issue is satisfied. |
+| 2.2 | **Edge cases** | Implementation handles empty states, error boundaries, and unexpected input. |
+| 2.3 | **No TODO/FIXME debt** | New `TODO` or `FIXME` comments are either resolved or tracked in a follow-up issue. |
+| 2.4 | **Feature completeness** | The feature works end-to-end as described; no partial implementations are merged without an explicit plan. |
 
-### Quick audit commands
+---
 
-```bash
-# Check for images missing alt text
-grep -r '<img' src/ --include="*.tsx" | grep -v 'alt='
+## 3. Code Quality
 
-# Check for aria-label on icon-only buttons
-grep -r 'aria-label' src/ --include="*.tsx"
+| # | Check | Details |
+|---|-------|---------|
+| 3.1 | **Readability** | Code is self-documenting with clear variable and function names. |
+| 3.2 | **Component architecture** | New components follow the project hierarchy: pages in `src/pages/`, reusable UI in `src/components/`, hooks in `src/hooks/`. |
+| 3.3 | **State management** | State is kept as local as possible. Global state (via Zustand) is used only when genuinely required. |
+| 3.4 | **No hardcoded values** | Magic numbers, URLs, and configuration are extracted into constants or environment variables. |
+| 3.5 | **TypeScript usage** | Types are explicit and meaningful. `any` is avoided unless justified with a comment. |
+| 3.6 | **No dead code** | Unused imports, variables, functions, and commented-out blocks are removed. |
+
+---
+
+## 4. Styling and Responsiveness
+
+| # | Check | Details |
+|---|-------|---------|
+| 4.1 | **Tailwind conventions** | Styling uses Tailwind utility classes. Custom CSS in `globals.css` is avoided unless absolutely necessary. |
+| 4.2 | **Brand consistency** | Brand colors use the project tokens: `bg-aegis-brand`, `text-aegis-dark`, `text-aegis-accent`. |
+| 4.3 | **Mobile-first design** | UI is responsive and follows a mobile-first approach via Tailwind breakpoints. |
+| 4.4 | **Visual evidence** | PR includes a screenshot or GIF demonstrating the UI change (required for all visual PRs). |
+
+---
+
+## 5. Testing and Verification
+
+| # | Check | Details |
+|---|-------|---------|
+| 5.1 | **Test coverage** | New logic includes unit or integration tests, or the PR explains why tests are not applicable. |
+| 5.2 | **Manual verification** | The reviewer has pulled the branch locally and verified the feature works as described. |
+| 5.3 | **Regression check** | Existing functionality is not broken by the change. |
+| 5.4 | **Build succeeds** | `npm run build` completes without errors. |
+| 5.5 | **Lint passes** | `npm run lint` reports no new warnings or errors. |
+
+---
+
+## 6. CI and Pipeline Status
+
+| # | Check | Details |
+|---|-------|---------|
+| 6.1 | **CI passes** | All automated checks (linting, type-checking, tests) are green. |
+| 6.2 | **No ignored failures** | CI failures are investigated and resolved, not dismissed or skipped. |
+| 6.3 | **Workflow integrity** | Changes to `.github/` workflow files are reviewed for correctness and do not weaken existing checks. |
+
+---
+
+## 7. Security and Sensitive Data
+
+| # | Check | Details |
+|---|-------|---------|
+| 7.1 | **No secrets** | No API keys, private keys, mnemonics, or credentials are committed. |
+| 7.2 | **Environment variables** | Sensitive configuration uses environment variables, not hardcoded values. |
+| 7.3 | **Dependency safety** | New dependencies are from trusted sources and do not introduce known vulnerabilities. |
+| 7.4 | **Input validation** | User-facing inputs are validated and sanitized where applicable. |
+
+---
+
+## 8. Documentation
+
+| # | Check | Details |
+|---|-------|---------|
+| 8.1 | **Inline documentation** | Complex logic includes comments explaining *why*, not *what*. |
+| 8.2 | **Updated docs** | If the change affects setup, configuration, or architecture, the relevant docs (`README.md`, `docs/`) are updated. |
+| 8.3 | **Breaking changes** | Any breaking changes are clearly documented in the PR description. |
+
+---
+
+## Quick-Reference Checklist
+
+Copy this into your PR review comment for convenient tracking:
+
+```markdown
+### Reviewer Checklist
+
+**PR Hygiene**
+- [ ] Branch follows naming convention (`feat/`, `fix/`, `ui/`, `docs/`)
+- [ ] PR description explains what and why
+- [ ] Issue is linked
+- [ ] Single-concern scope
+- [ ] No unrelated changes
+
+**Implementation Completeness**
+- [ ] All acceptance criteria are met
+- [ ] Edge cases are handled
+- [ ] No unresolved TODO/FIXME items
+- [ ] Feature is complete end-to-end
+
+**Code Quality**
+- [ ] Readable and self-documenting
+- [ ] Follows component architecture (`pages/`, `components/`, `hooks/`)
+- [ ] State management is appropriate
+- [ ] No hardcoded values
+- [ ] TypeScript types are explicit
+- [ ] No dead code
+
+**Styling and Responsiveness**
+- [ ] Uses Tailwind utility classes
+- [ ] Uses brand color tokens
+- [ ] Mobile-first and responsive
+- [ ] Screenshot/GIF provided for UI changes
+
+**Testing and Verification**
+- [ ] Tests included or justification provided
+- [ ] Manually verified by reviewer
+- [ ] No regressions introduced
+- [ ] `npm run build` succeeds
+- [ ] `npm run lint` passes
+
+**CI and Pipeline**
+- [ ] All CI checks pass
+- [ ] No ignored failures
+- [ ] Workflow file changes reviewed
+
+**Security**
+- [ ] No secrets or credentials committed
+- [ ] Sensitive config uses env variables
+- [ ] New dependencies are trustworthy
+- [ ] Inputs are validated
+
+**Documentation**
+- [ ] Complex logic is commented
+- [ ] Relevant docs are updated
+- [ ] Breaking changes are documented
 ```
 
 ---
 
-## 5. Acceptance Criteria Review
+## Review Outcomes
 
-- [ ] Every acceptance criterion from the linked issue is addressed
-- [ ] Criteria that are NOT met are explicitly called out in the PR description with reasoning
-- [ ] Edge cases listed in the issue are handled or documented as out of scope
+After completing the checklist, apply one of the following outcomes:
 
-### Cross-browser and device check
-
-| Environment | Status | Notes |
-|---|---|---|
-| Chrome (latest) | ⬜ | |
-| Firefox (latest) | ⬜ | |
-| Safari (latest) | ⬜ | |
-| Mobile Chrome (Android) | ⬜ | |
-| Mobile Safari (iOS) | ⬜ | |
-| Tablet (portrait) | ⬜ | |
+| Outcome | When to Use |
+|---------|-------------|
+| **Approve** | All applicable items pass. The PR is ready to merge. |
+| **Request Changes** | One or more items fail. Leave specific, actionable feedback for each failure. |
+| **Comment** | The reviewer has questions or suggestions but is not blocking the merge. |
 
 ---
 
-## 6. Documentation
+## Escalation
 
-- [ ] `README.md` is updated if setup steps changed
-- [ ] `docs/` is updated if architecture, flows, or conventions changed
-- [ ] Inline comments explain non-obvious logic (no redundant comments)
-- [ ] Changelog or PR description summarizes user-facing impact
+If a PR introduces architectural changes, new dependencies, or modifications to CI workflows, request a second review from another maintainer before merging.
 
 ---
 
-## Sign-off
-
-| Reviewer | Date | Approved / Changes Requested | Notes |
-|---|---|---|---|
-| | | | |
-
-PR number: ___________
-Linked issue: ___________
-Branch reviewed: ___________
+*This checklist is a living document. If you identify a gap or improvement, open an issue or PR to update it.*

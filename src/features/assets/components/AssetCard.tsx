@@ -10,7 +10,7 @@ interface AssetCardProps {
 }
 
 export default function AssetCard({ asset, onTransferClick }: AssetCardProps) {
-  const { name, ticker, balance, metadata, compliance, transferEligibility, isDataAvailable } = asset;
+  const { name, ticker, balance, metadata, compliance, transferEligibility, lifecycleStatus, isDataAvailable } = asset;
   const canTransfer = isDataAvailable && transferEligibility.state === 'eligible';
 
   return (
@@ -22,7 +22,10 @@ export default function AssetCard({ asset, onTransferClick }: AssetCardProps) {
             {ticker}
           </span>
         </div>
-        {isDataAvailable && <ComplianceBadge compliance={compliance} />}
+        <div className="flex flex-col items-end gap-1">
+          {isDataAvailable && <ComplianceBadge compliance={compliance} />}
+          {lifecycleStatus && <AssetLifecycleBadge state={lifecycleStatus.current} />}
+        </div>
       </div>
 
       {isDataAvailable ? (

@@ -17,7 +17,8 @@ export type FeatureFlagKey =
   | 'newMintFlow'
   | 'complianceBanner'
   | 'darkMode'
-  | 'mockMode';
+  | 'mockMode'
+  | 'performanceBudgetReview';
 
 export interface FeatureFlagMeta {
   label: string;
@@ -27,7 +28,7 @@ export interface FeatureFlagMeta {
 export const FLAG_METADATA: Record<FeatureFlagKey, FeatureFlagMeta> = {
   newMintFlow: {
     label: 'New Mint Flow',
-    description: 'Enables the redesigned admin mint experience.',
+    description: 'Enables the redesigned admin mint experience (asset selector, compliance pre-check, review, receipt). Default on.',
   },
   complianceBanner: {
     label: 'Compliance Banner',
@@ -42,15 +43,21 @@ export const FLAG_METADATA: Record<FeatureFlagKey, FeatureFlagMeta> = {
     description:
       'Uses local fixture data instead of live SDK calls. For local development only — never enable on testnet or mainnet.',
   },
+  performanceBudgetReview: {
+    label: 'Performance Budget Review',
+    description:
+      'Enables the performance budget review panel in the diagnostics section. For testing budget threshold evaluation.',
+  },
 };
 
 const DEFAULT_FLAGS: Record<FeatureFlagKey, boolean> = {
-  newMintFlow: false,
+  // Issue #6 — guided RWA mint workflow is the default admin mint experience.
+  // Toggle off in the feature-flags panel to fall back to the legacy fixed-amount panel.
+  newMintFlow: true,
   complianceBanner: true,
   darkMode: false,
-  // Seed from the env var so the Diagnostics page and FeatureFlagsPanel reflect
-  // the true initial state without the user having to toggle manually.
   mockMode: isMockModeEnabled(),
+  performanceBudgetReview: false,
 };
 
 interface FeatureFlagsState {

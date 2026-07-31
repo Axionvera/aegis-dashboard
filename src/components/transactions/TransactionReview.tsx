@@ -1,4 +1,5 @@
-import { ShieldCheck } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { AlertTriangle, ShieldCheck } from 'lucide-react';
 import { TRANSACTION_ACTION_LABELS, type TransactionDetails } from './types';
 
 interface TransactionReviewProps {
@@ -7,6 +8,13 @@ interface TransactionReviewProps {
   onCancel: () => void;
   /** Disables both buttons while the confirmation is being handled. */
   isSubmitting?: boolean;
+  /**
+   * Blocks the signature without disabling Cancel, for conditions the user can
+   * still walk away from — a wrong wallet network, for example.
+   */
+  canConfirm?: boolean;
+  /** Rendered above the buttons, for guards that must be read before signing. */
+  notice?: ReactNode;
 }
 
 /**
@@ -18,7 +26,11 @@ export default function TransactionReview({
   onConfirm,
   onCancel,
   isSubmitting = false,
+  canConfirm = true,
+  notice,
 }: TransactionReviewProps) {
+  const riskNotes = details.riskNotes ?? [];
+
   return (
     <div className="space-y-5">
       <header>
@@ -34,7 +46,7 @@ export default function TransactionReview({
       <dl className="divide-y divide-slate-100 rounded-lg border border-slate-200">
         {details.rows.map((row) => (
           <div
-            key={row.label}
+            key={`${row.label}-${row.value}`}
             className="flex flex-col gap-1 px-3 py-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4"
           >
             <dt className="text-sm text-slate-500">{row.label}</dt>
@@ -49,6 +61,29 @@ export default function TransactionReview({
         ))}
       </dl>
 
+      {details.expectedResult && (
+        <div className="rounded-lg border border-emerald-100 bg-emerald-50 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800">
+            Expected result
+          </p>
+          <p className="mt-1 text-sm text-emerald-900">{details.expectedResult}</p>
+        </div>
+      )}
+
+      {riskNotes.length > 0 && (
+        <div className="rounded-lg border border-amber-100 bg-amber-50 p-3">
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-amber-800">
+            <AlertTriangle size={14} aria-hidden="true" />
+            Risk notes
+          </p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-amber-900">
+            {riskNotes.map((note) => (
+              <li key={note}>{note}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <p className="flex items-start gap-2 rounded-lg bg-slate-50 p-3 text-xs text-slate-600">
         <ShieldCheck size={16} className="mt-px shrink-0 text-aegis-accent" />
         <span>
@@ -56,6 +91,8 @@ export default function TransactionReview({
           network until you approve it.
         </span>
       </p>
+
+      {notice}
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:space-x-3 sm:gap-0">
         <button
@@ -69,7 +106,7 @@ export default function TransactionReview({
         <button
           type="button"
           onClick={onConfirm}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !canConfirm}
           className="flex-1 rounded bg-aegis-brand py-2 font-medium text-white transition hover:bg-blue-600 disabled:opacity-50"
         >
           {isSubmitting ? 'Confirming...' : 'Confirm & Sign'}

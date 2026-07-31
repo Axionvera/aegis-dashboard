@@ -65,6 +65,7 @@ All fixture files live in `src/fixtures/`. They are imported only by
 | `transactions.ts` | Re-exports the canonical transaction history fixtures from `src/features/transactions/fixtures.ts` |
 | `diagnostics.ts` | Mock diagnostics report with `[MOCK]` labels |
 | `index.ts` | Barrel that re-exports all of the above |
+| `flows.ts` | Named end-to-end investor journeys that link the files above together by address/asset — see [mock-flow-fixtures.md](mock-flow-fixtures.md) |
 
 To add or change fixture data, edit the relevant file. Changes take effect
 on the next hot reload — no server restart required.
@@ -107,9 +108,11 @@ The `MockAegisProvider` maps the transfer/mint `amount` to a specific outcome:
 | `0.03` | Unknown status (exercises the fallback UI path) |
 | Any other value | `SUCCESS` |
 
-This lets you exercise every receipt state without touching any code. Open the
-Admin page, enter any G-address longer than 50 characters, and mint with one of
-these amounts.
+This lets you exercise every receipt state without touching any code. On the
+Admin page with the guided mint workflow (`newMintFlow`, default on), select an
+asset, enter any G-address longer than 50 characters, and mint with one of
+these amounts (0.01 / 0.02 / 0.03). See
+[rwa-asset-minting-workflow.md](rwa-asset-minting-workflow.md).
 
 ---
 

@@ -1,8 +1,14 @@
 import type { PortfolioAsset, PortfolioReadModel } from './types';
+import type { WhitelistEntry } from '@/lib/whitelist';
+import { sampleWhitelistEntries } from '@/lib/__fixtures__/whitelist';
 import type {
   RawTransactionOutcome,
   TransactionPhase,
 } from '@/components/transactions/types';
+import type { BudgetReviewResult } from '@/lib/performanceBudget';
+import type { RawAddressComplianceRecord } from '@/features/compliance/types';
+import { addressComplianceFixtureByAddress } from '@/features/compliance/fixtures';
+import { sampleBudgetResults } from '@/lib/__fixtures__/performanceBudget';
 
 /**
  * Stand-in for `@aegis/sdk`. The real SDK is not published to this
@@ -138,6 +144,83 @@ export async function checkWhitelist(address: string): Promise<boolean> {
   return address.startsWith('G') && address.length > 50;
 }
 
+/**
+ * Stand-in for `AegisClient.compliance.listWhitelist()`. Returns every
+ * address the admin dashboard knows about (whitelisted and revoked) so the
+ * compliance management UI can render the full history.
+ *
+ * TODO(@aegis/sdk): replace with a real contract read once the whitelist
+ * registry is queryable on-chain.
+ */
+export async function listWhitelist(): Promise<WhitelistEntry[]> {
+  await wait(600);
+  return sampleWhitelistEntries.map((entry) => ({ ...entry }));
+}
+
+/**
+ * Stand-in for `AegisClient.compliance.addToWhitelist(address)`.
+ *
+ * TODO(@aegis/sdk): replace with the real signed contract invocation.
+ */
+export async function addToWhitelist(
+  address: string,
+  actor: string,
+  onPhase?: PhaseListener,
+): Promise<RawTransactionOutcome> {
+  void actor;
+  await simulateSubmission(onPhase);
+  return { status: 'SUCCESS', hash: `mock_tx_hash_whitelist_add_${Date.now()}` };
+}
+
+/**
+ * Stand-in for `AegisClient.compliance.removeFromWhitelist(address)`.
+ *
+ * TODO(@aegis/sdk): replace with the real signed contract invocation.
+ */
+export async function removeFromWhitelist(
+  address: string,
+  actor: string,
+  onPhase?: PhaseListener,
+): Promise<RawTransactionOutcome> {
+  void actor;
+  await simulateSubmission(onPhase);
+  return { status: 'SUCCESS', hash: `mock_tx_hash_whitelist_remove_${Date.now()}` };
+}
+
+/**
+ * Mocks address-level compliance registry lookup.
+ * Returns a raw record for the dashboard status panel mapper.
+ */
+export async function getAddressCompliance(
+  address: string,
+): Promise<RawAddressComplianceRecord> {
+  await wait(500);
+
+  const fixture = addressComplianceFixtureByAddress[address];
+  if (fixture) {
+    return { ...fixture, address };
+  }
+
+  const normalized = address.toUpperCase();
+  if (normalized.includes('REVOKED')) {
+    return { address, status: 'revoked', reasonCode: 'APPROVAL_REVOKED' };
+  }
+  if (normalized.includes('BLOCK') || normalized.includes('DENY')) {
+    return { address, status: 'blocked', reasonCode: 'REGISTRY_BLOCKED' };
+  }
+  if (normalized.includes('PENDING') || normalized.includes('REVIEW')) {
+    return { address, status: 'pending', reasonCode: 'AWAITING_REVIEW' };
+  }
+  if (normalized.includes('UNAVAILABLE') || normalized.includes('TIMEOUT')) {
+    return { address, status: 'unavailable', unavailable: true, reasonCode: 'REGISTRY_TIMEOUT' };
+  }
+  if (address.startsWith('G') && address.length > 50) {
+    return { address, status: 'approved', reasonCode: 'REGISTRY_APPROVED' };
+  }
+
+  return { address, status: 'unknown', reasonCode: 'NO_RECORD' };
+}
+
 /** Called as the transaction moves from wallet signature to network submission. */
 type PhaseListener = (phase: TransactionPhase) => void;
 
@@ -198,4 +281,17 @@ export async function mint(
   void to;
   await simulateSubmission(onPhase);
   return mockOutcome(amount, 'mock_tx_hash_0987654321');
+}
+
+/**
+ * Mocks fetching performance budget review results for a portfolio.
+ * Returns the sample fixture data so the PerformanceBudgetPanel can
+ * render meaningful results in mock mode.
+ */
+export async function getPerformanceBudget(
+  portfolioId: string,
+): Promise<BudgetReviewResult[]> {
+  void portfolioId;
+  await wait(500);
+  return sampleBudgetResults;
 }

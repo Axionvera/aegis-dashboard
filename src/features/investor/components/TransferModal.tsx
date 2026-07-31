@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import { useAegis } from '@/hooks/useAegis';
 import { useWallet } from '@/hooks/useWallet';
-import { formatAmount, truncateAddress } from '@/utils/formatting';
 import TransactionReview from '@/components/transactions/TransactionReview';
 import TransactionProgress from '@/components/transactions/TransactionProgress';
 import TransactionReceipt from '@/components/transactions/TransactionReceipt';
 import { mapToTransactionResult } from '@/components/transactions/statusMapper';
 import TransferRestrictionExplainer from './TransferRestrictionExplainer';
 import { getExplorerUrl } from '@/components/transactions/explorerLink';
+import { buildTransferSummary } from '@/components/transactions/operationSummary';
 import type {
   RawTransactionOutcome,
-  TransactionDetails,
   TransactionResult,
   TransactionState,
 } from '@/components/transactions/types';
 import { useIdempotentSubmit } from '@/features/forms/idempotency';
+import { validateTransferRequest, TRANSFER_ERROR_MESSAGES } from '@/lib/transferRequest';
 import {
   buildRecoveryPlan,
   classifySdkError,
@@ -22,6 +22,7 @@ import {
   type ClassifiedSdkError,
   type RecoveryPlan,
 } from '@/features/sdk-recovery';
+import { NetworkGuardNotice, useNetworkGuard } from '@/features/wallet';
 import type { PortfolioAsset } from '@/lib/aegis/types';
 
 interface TransferModalProps {
@@ -47,6 +48,10 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
   // must not assume the caller already validated eligibility.
   const isEligible = asset.isDataAvailable && asset.transferEligibility.state === 'eligible';
 
+  // Re-read on every render: the user can switch networks in Freighter while
+  // this modal is open, including between the review screen and the signature.
+  const networkGuard = useNetworkGuard('transfer');
+
   // Pasted Stellar addresses often carry surrounding whitespace, which would
   // otherwise reach the compliance check and the transaction itself.
   const cleanRecipient = recipient.trim();
@@ -68,35 +73,43 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
     },
   });
 
-  const details: TransactionDetails = {
-    action: 'transfer',
-    title: `Transfer ${asset.ticker}`,
-    description: 'Review the details before signing this transfer.',
-    network: network ?? undefined,
-    rows: [
-      { label: 'Asset', value: asset.ticker },
-      { label: 'Amount', value: `${formatAmount(parseFloat(amount) || 0)} ${asset.ticker}` },
-      { label: 'Recipient', value: cleanRecipient, mono: true },
-      ...(address
-        ? [{ label: 'From', value: truncateAddress(address), mono: true }]
-        : []),
-      { label: 'Network', value: network ?? 'Unknown' },
-    ],
-  };
+  const details = buildTransferSummary({
+    assetTicker: asset.ticker,
+    amount: Number.isFinite(numericAmount) ? numericAmount : 0,
+    recipient: cleanRecipient,
+    fromAddress: address,
+    network,
+  });
 
   const handleReview = async () => {
     setError('');
-    if (!cleanRecipient || !amount) return setError('Fill all fields');
 
-    if (Number.isNaN(numericAmount) || numericAmount <= 0) {
-      return setError('Enter a valid amount.');
-    }
-    if (numericAmount > asset.balance) {
-      return setError('Amount exceeds your available balance.');
+    // Checked again here rather than relying on the disabled button alone, so
+    // a network switch mid-form cannot slip a transfer onto the wrong ledger.
+    if (networkGuard.isBlocked) return;
+
+    // Covers missing fields, malformed addresses, self-transfer, non-positive
+    // amounts, balance overflow, and decimal precision beyond what the asset
+    // supports. See src/lib/transferRequest.ts and
+    // docs/investor-transfer-request-flow.md for the full edge-case list.
+    const validation = validateTransferRequest(
+      { recipient, amount },
+      { senderAddress: address, availableBalance: asset.balance, maxDecimals: asset.decimals }
+    );
+
+    if (!validation.valid || validation.parsedAmount === undefined) {
+      return setError(TRANSFER_ERROR_MESSAGES[validation.error!]);
     }
 
-    // Compliance Check
-    const isCompliant = await checkWhitelist(cleanRecipient);
+    // Compliance Check. A thrown error here means the check itself failed
+    // (e.g. RPC unreachable) — distinct from checkWhitelist resolving false,
+    // which means the recipient was checked and is not whitelisted.
+    let isCompliant: boolean;
+    try {
+      isCompliant = await checkWhitelist(cleanRecipient);
+    } catch {
+      return setError('Could not verify compliance status. Please try again.');
+    }
     if (!isCompliant) {
       return setError('Recipient is not KYC whitelisted.');
     }
@@ -105,6 +118,8 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
   };
 
   const handleConfirm = async () => {
+    if (networkGuard.isBlocked) return;
+
     setFailure(null);
     setState('signing');
 
@@ -240,6 +255,8 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
           // The guard already blocks a duplicate submission; disabling the
           // button stops the user from having to discover that.
           isSubmitting={submission.isSubmitting}
+          canConfirm={!networkGuard.isBlocked}
+          notice={<NetworkGuardNotice guard={networkGuard} />}
         />
       );
     }
@@ -249,6 +266,12 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
         <h2 className="text-xl font-bold mb-4">Transfer {asset.ticker}</h2>
 
         {error && <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">{error}</div>}
+
+        {networkGuard.decision !== 'allow' && (
+          <div className="mb-4">
+            <NetworkGuardNotice guard={networkGuard} />
+          </div>
+        )}
 
         <div className="space-y-4 mb-6">
           <div>
@@ -284,7 +307,7 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
           </button>
           <button
             onClick={handleReview}
-            disabled={isLoading}
+            disabled={isLoading || networkGuard.isBlocked}
             className="flex-1 bg-aegis-brand hover:bg-blue-600 text-white py-2 rounded font-medium transition disabled:opacity-50"
           >
             {isLoading ? 'Checking...' : 'Review Transfer'}

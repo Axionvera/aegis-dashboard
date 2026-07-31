@@ -1,8 +1,14 @@
 import { create } from 'zustand';
 import { isConnected, isAllowed, requestAccess, getPublicKey, getNetwork } from '@stellar/freighter-api';
+import { resolvePassphrase, toStoredNetwork } from '@/lib/environment';
 
 interface WalletState {
   address: string | null;
+  /**
+   * Stable network string for the connected wallet — Freighter's short name
+   * (`TESTNET` / `PUBLIC`) when available, otherwise the passphrase. Never the
+   * raw Freighter object: callers treat this as a string (e.g. `.trim()`).
+   */
   network: string | null;
   isConnecting: boolean;
   /** Set when connection fails; cleared on a successful connect or disconnect. */
@@ -11,9 +17,15 @@ interface WalletState {
   disconnect: () => void;
   /** Silently restore a previously-granted Freighter session on page load. */
   tryAutoReconnect: () => Promise<void>;
+  /**
+   * Re-read the wallet's current network without prompting the user. Freighter
+   * does not emit an event when the user switches networks, so callers must
+   * poll this to notice a switch that happened after connect.
+   */
+  refreshNetwork: () => Promise<void>;
 }
 
-export const useWallet = create<WalletState>((set) => ({
+export const useWallet = create<WalletState>((set, get) => ({
   address: null,
   network: null,
   isConnecting: false,
@@ -36,7 +48,7 @@ export const useWallet = create<WalletState>((set) => ({
 
       set({
         address: access,
-        network: networkDetails,
+        network: toStoredNetwork(networkDetails),
         isConnecting: false,
         connectionError: null,
       });
@@ -69,9 +81,31 @@ export const useWallet = create<WalletState>((set) => ({
       if (!publicKey) return;
 
       const networkDetails = await getNetwork();
-      set({ address: publicKey, network: networkDetails, connectionError: null });
+      set({
+        address: publicKey,
+        network: toStoredNetwork(networkDetails),
+        connectionError: null,
+      });
     } catch {
       // Auto-reconnect is best-effort — never surface errors to the user.
+    }
+  },
+
+  refreshNetwork: async () => {
+    if (!get().address) return;
+
+    try {
+      const networkDetails = await getNetwork();
+      const next = toStoredNetwork(networkDetails);
+      // Freighter returns a fresh object every call, so compare by resolved
+      // passphrase rather than by reference — otherwise every poll would
+      // rewrite the store and re-render the app for no reason.
+      if (resolvePassphrase(next) !== resolvePassphrase(get().network)) {
+        set({ network: next });
+      }
+    } catch {
+      // Leave the previous value in place. A transient Freighter failure must
+      // not wipe a known-good network and falsely unlock a signing action.
     }
   },
 

@@ -35,7 +35,9 @@ export type TransactionAction =
   | 'transfer'
   | 'mint'
   | 'whitelist'
-  | 'compliance-update';
+  | 'compliance-update'
+  | 'asset-registration'
+  | 'role-change';
 
 /** Human-readable label for each action, shared by review and receipt. */
 export const TRANSACTION_ACTION_LABELS: Record<TransactionAction, string> = {
@@ -43,6 +45,8 @@ export const TRANSACTION_ACTION_LABELS: Record<TransactionAction, string> = {
   mint: 'Mint',
   whitelist: 'Whitelist',
   'compliance-update': 'Compliance update',
+  'asset-registration': 'Asset registration',
+  'role-change': 'Role change',
 };
 
 /** A single label/value line in the review and receipt summaries. */
@@ -61,6 +65,16 @@ export interface TransactionDetails {
   rows: TransactionDetailRow[];
   /** Stellar network name as reported by the wallet, e.g. `TESTNET`. */
   network?: string;
+  /**
+   * Short statement of what should happen if the wallet signature is accepted
+   * and the network confirms the transaction.
+   */
+  expectedResult?: string;
+  /**
+   * Operation-specific caveats shown before signing. Keep these protocol-level
+   * and avoid legal / financial advice wording.
+   */
+  riskNotes?: string[];
 }
 
 /** Normalised outcome, produced by `mapToTransactionResult`. */

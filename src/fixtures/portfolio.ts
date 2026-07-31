@@ -38,6 +38,11 @@ export const mockPortfolioFixture: Omit<PortfolioReadModel, 'investorAddress' | 
         state: 'eligible',
         reasons: [],
       },
+      lifecycleStatus: {
+        current: 'active',
+        since: '2026-01-15T00:00:00Z',
+        history: [{ state: 'active', occurredAt: '2026-01-15T00:00:00Z', note: 'Asset issued and activated.' }],
+      },
       isDataAvailable: true,
     },
     {
@@ -62,6 +67,14 @@ export const mockPortfolioFixture: Omit<PortfolioReadModel, 'investorAddress' | 
       transferEligibility: {
         state: 'eligible',
         reasons: [],
+      },
+      lifecycleStatus: {
+        current: 'matured',
+        since: '2026-07-01T00:00:00Z',
+        history: [
+          { state: 'active', occurredAt: '2026-01-01T00:00:00Z' },
+          { state: 'matured', occurredAt: '2026-07-01T00:00:00Z', note: 'Reached scheduled maturity.' },
+        ],
       },
       isDataAvailable: true,
     },
@@ -88,6 +101,14 @@ export const mockPortfolioFixture: Omit<PortfolioReadModel, 'investorAddress' | 
         state: 'ineligible',
         reasons: [
           'Investor accreditation for EU private credit offerings is not on file.',
+        ],
+      },
+      lifecycleStatus: {
+        current: 'paused',
+        since: '2026-07-20T00:00:00Z',
+        history: [
+          { state: 'active', occurredAt: '2026-02-01T00:00:00Z' },
+          { state: 'paused', occurredAt: '2026-07-20T00:00:00Z', note: 'Paused by the issuer pending compliance review.' },
         ],
       },
       isDataAvailable: true,

@@ -4,10 +4,10 @@ import AssetCard from '@/features/assets/components/AssetCard';
 import AssetCardSkeleton from '@/features/assets/components/AssetCardSkeleton';
 import type { PortfolioAsset } from '@/lib/aegis/types';
 import { usePortfolio } from '../hooks/usePortfolio';
-import PortfolioEmptyState from './PortfolioEmptyState';
-import PortfolioErrorState from './PortfolioErrorState';
+import { EmptyState } from '@/components/states';
 import PortfolioDisclaimer from './PortfolioDisclaimer';
 import TransferModal from './TransferModal';
+import InvestorPortfolioTable from './InvestorPortfolioTable';
 
 const SKELETON_COUNT = 3;
 
@@ -27,29 +27,44 @@ export default function PortfolioList() {
   }
 
   if (status === 'error') {
+    if (failure) {
+      return (
+        <EmptyState
+          icon={undefined}
+          title="Portfolio unavailable"
+          description={error ?? 'Unable to load your portfolio right now.'}
+          variant="unavailable"
+          actions={[
+            {
+              label: 'Retry',
+              onClick: refetch,
+              variant: 'primary',
+            },
+          ]}
+        />
+      );
+    }
     return (
-      <PortfolioErrorState
-        message={error ?? 'Unable to load your portfolio right now.'}
-        failure={failure}
-        onRetry={refetch}
+      <EmptyState
+        icon={undefined}
+        title="Portfolio unavailable"
+        description={error ?? 'Unable to load your portfolio right now.'}
+        variant="unavailable"
+        actions={[
+          {
+            label: 'Try again',
+            onClick: refetch,
+            variant: 'primary',
+          },
+        ]}
       />
     );
   }
 
-  if (assets.length === 0) {
-    return <PortfolioEmptyState />;
-  }
-
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {assets.map((asset) => (
-          <AssetCard key={asset.id} asset={asset} onTransferClick={() => setActiveAsset(asset)} />
-        ))}
-      </div>
-
+      <InvestorPortfolioTable assets={assets} onTransferClick={setActiveAsset} />
       <PortfolioDisclaimer />
-
       {activeAsset && <TransferModal asset={activeAsset} onClose={() => setActiveAsset(null)} />}
     </div>
   );

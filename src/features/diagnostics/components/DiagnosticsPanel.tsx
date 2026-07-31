@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import StatusCard from './StatusCard';
-import { redactUrl, redactContractId } from '@/lib/diagnostics/redact';
+import { buildDiagnosticsReport } from '@/lib/diagnostics/buildReport';
 import { useWallet } from '@/hooks/useWallet';
 import { useFeatureFlags } from '@/hooks/useFeatureFlags';
 import { isProviderMocked } from '@/lib/sdk';
+import { validateDashboardConfig } from '@/config/validate';
 
 export default function DiagnosticsPanel() {
   const { address, network } = useWallet();
@@ -13,21 +14,21 @@ export default function DiagnosticsPanel() {
   const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || '';
   const contractId = process.env.NEXT_PUBLIC_AEGIS_CONTRACT_ID || '';
 
-  const redactedRpc = redactUrl(rpcUrl);
-  const redactedContract = redactContractId(contractId);
-
   const mockActive = isProviderMocked();
+  const configResult = validateDashboardConfig();
 
-  const reportData = {
-    timestamp: new Date().toISOString(),
-    sdkVersion: mockActive ? '[MOCK] v0.0.0-local' : 'Mocked v0.0.0',
-    rpc: mockActive ? '[MOCK] Not connected — mock provider active' : redactedRpc,
-    contract: mockActive ? '[MOCK] Not deployed — mock provider active' : redactedContract,
-    wallet: address ? redactContractId(address) : 'Not connected',
-    network: mockActive ? 'LOCAL_MOCK' : network || 'Not connected',
-    flags: flags,
-    provider: mockActive ? 'MockAegisProvider' : 'LiveAegisProvider',
-  };
+  const { report: reportData, cards } = buildDiagnosticsReport(
+    {
+      walletAddress: address,
+      walletNetwork: typeof network === 'string' ? network : null,
+      flags,
+      mockActive,
+      rpcUrl,
+      contractId,
+      sdkVersion: 'Mocked v0.0.0',
+    },
+    configResult,
+  );
 
   const handleCopy = () => {
     navigator.clipboard.writeText(JSON.stringify(reportData, null, 2));
@@ -61,37 +62,14 @@ export default function DiagnosticsPanel() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Provider row — always shown so the active provider is visible */}
-        <StatusCard
-          title="Active Provider"
-          value={reportData.provider}
-          status={mockActive ? 'warning' : 'ok'}
-        />
-        <StatusCard
-          title="RPC URL"
-          value={mockActive ? '[MOCK] Not connected' : redactedRpc}
-          status={mockActive ? 'warning' : rpcUrl ? 'ok' : 'error'}
-        />
-        <StatusCard
-          title="Contract ID"
-          value={mockActive ? '[MOCK] Not deployed' : redactedContract}
-          status={mockActive ? 'warning' : contractId ? 'ok' : 'error'}
-        />
-        <StatusCard
-          title="SDK Version"
-          value={reportData.sdkVersion}
-          status="warning"
-        />
-        <StatusCard
-          title="Wallet Address"
-          value={address ? redactContractId(address) : 'Not connected'}
-          status={address ? 'ok' : 'unknown'}
-        />
-        <StatusCard
-          title="Wallet Network"
-          value={mockActive ? 'LOCAL_MOCK' : network || 'Not connected'}
-          status={mockActive ? 'warning' : network ? 'ok' : 'unknown'}
-        />
+        {cards.map((card) => (
+          <StatusCard
+            key={card.title}
+            title={card.title}
+            value={card.value}
+            status={card.status}
+          />
+        ))}
       </div>
 
       <div className="mt-6">
