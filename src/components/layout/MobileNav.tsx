@@ -5,18 +5,11 @@ import { X } from "lucide-react";
 import Link from "next/link";
 
 const NAV_LINKS = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Portfolio",
-    href: "/portfolio",
-  },
-  {
-    label: "Admin ",
-    href: "/admin",
-  },
+  { label: "Home", href: "/" },
+  { label: "Portfolio", href: "/portfolio" },
+  { label: "Transactions", href: "/transactions" },
+  { label: "Admin", href: "/admin" },
+  { label: "Diagnostics", href: "/diagnostics" },
 ];
 
 interface MobileNavProps {
@@ -41,10 +34,13 @@ export default function MobileNav({
   return (
     <div
       id="mobile-navigation"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Mobile navigation menu"
       className={`fixed left-0 top-0 z-50 h-screen w-full overflow-y-auto bg-white transition-all duration-300 ease-in-out md:hidden ${
         isMobileMenuOpen
           ? "translate-y-0 opacity-100"
-          : "-translate-y-full opacity-0"
+          : "-translate-y-full opacity-0 pointer-events-none"
       }`}
     >
       <div className="container mx-auto px-4 py-4">
@@ -87,7 +83,7 @@ export default function MobileNav({
                   disconnect();
                   onClose();
                 }}
-                className="btn-outline w-full"
+                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2 rounded-md font-medium text-sm transition"
               >
                 Disconnect {truncateAddress(address)}
               </button>
@@ -97,9 +93,10 @@ export default function MobileNav({
               <button
                 type="button"
                 onClick={onConnectWallet}
+                disabled={isConnecting}
                 className="bg-aegis-brand hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium text-sm transition disabled:opacity-50"
               >
-                {isConnecting ? "Connecting..." : "Connect Wallet"}
+                {isConnecting ? "Connecting…" : "Connect Wallet"}
               </button>
             </div>
           )}
