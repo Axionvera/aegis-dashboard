@@ -53,19 +53,10 @@ Key resources for contributors:
 
 > **Note:** All pull requests must follow the [PR Evidence Checklist](docs/pr-evidence-checklist.md) and be audited against the [Evaluation Readiness Dashboard](docs/evaluation-readiness.md) before requesting review.
 
-The transactions page also includes a contributor-ready fixture gallery for transaction review, progress, and receipt states. See [docs/transaction-components.md](docs/transaction-components.md) for the shared component contract and [docs/transaction-review-modal.md](docs/transaction-review-modal.md) for review-before-sign behaviour, risk notes, and the operation summary mapper.
+The transactions page also includes a contributor-ready fixture gallery for transaction review, progress, and receipt states. See [docs/transaction-components.md](docs/transaction-components.md) for the shared component contract, fixture expectations, and compliance-safe wording guidance.
 
-## Evaluation Readiness
-Before submitting a pull request for maintainer review or payment evaluation, review the [Evaluation Readiness Dashboard](docs/evaluation-readiness.md). It links testing standards, CI status expectations, PR evidence templates, acceptance criteria mapping, and conduct guidelines into a single scorecard.
-
-## Payment-Period Conduct
-During GrantFox evaluation windows, all contributors must follow the [Payment-Period Conduct Policy](docs/payment-period-conduct.md). Repeated spam, payout-related complaints, or harassment in community channels will not be tolerated. Self-review your PR thoroughly before raising payment concerns.
+## Transfer Restriction Explainer
+Investor-facing transfer flows now include a reusable explainer for transfer restrictions. The logic lives in [src/lib/eligibility.ts](src/lib/eligibility.ts) and the UI is surfaced in the investor portfolio and transfer modal. See [docs/investor-transfer-eligibility.md](docs/investor-transfer-eligibility.md) for the typed state model, edge cases, and compliance-safe wording guidance.
 
 ## Route Access
 Role-aware route guards protect admin, issuer, investor, and read-only sections. See `docs/route-access.md` for route mapping, guard states, SDK assumptions, and mock wallet fixtures.
-
-## Contribution Quality Examples
-Before submitting a PR, read the [Contribution Quality Examples](docs/contribution-quality-examples.md) for concrete examples of low-effort, partial, under-tested, failing-CI, and acceptable contributions — including what each category looks like and how to improve it. The companion [Low-Effort PR Examples](docs/low-effort-pr-examples.md) covers additional screenshot and CI-specific anti-patterns.
-
-## Documentation Index
-A full index of every file in `docs/` organised by audience (onboarding, building features, review and payment, release) is at [docs/README.md](docs/README.md).

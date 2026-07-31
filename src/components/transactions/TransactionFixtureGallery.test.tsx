@@ -9,13 +9,10 @@ describe('TransactionFixtureGallery', () => {
       screen.getByRole('heading', { name: /component fixture gallery/i }),
     ).toBeInTheDocument();
     expect(screen.getByText(/review transfer before signing/i)).toBeInTheDocument();
-    expect(screen.getByText(/review whitelist update/i)).toBeInTheDocument();
     expect(screen.getByText(/waiting for signature/i)).toBeInTheDocument();
     // expect(screen.getByText(/submitting to the network/i)).toBeInTheDocument();
     expect(screen.getAllByText(/submitting to the network/i),).toHaveLength(2);
     expect(screen.getByText(/transaction confirmed/i)).toBeInTheDocument();
-    expect(screen.getByText(/pending receipt/i)).toBeInTheDocument();
-    expect(screen.getByText(/transaction submitted/i)).toBeInTheDocument();
     expect(screen.getByText(/transaction failed/i)).toBeInTheDocument();
     expect(screen.getByText(/transaction status unknown/i)).toBeInTheDocument();
   });

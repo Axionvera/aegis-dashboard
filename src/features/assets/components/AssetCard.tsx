@@ -1,7 +1,7 @@
 import { formatAmount } from '@/utils/formatting';
 import ComplianceBadge from './ComplianceBadge';
 import TransferEligibilityBadge from './TransferEligibilityBadge';
-import AssetLifecycleBadge from './AssetLifecycleBadge';
+import TransferRestrictionExplainer from '@/features/investor/components/TransferRestrictionExplainer';
 import type { PortfolioAsset } from '@/lib/aegis/types';
 
 interface AssetCardProps {
@@ -45,8 +45,12 @@ export default function AssetCard({ asset, onTransferClick }: AssetCardProps) {
         </p>
       </div>
 
-      <div className="mb-6">
+      <div className="mb-4">
         <TransferEligibilityBadge eligibility={transferEligibility} />
+      </div>
+
+      <div className="mb-6">
+        <TransferRestrictionExplainer asset={asset} compact />
       </div>
 
       <button

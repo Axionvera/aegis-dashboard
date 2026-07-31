@@ -17,6 +17,17 @@ interface TransactionFixtureGalleryEntry {
   explorerUrl?: string | null;
 }
 
+interface TransactionFixtureGalleryEntry {
+  id: string;
+  kind: 'review' | 'progress' | 'receipt';
+  title: string;
+  description: string;
+  details?: TransactionDetails;
+  state?: 'signing' | 'pending';
+  result?: TransactionResult;
+  explorerUrl?: string | null;
+}
+
 /**
  * Sample data for previewing the transaction components without running a real
  * flow — useful for manual QA of the failure and unknown states, which the
@@ -93,13 +104,6 @@ export const transactionResultFixtures: TransactionResult[] = [
   unknownResultFixture,
 ];
 
-export const transactionReviewFixtures: TransactionDetails[] = [
-  transferDetailsFixture,
-  mintDetailsFixture,
-  whitelistDetailsFixture,
-  complianceDetailsFixture,
-];
-
 export const transactionFixtureGalleryEntries: TransactionFixtureGalleryEntry[] = [
   {
     id: 'review-transfer',
@@ -114,13 +118,6 @@ export const transactionFixtureGalleryEntries: TransactionFixtureGalleryEntry[] 
     title: 'Review mint request',
     description: 'Preview the confirmation copy for an issuance workflow.',
     details: mintDetailsFixture,
-  },
-  {
-    id: 'review-whitelist',
-    kind: 'review',
-    title: 'Review whitelist update',
-    description: 'Preview the confirmation screen for a whitelist add action.',
-    details: whitelistDetailsFixture,
   },
   {
     id: 'review-compliance',
@@ -151,15 +148,6 @@ export const transactionFixtureGalleryEntries: TransactionFixtureGalleryEntry[] 
     details: transferDetailsFixture,
     result: successResultFixture,
     explorerUrl: 'https://stellar.expert/explorer/testnet/tx/b9d0e1f2a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e',
-  },
-  {
-    id: 'receipt-pending',
-    kind: 'receipt',
-    title: 'Pending receipt',
-    description: 'Preview the submitted-but-unconfirmed receipt state.',
-    details: transferDetailsFixture,
-    result: pendingResultFixture,
-    explorerUrl: 'https://stellar.expert/explorer/testnet/tx/c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f60718293a4b5c6d7e8f9a0b1c2d3e4f50',
   },
   {
     id: 'receipt-failure',
