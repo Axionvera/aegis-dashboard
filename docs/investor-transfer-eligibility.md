@@ -31,11 +31,13 @@ This panel surfaces a human-readable explanation instead of a bare error.
 - No wording implies a legal or regulatory guarantee.
 
 ## Files
-- `src/lib/eligibility.ts` — pure evaluation engine (no React; fully unit-tested).
+- `src/lib/eligibility.ts` — pure evaluation engine (no React; fully unit-tested) plus the portfolio-facing explainer helper.
 - `src/lib/__fixtures__/eligibility.ts` — sample inputs for all major states.
-- `src/features/investor/InvestorEligibilityPanel.tsx` — the UI panel.
+- `src/features/investor/InvestorEligibilityPanel.tsx` — the reusable panel UI.
+- `src/features/investor/components/TransferRestrictionExplainer.tsx` — the portfolio/transfer-modal explainer used in investor flows.
 - `src/lib/eligibility.test.ts` — engine unit tests.
 - `src/features/investor/InvestorEligibilityPanel.test.tsx` — component tests.
+- `src/features/assets/components/AssetCard.test.tsx` — regression coverage for the investor asset card experience.
 
 ## SDK mapping
 The dashboard should feed real signals into `EligibilityInput`:
@@ -45,4 +47,4 @@ The dashboard should feed real signals into `EligibilityInput`:
 - `serviceAvailable` ← backend/SDK reachability.
 
 Until those signals are wired, the panel can be rendered with `serviceAvailable: false`
-to honestly show an `unknown` state rather than guessing.
+to honestly show an `unknown` state rather than guessing. For portfolio and transfer modal contexts, the same logic is exposed through `explainPortfolioTransferEligibility(asset)` so contributors can reuse one consistent explanation path rather than branching into ad-hoc copy.

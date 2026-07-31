@@ -6,6 +6,7 @@ import TransactionReview from '@/components/transactions/TransactionReview';
 import TransactionProgress from '@/components/transactions/TransactionProgress';
 import TransactionReceipt from '@/components/transactions/TransactionReceipt';
 import { mapToTransactionResult } from '@/components/transactions/statusMapper';
+import TransferRestrictionExplainer from './TransferRestrictionExplainer';
 import { getExplorerUrl } from '@/components/transactions/explorerLink';
 import type {
   TransactionDetails,
@@ -92,9 +93,8 @@ export default function TransferModal({ asset, onClose }: TransferModalProps) {
       return (
         <>
           <h2 className="text-xl font-bold mb-4">Transfer {asset.ticker}</h2>
-          <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">
-            This asset is not currently eligible for transfer.
-            {asset.transferEligibility.reasons[0] ? ` ${asset.transferEligibility.reasons[0]}` : ''}
+          <div className="mb-4">
+            <TransferRestrictionExplainer asset={asset} />
           </div>
           <button
             onClick={onClose}

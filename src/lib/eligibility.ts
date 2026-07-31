@@ -155,3 +155,54 @@ export function evaluateBothDirections(input: Omit<EligibilityInput, 'direction'
 }
 
 export const STATE_ORDER: EligibilityState[] = ['compliant', 'blocked', 'unknown', 'unavailable'];
+
+export function explainPortfolioTransferEligibility(asset: {
+  ticker: string;
+  compliance?: { state?: string; detail?: string };
+  transferEligibility?: { state?: string; reasons?: string[] };
+  isDataAvailable?: boolean;
+}): EligibilityResult {
+  const state = asset.transferEligibility?.state;
+  const reasons = asset.transferEligibility?.reasons ?? [];
+  const detail = asset.compliance?.detail;
+
+  if (!asset.isDataAvailable) {
+    return {
+      state: 'unknown',
+      title: 'Status unknown',
+      message: 'We could not verify transfer eligibility for this asset right now. This is not a confirmation that the transfer is allowed or blocked.',
+      hint: 'Try again once the compliance registry sync is available.',
+      assetSpecific: true,
+    };
+  }
+
+  if (state === 'ineligible') {
+    const reason = reasons[0] ?? detail ?? `This asset (${asset.ticker}) has transfer restrictions under current compliance rules.`;
+    return {
+      state: 'blocked',
+      title: 'Not eligible',
+      message: reason,
+      hint: 'Complete any required compliance steps before retrying.',
+      assetSpecific: true,
+    };
+  }
+
+  if (state === 'unknown') {
+    return {
+      state: 'unknown',
+      title: 'Status unknown',
+      message: 'We could not verify transfer eligibility right now. This is not a confirmation that the transfer is allowed or blocked.',
+      hint: 'Check the latest compliance status or try again later.',
+      assetSpecific: true,
+    };
+  }
+
+  return {
+    state: 'compliant',
+    title: 'Eligible',
+    message: `Based on the information available, this wallet appears able to transfer ${asset.ticker} at this time. Final approval is decided on-chain at transfer.`,
+    hint: 'Always confirm the on-chain result before relying on this.',
+    assetSpecific: true,
+  };
+}
+
